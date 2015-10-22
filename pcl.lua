@@ -1,31 +1,34 @@
 require 'torch'
 local ffi = require 'ffi'
 
+pcl = {}
+
 local ALIGN16 = "__attribute__((aligned(16)))"
 local PCL_POINT4D = "union ".. ALIGN16.." { float data[4]; struct { float x; float y; float z; }; };"
 local PCL_NORMAL4D = "union "..ALIGN16.." { float data_n[4]; float normal[3]; struct { float normal_x; float normal_y; float normal_z; }; };"
 local PCL_RGB = "union { union { struct { uint8_t b; uint8_t g; uint8_t r; uint8_t a; }; uint32_t rgba; }; uint32_t rgba; };"
 
-local cdef = "typedef struct RGB { "..PCL_RGB.." } RGB; \z
-typedef struct PointXY { float x; float y; } PointUV; \z
-typedef struct PointUV { float u; float v; } PointUV; \z
-typedef struct "..ALIGN16.." InterestPoint { "..PCL_POINT4D.." union { struct { float strength; }; float data_c[4]; }; } InterestPoint; \z
-typedef struct "..ALIGN16.." _PointXYZ { "..PCL_POINT4D.."} _PointXYZ; \z
-typedef struct "..ALIGN16.." _PointXYZI { "..PCL_POINT4D.." union { struct { float intensity; }; float data_c[4]; }; } _PointXYZI; \z
-typedef struct "..ALIGN16.." _PointXYZL { "..PCL_POINT4D.." uint32_t label; } _PointXYZL; \z
-typedef struct "..ALIGN16.." _PointXYZRGBA { "..PCL_POINT4D..PCL_RGB.." } _PointXYZRGBA; \z
-typedef struct "..ALIGN16.." _PointXYZRGBL { "..PCL_POINT4D..PCL_RGB.." uint32_t label; } _PointXYZRGBL; \z
-typedef struct "..ALIGN16.." _Normal { "..PCL_POINT4D.." union { struct { float curvature; }; float data_c[4]; }; } _Normal; \z
-typedef struct "..ALIGN16.." _Axis { "..PCL_NORMAL4D.." } _Axis; \z
-typedef struct "..ALIGN16.." _PointNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } _PointNormal; \z
-typedef struct "..ALIGN16.." _PointXYZRGBNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } _PointXYZRGBNormal; \z
-typedef struct "..ALIGN16.." _PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } _PointXYZINormal;" ..
+local cdef = "enum NormType { L1, L2_SQR, L2, LINF, JM, B, SUBLINEAR, CS, DIV, PF, K, KL, HIK }; \z
+typedef struct { "..PCL_RGB.." } RGB; \z
+typedef struct { float x; float y; } PointXY; \z
+typedef struct { float u; float v; } PointUV; \z
+typedef struct { "..PCL_POINT4D.." union { struct { float strength; }; float data_c[4]; }; } InterestPoint; \z
+typedef struct { "..PCL_POINT4D.."} PointXYZ; \z
+typedef struct { "..PCL_POINT4D.." union { struct { float intensity; }; float data_c[4]; }; } PointXYZI; \z
+typedef struct { "..PCL_POINT4D.." uint32_t label; } PointXYZL; \z
+typedef struct { "..PCL_POINT4D..PCL_RGB.." } PointXYZRGBA; \z
+typedef struct { "..PCL_POINT4D..PCL_RGB.." uint32_t label; } PointXYZRGBL; \z
+typedef struct { "..PCL_POINT4D.." union { struct { float curvature; }; float data_c[4]; }; } Normal; \z
+typedef struct { "..PCL_NORMAL4D.." } Axis; \z
+typedef struct { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } PointNormal; \z
+typedef struct { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBNormal; \z
+typedef struct { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal;" ..
 [[
 void* pcl_PointCloud_XYZ_new(uint32_t width, uint32_t height);
 void pcl_PointCloud_XYZ_delete(void* self);
 bool pcl_PointCloud_XYZ_empty(void* self);
 void pcl_PointCloud_XYZ_clear(void* self);
-_PointXYZ& pcl_PointCloud_at1D(void* self, int n);
+PointXYZ& pcl_PointCloud_at1D(void* self, int n);
 void pcl_PointCloud_XYZ_totensor(void* self, void* destination);
 THFloatStorage* pcl_PointCloud_XYZ_storage(void* self);
 ]]
@@ -34,22 +37,47 @@ ffi.cdef(cdef)
 
 local p = ffi.load('build/debug/libtorch-pcl.so')
 
+pcl.PointXYZ            = ffi.typeof('PointXYZ')            -- float x, y, z;
+pcl.PointXYZI           = ffi.typeof('PointXYZI')           -- float x, y, z, intensity;
+pcl.PointXYZRGBA        = ffi.typeof('PointXYZRGBA')        -- float x, y, z; uint32_t rgba;
+pcl.PointXY             = ffi.typeof('PointXY')             -- float x, y;
+pcl.PointNormal         = ffi.typeof('Normal')              -- float normal[3], curvature;
+pcl.PointNormal         = ffi.typeof('PointNormal')         -- float x, y, z; float normal[3], curvature;
+pcl.PointXYZRGBNormal   = ffi.typeof('PointXYZRGBNormal')   -- float x, y, z, rgb, normal[3], curvature;
+pcl.PointXYZINormal     = ffi.typeof('PointXYZINormal')     -- float x, y, z, intensity, normal[3], curvature;
 
-local PointCloud = {}
-
-local types = {
-    "XYZ",            -- float x, y, z;    
-    "XYZI",           -- float x, y, z, intensity;
-    "XYZRGBA",        -- float x, y, z; uint32_t rgba;
-    "XYZRGB",         -- float x, y, z, rgb;
-    "XY",             -- float x, y;
-    "Normal",         -- float normal[3], curvature;
-    "XYZNormal",      -- float x, y, z; float normal[3], curvature;
-    "XYZRGBNormal",   -- float x, y, z, rgb, normal[3], curvature;
-    "XYZINormal"      -- float x, y, z, intensity, normal[3], curvature;
+-- create metatables for point types
+local PointXYZ = {
+    prototype = {
+        fromtensor = function(t) 
+            local p = pcl.PointXYZ() 
+            for i=1,3 do p[i] = t[i] end
+            return p
+        end,
+        totensor = function(self) return torch.FloatTensor({ self.x, self.y, self.z }) end
+    }
 }
 
-function PointCloud:__tostring__()
+function PointXYZ:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZ.prototype[i] end end
+function PointXYZ:__newindex(i, v) self.data[i-1] = v end
+function PointXYZ:__tostring() return string.format('{ x:%f, y:%f, z:%f }', self.x, self.y, self.z) end 
+
+ffi.metatype("PointXYZ", PointXYZ)
+
+
+
+-- test code
+
+a = pcl.PointXYZ.fromtensor(torch.Tensor({1,2,3}))
+print(a)
+
+local PointCloud = torch.class('PointCloud')
+
+function PointCloud.__init(pointType, width, height)
+    
+end
+
+function PointCloud:__tostring()
     return "PointCloud"
 end
 
@@ -58,7 +86,8 @@ local obj = p.pcl_PointCloud_XYZ_new(10, 10)
 print(torch.typename(obj))
 ffi.gc(obj, p.pcl_PointCloud_XYZ_delete)
 
-local x =p.pcl_PointCloud_at1D(obj, 3)
+local x = p.pcl_PointCloud_at1D(obj, 3)
+print(x)
 --x.y = 1.23124;
 
 
@@ -98,5 +127,9 @@ local pt = torch.rand(3, 10)
 
 -- allocating / deallocating objects
 
+
+
+pcl.PointT = PointT
+pcl.io = io
 
 return pcl
