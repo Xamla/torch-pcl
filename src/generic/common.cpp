@@ -5,6 +5,10 @@ extern "C" {
 #include <TH/TH.h>
 }
 
+
+typedef struct { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;
+
+
 PCLIMP(void*, PointCloud, new)(uint32_t width, uint32_t height) 
 {
     return new pcl::PointCloud<_PointT>(width, height);
@@ -35,7 +39,7 @@ PCLIMP(uint32_t, PointCloud, height)(pcl::PointCloud<_PointT>* self)
 }
 
 
-PCLIMP(uint32_t, PointCloud, isDense)(pcl::PointCloud<_PointT>* self)
+PCLIMP(bool, PointCloud, isDense)(pcl::PointCloud<_PointT>* self)
 {
     return self->is_dense;
 }
@@ -71,18 +75,16 @@ PCLIMP(bool, PointCloud, isOrganized)(pcl::PointCloud<_PointT>* self)
 }
 
 
-PCLIMP(THFloatStorage*, PointCloud, points)(pcl::PointCloud<_PointT>* self)
+PCLIMP(_PointsBuffer, PointCloud, points)(pcl::PointCloud<_PointT>* self)
 {
     float* ptr = reinterpret_cast<float*>(&self->points[0]);
-    THFloatStorage* storage = THFloatStorage_newWithData(ptr, self->points.size() * sizeof(_PointT) / sizeof(float));
-    storage->flag = TH_STORAGE_REFCOUNTED;
-    return storage;
-}
-
-
-PCLIMP(void, PointCloud, add)(pcl::PointCloud<_PointT>* self, pcl::PointCloud<_PointT>* other)
-{
-    *self += *other;
+    _PointsBuffer buf;
+    buf.dim = sizeof(_PointT) / sizeof(float);
+    buf.storage = THFloatStorage_newWithData(ptr, self->points.size() * buf.dim);
+    buf.storage->flag = TH_STORAGE_REFCOUNTED;
+    buf.width = self->width;
+    buf.height =self->height;
+    return buf;
 }
 
 
@@ -101,4 +103,10 @@ PCLIMP(THFloatStorage*, PointCloud, sensorOrientation)(pcl::PointCloud<_PointT>*
     THFloatStorage* storage = THFloatStorage_newWithData(ptr, 4);
     storage->flag = TH_STORAGE_REFCOUNTED;
     return storage;
+}
+
+
+PCLIMP(void, PointCloud, add)(pcl::PointCloud<_PointT>* self, pcl::PointCloud<_PointT>* other)
+{
+    *self += *other;
 }

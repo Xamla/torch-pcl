@@ -27,6 +27,8 @@
     </VirtualDirectory>
     <File Name="src/io_xyz.cpp"/>
     <File Name="src/common_xyz.cpp"/>
+    <File Name="src/common_xyzi.cpp"/>
+    <File Name="src/common_xyzrgba.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
