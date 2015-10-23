@@ -23,6 +23,7 @@ typedef struct { "..PCL_NORMAL4D.." } Axis; \z
 typedef struct { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } PointNormal; \z
 typedef struct { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBNormal; \z
 typedef struct { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal;" ..
+
 [[
 void* pcl_PointCloud_XYZ_new(uint32_t width, uint32_t height);
 void pcl_PointCloud_XYZ_delete(void* self);
@@ -64,12 +65,46 @@ function PointXYZ:__tostring() return string.format('{ x:%f, y:%f, z:%f }', self
 
 ffi.metatype("PointXYZ", PointXYZ)
 
+func_by_type = {}
+
+local PointCloud_method_names = {
+    "new",
+    "clone",
+    "delete",
+    "width",
+    "height",
+    "isDense",
+    "at1D",
+    "at2D",
+    "clear",
+    "empty",
+    "isOrganized",
+    "points",
+    "sensorOrientation",
+    "sensorOrigin"
+}
+
+local generic_names = {}
+for i,n in ipairs(PointCloud_method_names) do
+    generic_names[n] = "pcl_PointCloud_TYPE_KEY_" .. n
+end
+
+function create_typed_methods(type_key)
+    local map = {}
+    for k,v in pairs(generic_names) do
+        map[k] = string.gsub(v, "TYPE_KEY", type_key)
+    end
+    return map
+end
+
+func_by_type[pcl.PointXYZ] = create_typed_methods("XYZ")
 
 
 -- test code
 
 a = pcl.PointXYZ.fromtensor(torch.Tensor({1,2,3}))
 print(a)
+
 
 local PointCloud = torch.class('PointCloud')
 

@@ -16,5 +16,5 @@ set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS}  ")
 # Library path
 set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L\".\" ")
 
-add_library(torch-pcl SHARED "${SOURCE_DIR}/io.cpp")
+add_library(torch-pcl SHARED "${SOURCE_DIR}/io_xyz.cpp" "${SOURCE_DIR}/common_xyz.cpp")
 target_link_libraries(torch-pcl TH ${PCL_LIBRARIES})

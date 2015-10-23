@@ -20,9 +20,13 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="src/io.cpp"/>
     <File Name="pcl.lua"/>
-    <File Name="src/common.cpp"/>
+    <VirtualDirectory Name="generic">
+      <File Name="src/generic/io.cpp"/>
+      <File Name="src/generic/common.cpp"/>
+    </VirtualDirectory>
+    <File Name="src/io_xyz.cpp"/>
+    <File Name="src/common_xyz.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
