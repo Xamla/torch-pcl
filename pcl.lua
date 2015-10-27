@@ -1,8 +1,6 @@
 require 'torch'
 local ffi = require 'ffi'
 
-pcl = {}
-
 local PCL_POINT4D = "union __attribute__((aligned(16))) { float data[4]; struct { float x; float y; float z; }; };"
 local PCL_NORMAL4D = "union __attribute__((aligned(16))) { float data_n[4]; float normal[3]; struct { float normal_x; float normal_y; float normal_z; }; };"
 local PCL_RGB = "union { union { struct { uint8_t b; uint8_t g; uint8_t r; uint8_t a; }; float rgb; }; uint32_t rgba; };"
@@ -59,7 +57,7 @@ for i,v in ipairs(supported_keys) do
   ffi.cdef(specialized)
 end
 
-local p = ffi.load('build/debug/libtorch-pcl.so')
+local p = ffi.load(package.searchpath('libtorch-pcl', package.cpath))
 
 pcl.PointXYZ            = ffi.typeof('PointXYZ')            -- float x, y, z;
 pcl.PointXYZI           = ffi.typeof('PointXYZI')           -- float x, y, z, intensity;
@@ -326,12 +324,9 @@ print(obj:points())
 -- loading a point cloud file and get points as torch tensors
 -- local cloud = pcl.io.loadPCDFile('')
 
-local pc = PointCloud.new(pcl.PointXYZ)
-pc:loadPCDFile('data/bunny.pcd')
-local t = pc:points()
-print(t)
-
-io = {}
-pcl.io = io
-
-return pcl
+function pcl:test()
+  local pc = PointCloud.new(pcl.PointXYZ)
+  pc:loadPCDFile('data/bunny.pcd')
+  local t = pc:points()
+  print(t)
+end

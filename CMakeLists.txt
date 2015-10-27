@@ -1,24 +1,32 @@
-cmake_minimum_required(VERSION 2.8.11)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11)
 
-project(torch-pcl)
-find_package(PCL 1.3 REQUIRED COMPONENTS common io)
-find_package(Torch REQUIRED)
+PROJECT(torch-pcl)
 
-include_directories(${Torch_INSTALL_INCLUDE} ${PCL_INCLUDE_DIRS})
+FIND_PACKAGE(PCL 1.3 REQUIRED)
+FIND_PACKAGE(Torch REQUIRED)
 
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
+INCLUDE_DIRECTORIES(${PCL_INCLUDE_DIRS} ${Torch_INSTALL_INCLUDE})
+LINK_DIRECTORIES(${PCL_LIBRARY_DIRS} "${Torch_INSTALL_LIB}")
+ADD_DEFINITIONS(${PCL_DEFINITIONS})
 
-set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+SET(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 # Linker options
-set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS}  ")
+SET(CMAKE_LDFLAGS "${CMAKE_LDFLAGS}  ")
 
 # Library path
-set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L\".\" ")
+SET(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L\".\" ")
 
-add_library(torch-pcl SHARED 
+SET(src 
   "${SOURCE_DIR}/xyz.cpp"
   "${SOURCE_DIR}/xyzi.cpp"
   "${SOURCE_DIR}/xyzrgba.cpp"
 )
-target_link_libraries(torch-pcl TH ${PCL_LIBRARIES})
+
+FILE(GLOB luasrc *.lua)
+
+ADD_TORCH_PACKAGE(torch-pcl "${src}" "${luasrc}")
+
+TARGET_LINK_LIBRARIES(torch-pcl TH ${PCL_LIBRARIES})
+
+INSTALL(DIRECTORY "doc" DESTINATION "${Torch_INSTALL_LUA_PATH_SUBDIR}/torch-pcl")
+INSTALL(FILES "README.md" DESTINATION "${Torch_INSTALL_LUA_PATH_SUBDIR}/torch-pcl")

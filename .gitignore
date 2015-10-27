@@ -1,3 +1,6 @@
+# Build directory 
+build/
+
 # Compiled Lua sources
 luac.out
 

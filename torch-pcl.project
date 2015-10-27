@@ -29,6 +29,7 @@
     <File Name="src/xyz.cpp"/>
     <File Name="src/xyzi.cpp"/>
     <File Name="src/xyzrgba.cpp"/>
+    <File Name="init.lua"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -121,4 +122,7 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="rocks">
+    <File Name="rocks/torch-pcl-scm-1.rockspec"/>
+  </VirtualDirectory>
 </CodeLite_Project>
