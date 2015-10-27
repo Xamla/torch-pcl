@@ -2,105 +2,101 @@
 #include <pcl/point_types.h>
 #include <pcl/conversions.h>
 
-extern "C" {
-#include <TH/TH.h>
-}
-
 typedef struct { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;
 
 PCLIMP(void*, PointCloud, new)(uint32_t width, uint32_t height) 
 {
-    return new pcl::PointCloud<_PointT>(width, height);
+  return new pcl::PointCloud<_PointT>::Ptr(new pcl::PointCloud<_PointT>(width, height));
 }
 
-PCLIMP(void*, PointCloud, clone)(pcl::PointCloud<_PointT>* self)
+PCLIMP(void*, PointCloud, clone)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    return new pcl::PointCloud<_PointT>(*self);
+  return new pcl::PointCloud<_PointT>::Ptr(new pcl::PointCloud<_PointT>(**self));
 }
 
-PCLIMP(void, PointCloud, delete)(pcl::PointCloud<_PointT>* self)
+PCLIMP(void, PointCloud, delete)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    delete self;
+  delete self;
 }
 
-PCLIMP(uint32_t, PointCloud, width)(pcl::PointCloud<_PointT>* self)
+PCLIMP(uint32_t, PointCloud, width)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    return self->width;
+  return (*self)->width;
 }
 
-PCLIMP(uint32_t, PointCloud, height)(pcl::PointCloud<_PointT>* self)
+PCLIMP(uint32_t, PointCloud, height)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    return self->height;
+  return (*self)->height;
 }
 
-PCLIMP(bool, PointCloud, isDense)(pcl::PointCloud<_PointT>* self)
+PCLIMP(bool, PointCloud, isDense)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    return self->is_dense;
+  return (*self)->is_dense;
 }
 
-PCLIMP(_PointT&, PointCloud, at1D)(pcl::PointCloud<_PointT>* self, int n)
+PCLIMP(_PointT&, PointCloud, at1D)(pcl::PointCloud<_PointT>::Ptr *self, int n)
 {
-    return self->at(n);
+  return (*self)->at(n);
 }
 
-PCLIMP(_PointT&, PointCloud, at2D)(pcl::PointCloud<_PointT>* self, int column, int row)
+PCLIMP(_PointT&, PointCloud, at2D)(pcl::PointCloud<_PointT>::Ptr *self, int column, int row)
 {
-    return self->at(column, row);
+  return (*self)->at(column, row);
 }
 
-PCLIMP(void, PointCloud, clear)(pcl::PointCloud<_PointT>* self)
+PCLIMP(void, PointCloud, clear)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    self->clear();
+  (*self)->clear();
 }
 
-PCLIMP(bool, PointCloud, empty)(pcl::PointCloud<_PointT>* self)
+PCLIMP(bool, PointCloud, empty)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    return self->empty();
+  return (*self)->empty();
 }
 
-PCLIMP(bool, PointCloud, isOrganized)(pcl::PointCloud<_PointT>* self)
+PCLIMP(bool, PointCloud, isOrganized)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    return self->isOrganized();
+  return (*self)->isOrganized();
 }
 
-PCLIMP(_PointsBuffer, PointCloud, points)(pcl::PointCloud<_PointT>* self)
+PCLIMP(_PointsBuffer, PointCloud, points)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    float* ptr = reinterpret_cast<float*>(&self->points[0]);
-    _PointsBuffer buf;
-    buf.dim = sizeof(_PointT) / sizeof(float);
-    buf.storage = THFloatStorage_newWithData(ptr, self->points.size() * buf.dim);
-    buf.storage->flag = TH_STORAGE_REFCOUNTED;
-    buf.width = self->width;
-    buf.height =self->height;
-    return buf;
+  float* ptr = reinterpret_cast<float*>(&(*self)->points[0]);
+  _PointsBuffer buf;
+  buf.dim = sizeof(_PointT) / sizeof(float);
+  buf.storage = THFloatStorage_newWithData(ptr, (*self)->points.size() * buf.dim);
+  buf.storage->flag = TH_STORAGE_REFCOUNTED;
+  buf.width = (*self)->width;
+  buf.height = (*self)->height;
+  return buf;
 }
 
-PCLIMP(THFloatStorage*, PointCloud, sensorOrigin)(pcl::PointCloud<_PointT>* self)
+PCLIMP(THFloatStorage*, PointCloud, sensorOrigin)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    float* ptr = &(self->sensor_origin_(0));
-    THFloatStorage* storage = THFloatStorage_newWithData(ptr, 4);
-    storage->flag = TH_STORAGE_REFCOUNTED;
-    return storage;
+  float* ptr = &((*self)->sensor_origin_(0));
+  THFloatStorage* storage = THFloatStorage_newWithData(ptr, 4);
+  storage->flag = TH_STORAGE_REFCOUNTED;
+  return storage;
 }
 
-PCLIMP(THFloatStorage*, PointCloud, sensorOrientation)(pcl::PointCloud<_PointT>* self)
+PCLIMP(THFloatStorage*, PointCloud, sensorOrientation)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-    float* ptr = &(self->sensor_orientation_.coeffs()(0));
-    THFloatStorage* storage = THFloatStorage_newWithData(ptr, 4);
-    storage->flag = TH_STORAGE_REFCOUNTED;
-    return storage;
+  float* ptr = &((*self)->sensor_orientation_.coeffs()(0));
+  THFloatStorage* storage = THFloatStorage_newWithData(ptr, 4);
+  storage->flag = TH_STORAGE_REFCOUNTED;
+  return storage;
 }
 
-PCLIMP(void, PointCloud, add)(pcl::PointCloud<_PointT>* self, pcl::PointCloud<_PointT>* other)
+PCLIMP(void, PointCloud, add)(pcl::PointCloud<_PointT>::Ptr* self, pcl::PointCloud<_PointT>::Ptr *other)
 {
-    *self += *other;
+  **self += **other;
 }
 
-PCLIMP(void, PointCloud, fromPCLPointCloud2)(pcl::PointCloud<_PointT> *cloud, pcl::PCLPointCloud2 *msg)
+PCLIMP(void, PointCloud, fromPCLPointCloud2)(pcl::PointCloud<_PointT>::Ptr *self, pcl::PCLPointCloud2 *msg)
 {
-    pcl::fromPCLPointCloud2<_PointT>(*msg, *cloud);
+  pcl::fromPCLPointCloud2<_PointT>(*msg, **self);
 }
 
-PCLIMP(void, PointCloud, toPCLPointCloud2)(pcl::PointCloud<_PointT> *cloud, pcl::PCLPointCloud2 *msg)
+PCLIMP(void, PointCloud, toPCLPointCloud2)(pcl::PointCloud<_PointT>::Ptr *self, pcl::PCLPointCloud2 *msg)
 {
-    pcl::toPCLPointCloud2<_PointT>(*cloud, *msg);}
+  pcl::toPCLPointCloud2<_PointT>(**self, *msg);}

@@ -24,12 +24,23 @@
     <VirtualDirectory Name="generic">
       <File Name="src/generic/io.cpp"/>
       <File Name="src/generic/common.cpp"/>
+      <File Name="src/generic/cloudviewer.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
     <File Name="src/xyzi.cpp"/>
     <File Name="src/xyzrgba.cpp"/>
     <File Name="init.lua"/>
+    <File Name="README.md"/>
+    <File Name="src/cloudviewer_all.cpp"/>
+    <File Name="src/utils.h"/>
+    <File Name="src/generic.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="rocks">
+    <File Name="rocks/torch-pcl-scm-1.rockspec"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="doc">
+    <File Name="doc/common.md"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -122,7 +133,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="rocks">
-    <File Name="rocks/torch-pcl-scm-1.rockspec"/>
-  </VirtualDirectory>
 </CodeLite_Project>

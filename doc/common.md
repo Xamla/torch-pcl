@@ -4,10 +4,9 @@
 
 ```lua
 require 'torch-pcl'
-local cloud = PointCloud.new(pcl.PointXYZ)
+local cloud = pcl.PointCloud(pcl.PointXYZ)
 cloud:loadPCDFile('data/bunny.pcd')
-local p = cloud:points()	-- get tensor view to points
+local p = cloud:points()  -- get tensor view to points
 print(p)
 ```
-
 

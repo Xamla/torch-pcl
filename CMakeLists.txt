@@ -17,6 +17,7 @@ SET(CMAKE_LDFLAGS "${CMAKE_LDFLAGS}  ")
 SET(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L\".\" ")
 
 SET(src 
+  "${SOURCE_DIR}/cloudviewer_all.cpp"
   "${SOURCE_DIR}/xyz.cpp"
   "${SOURCE_DIR}/xyzi.cpp"
   "${SOURCE_DIR}/xyzrgba.cpp"

@@ -5,36 +5,32 @@
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
 
-extern "C" {
-#include <TH/TH.h>
+PCLIMP(int, PointCloud, loadPCDFile)(pcl::PointCloud<_PointT>::Ptr *self, const char *fn)
+{
+    return pcl::io::loadPCDFile<_PointT>(fn, **self);
 }
 
-PCLIMP(int, PointCloud, loadPCDFile)(pcl::PointCloud<_PointT> *cloud, const char *fn)
+PCLIMP(int, PointCloud, savePCDFile)(pcl::PointCloud<_PointT>::Ptr *self, const char *fn, bool binary) 
 {
-    return pcl::io::loadPCDFile<_PointT> (fn, *cloud);
+    return pcl::io::savePCDFile(fn, **self, binary);
 }
 
-PCLIMP(int, PointCloud, savePCDFile)(pcl::PointCloud<_PointT> *cloud, const char *fn, bool binary) 
+PCLIMP(int, PointCloud, loadPLYFile)(pcl::PointCloud<_PointT>::Ptr *self, const char *fn)
 {
-    return pcl::io::savePCDFile(fn, *cloud, binary);
+    return pcl::io::loadPLYFile(fn, **self);
 }
 
-PCLIMP(int, PointCloud, loadPLYFile)(pcl::PointCloud<_PointT> *cloud, const char *fn)
+PCLIMP(int, PointCloud, savePLYFile)(pcl::PointCloud<_PointT>::Ptr *self, const char *fn, bool binary)
 {
-    return pcl::io::loadPLYFile(fn, *cloud);
+    return pcl::io::savePLYFile(fn, **self, binary);
 }
 
-PCLIMP(int, PointCloud, savePLYFile)(pcl::PointCloud<_PointT> *cloud, const char *fn, bool binary)
+PCLIMP(int, PointCloud, loadOBJFile)(pcl::PointCloud<_PointT>::Ptr *self, const char *fn)
 {
-    return pcl::io::savePLYFile(fn, *cloud, binary);
+    return pcl::io::loadOBJFile(fn, **self);
 }
 
-PCLIMP(int, PointCloud, loadOBJFile)(pcl::PointCloud<_PointT> *cloud, const char *fn)
+PCLIMP(void, PointCloud, savePNGFile)(pcl::PointCloud<_PointT>::Ptr *self, const char *fn, const char* field_name)
 {
-    return pcl::io::loadOBJFile(fn, *cloud);
-}
-
-PCLIMP(void, PointCloud, savePNGFile)(pcl::PointCloud<_PointT> *cloud, const char *fn, const char* field_name)
-{
-    pcl::io::savePNGFile(fn, *cloud, field_name);
+    pcl::io::savePNGFile(fn, **self, field_name);
 }

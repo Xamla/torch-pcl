@@ -171,7 +171,7 @@ for k,v in pairs(type_key_map) do
   func_by_type[k] = create_typed_methods(v)
 end
 
-local PointCloud = torch.class('PointCloud')
+local PointCloud = torch.class('pcl.PointCloud')
 
 function PointCloud:__init(pointType, width, height)
   pointType = pointType or pcl.PointXYZ
