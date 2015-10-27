@@ -25,10 +25,10 @@
       <File Name="src/generic/io.cpp"/>
       <File Name="src/generic/common.cpp"/>
     </VirtualDirectory>
-    <File Name="src/io_xyz.cpp"/>
-    <File Name="src/common_xyz.cpp"/>
-    <File Name="src/common_xyzi.cpp"/>
-    <File Name="src/common_xyzrgba.cpp"/>
+    <File Name="src/PointCloud2.cpp"/>
+    <File Name="src/xyz.cpp"/>
+    <File Name="src/xyzi.cpp"/>
+    <File Name="src/xyzrgba.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -44,6 +44,7 @@
       <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="/home/koepf/torch/install/include"/>
+        <IncludePath Value="/usr/include/pcl-1.7"/>
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
