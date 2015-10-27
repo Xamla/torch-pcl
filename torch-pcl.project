@@ -20,7 +20,6 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="pcl.lua"/>
     <VirtualDirectory Name="generic">
       <File Name="src/generic/io.cpp"/>
       <File Name="src/generic/common.cpp"/>
@@ -30,11 +29,10 @@
     <File Name="src/xyz.cpp"/>
     <File Name="src/xyzi.cpp"/>
     <File Name="src/xyzrgba.cpp"/>
-    <File Name="init.lua"/>
     <File Name="README.md"/>
-    <File Name="src/cloudviewer_all.cpp"/>
     <File Name="src/utils.h"/>
     <File Name="src/generic.cpp"/>
+    <File Name="src/cloudviewer.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
@@ -133,4 +131,10 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="lua">
+    <File Name="CloudViewer.lua"/>
+    <File Name="init.lua"/>
+    <File Name="pcl.lua"/>
+    <File Name="PointCloud.lua"/>
+  </VirtualDirectory>
 </CodeLite_Project>
