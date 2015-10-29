@@ -20,8 +20,8 @@ $ luarocks install torch-pcl
 
 ```lua
 require 'torch-pcl'
-c = pcl.PointCloud(pcl.PointXYZ)
-c:loadPCDFile('data/bunny.pcd')
-p = cloud:points()  -- get tensor view to points
-print(p)
+cloud = pcl.PointCloud(pcl.PointXYZ)
+cloud:loadPCDFile('data/bunny.pcd')
+pt = cloud:points()  -- get tensor view to points
+print(pt)
 ```
