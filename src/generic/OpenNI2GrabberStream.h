@@ -1,7 +1,7 @@
 #include <pcl/io/openni2_grabber.h>
 
-// Allow single threaded access to open NI point cloud stream from main LUA thread
-//template class OpenNIGrabberStream<PointT>
+// Allow single threaded access to open NI point cloud stream from main LUA thread.
+// Up to maxBacklog frames are buffered.
 template<typename PointT>
 class OpenNI2GrabberStream
 {
@@ -80,10 +80,10 @@ private:
   
   void grabber_callback(const CloudPointConstPtr &cloud)
   {
-      boost::unique_lock<boost::mutex> lock(queueLock);
-      if (maxBacklog >= 0 && queue.size() > maxBacklog)
-        queue.pop_front();
-      queue.push_back(cloud->makeShared());
-      framesAvailable.notify_one();
+    boost::unique_lock<boost::mutex> lock(queueLock);
+    if (maxBacklog >= 0 && queue.size() > maxBacklog)
+      queue.pop_front();
+    queue.push_back(cloud->makeShared());
+    framesAvailable.notify_one();
   }
 };

@@ -24,6 +24,13 @@ typedef struct { THFloatStorage* storage; uint32_t width, height, dim; } _Points
 [[
 void* pcl_CloudViewer_new(const char *window_name);
 void pcl_CloudViewer_delete(void *self);
+
+void* pcl_OpenNI2Stream_XYZRGBA_new(int max_backlog);
+void pcl_OpenNI2Stream_XYZRGBA_delete(void* self);
+void pcl_OpenNI2Stream_XYZRGBA_start(void* self);
+void pcl_OpenNI2Stream_XYZRGBA_stop(void* self);
+void* pcl_OpenNI2Stream_XYZRGBA_read(void* self, int timeout_milliseconds);
+
 ]]
 ffi.cdef(cdef)
 
@@ -138,6 +145,23 @@ type_key_map[pcl.PointXYZRGBA] = 'XYZRGBA'
   
 PointCloud_init(pcl, ffi, p, type_key_map)
 CloudViewer_init(pcl, ffi, p, type_key_map)
+
+methods = {
+  create = p["pcl_OpenNI2Stream_XYZRGBA_new"],
+  delete = p["pcl_OpenNI2Stream_XYZRGBA_delete"],
+  start = p["pcl_OpenNI2Stream_XYZRGBA_start"],
+  stop = p["pcl_OpenNI2Stream_XYZRGBA_stop"],
+  read = p["pcl_OpenNI2Stream_XYZRGBA_read"] 
+}
+
+print(methods)
+a = methods.create(10);
+methods.start(a)
+b = methods.read(a, 1000);
+print('read result:');
+print(b);
+methods.stop(a)
+
 
 --[[
 local obj = PointCloud.new(pcl.PointXYZ, torch.FloatTensor({{ 4,3,2,1 }, { 5,3,2, 1 }}))

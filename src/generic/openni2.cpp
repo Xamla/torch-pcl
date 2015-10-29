@@ -3,7 +3,7 @@
 #include <pcl/conversions.h>
 #include "OpenNI2GrabberStream.h"
 
-PCLIMP(void*, PoinNI2Stream, new)(int max_backlog)
+PCLIMP(void*, OpenNI2Stream, new)(int max_backlog)
 {
   return new OpenNI2GrabberStream<_PointT>("", max_backlog);
 }
