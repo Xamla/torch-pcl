@@ -1,13 +1,11 @@
+local ffi = require 'ffi'
+local utils = require 'pclutils'
+
 local PointCloud = torch.class('pcl.PointCloud')
 
-local pcl
-local ffi
 local func_by_type = {}
 
-function init(_pcl, _ffi, p, type_key_map)
-  pcl = _pcl
-  ffi = _ffi
-  
+function init()
   local PointCloud_method_names = {
     "new",
     "clone",
@@ -33,23 +31,12 @@ function init(_pcl, _ffi, p, type_key_map)
     "savePNGFile"
   }
 
-  local generic_names = {}
-  for i,n in ipairs(PointCloud_method_names) do
-    generic_names[n] = "pcl_PointCloud_TYPE_KEY_" .. n
-  end
-
-  local function create_typed_methods(type_key)
-    local map = {}
-    for k,v in pairs(generic_names) do
-      map[k] = p[string.gsub(v, "TYPE_KEY", type_key)]
-    end
-    return map
-  end
-
-  for k,v in pairs(type_key_map) do
-    func_by_type[k] = create_typed_methods(v)
+  for k,v in pairs(utils.type_key_map) do
+    func_by_type[k] = utils.create_typed_methods("pcl_PointCloud_TYPE_KEY_", PointCloud_method_names, v)
   end
 end
+
+init()
 
 function PointCloud:__init(pointType, width, height)
   pointType = pointType or pcl.PointXYZ
@@ -72,13 +59,12 @@ function PointCloud:__init(pointType, width, height)
     self.c = width
   else
     self.c = self.f.new(width, height)
-    ffi.gc(self.c, self.f.delete)
   end
+  ffi.gc(self.c, self.f.delete)
 end
 
-function PointCloud:clone()
+function PointCloud:clonCloudViewere()
   local clone = self.f.clone(self.c)
-  ffi.gc(clone, self.f.delete)
   return PointCloud.new(self.pointType, clone)
 end
 
@@ -183,5 +169,3 @@ end
 function PointCloud:__tostring()
   return string.format("PointCloud (w:%d, h:%d)", self:width(), self:height())
 end
-
-return init

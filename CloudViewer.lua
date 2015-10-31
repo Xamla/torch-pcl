@@ -1,14 +1,12 @@
+local ffi = require 'ffi'
+local utils = require 'pclutils'
+
 local CloudViewer = torch.class('pcl.CloudViewer')
 
-local pcl
-local ffi
 local func_by_type = {}
 local ft = {}
 
-function init(_pcl, _ffi, p, type_key_map)
-  pcl = _pcl
-  ffi = _ffi
-  
+function init()
   local CloudViewer_method_names = {
     "showCloud"
   }
@@ -18,23 +16,15 @@ function init(_pcl, _ffi, p, type_key_map)
     generic_names[n] = "pcl_CloudViewer_TYPE_KEY_" .. n
   end
   
-  local function create_typed_methods(type_key)
-    local map = {}
-    for k,v in pairs(generic_names) do
-      map[k] = p[string.gsub(v, "TYPE_KEY", type_key)]
-    end
-    return map
+  for k,v in pairs(utils.type_key_map) do
+    func_by_type[k] = utils.create_typed_methods("pcl_CloudViewer_TYPE_KEY_", CloudViewer_method_names, v)
   end
-  
-  print(type_key_map)
-  for k,v in pairs(type_key_map) do
-    func_by_type[k] = create_typed_methods(v)
-  end
-  print(func_by_type)
 
-  ft.new = p["pcl_CloudViewer_new"]
-  ft.delete = p["pcl_CloudViewer_delete"]
+  ft.new = pcl.lib["pcl_CloudViewer_new"]
+  ft.delete = pcl.lib["pcl_CloudViewer_delete"]
 end
+
+init()
 
 function CloudViewer:__init(window_name)
   self.v = ft.new(window_name)
@@ -47,5 +37,3 @@ function CloudViewer:showCloud(cloud, name)
     f.showCloud(self.v, cloud.c, name);
   end
 end
-
-return init

@@ -3,9 +3,9 @@
 #include <pcl/conversions.h>
 #include "OpenNI2GrabberStream.h"
 
-PCLIMP(void*, OpenNI2Stream, new)(int max_backlog)
+PCLIMP(void*, OpenNI2Stream, new)(const char* device_id, int max_backlog)
 {
-  return new OpenNI2GrabberStream<_PointT>("", max_backlog);
+  return new OpenNI2GrabberStream<_PointT>(device_id, max_backlog);
 }
 
 PCLIMP(void, OpenNI2Stream, delete)(OpenNI2GrabberStream<_PointT> *self)

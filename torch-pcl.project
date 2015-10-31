@@ -138,5 +138,8 @@
     <File Name="init.lua"/>
     <File Name="pcl.lua"/>
     <File Name="PointCloud.lua"/>
+    <File Name="OpenNI2Stream.lua"/>
+    <File Name="PointTypes.lua"/>
+    <File Name="pclutils.lua"/>
   </VirtualDirectory>
 </CodeLite_Project>

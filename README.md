@@ -16,7 +16,9 @@ Install using LuaRocks:
 $ luarocks install torch-pcl
 ```
 
-## Usage
+## Some Examples
+
+### Load a PCD file and acess values as torch tensor.
 
 ```lua
 require 'torch-pcl'
@@ -24,4 +26,21 @@ cloud = pcl.PointCloud(pcl.PointXYZ)
 cloud:loadPCDFile('data/bunny.pcd')
 pt = cloud:points()  -- get tensor view to points
 print(pt)
+```
+
+### Visualize live RGB-D sensor data 
+
+Capture cloud point with OpenNI2 device and show result live in a cloud viewer window.
+
+```lua
+local s = pcl.OpenNI2Stream()
+local v = pcl.CloudViewer()
+s:start()
+for i=1,1000 do
+  local c = s:read(1000)
+  if c ~= nil then
+    v:showCloud(c)
+  end
+end
+s:stop()
 ```

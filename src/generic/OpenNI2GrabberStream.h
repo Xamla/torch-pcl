@@ -9,8 +9,8 @@ public:
   typedef typename pcl::PointCloud<PointT>::Ptr CloudPointPtr;
   typedef typename pcl::PointCloud<PointT>::ConstPtr CloudPointConstPtr;
 
-  OpenNI2GrabberStream(const std::string& device_id, int maxBacklog = 30)
-    : maxBacklog(maxBacklog)
+  OpenNI2GrabberStream(const std::string& device_id, int max_backlog = 30)
+    : maxBacklog(max_backlog)
     , grabber(device_id)
   {
     boost::function<void (const CloudPointConstPtr&)> cb =
@@ -53,7 +53,10 @@ public:
   {
     boost::unique_lock<boost::mutex> lock(queueLock);
 
-    for (int i=0; i<2; i++)
+    boost::chrono::system_clock::time_point timeout = boost::chrono::system_clock::now() 
+      + boost::chrono::milliseconds(timeout_milliseconds);
+      
+    do
     {
       // check if frames are available
       if (!queue.empty())
@@ -64,10 +67,8 @@ public:
       }
 
       // wait with timeout for frame to be captured
-      if (!framesAvailable.wait_for(lock, boost::chrono::milliseconds(timeout_milliseconds)))
-        break;
-    }
-    
+    } while(framesAvailable.wait_until(lock, timeout) != boost::cv_status::timeout);
+
     return CloudPointPtr();
   }
   

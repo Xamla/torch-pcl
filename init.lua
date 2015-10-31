@@ -1,7 +1,6 @@
 require('torch')
 
 pcl = {}
-
-include('pcl.lua')
+require('pcl')
 
 return pcl
