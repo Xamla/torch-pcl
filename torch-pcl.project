@@ -26,6 +26,7 @@
       <File Name="src/generic/cloudviewer.cpp"/>
       <File Name="src/generic/OpenNI2GrabberStream.h"/>
       <File Name="src/generic/openni2.cpp"/>
+      <File Name="src/generic/filters.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>

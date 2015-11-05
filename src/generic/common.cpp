@@ -100,3 +100,14 @@ PCLIMP(void, PointCloud, fromPCLPointCloud2)(pcl::PointCloud<_PointT>::Ptr *self
 PCLIMP(void, PointCloud, toPCLPointCloud2)(pcl::PointCloud<_PointT>::Ptr *self, pcl::PCLPointCloud2 *msg)
 {
   pcl::toPCLPointCloud2<_PointT>(**self, *msg);}
+
+/*PCLIMP(void*, PointCloud, fromTensor)(THTensor* tensor) 
+{
+  
+  // TODO
+  
+  // validate tensor
+  
+  // get float buffer
+  return new pcl::PointCloud<_PointT>::Ptr(...);
+}*/
