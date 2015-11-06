@@ -7,13 +7,14 @@ If you want to help please contact [@andreaskoepf](https://github.com/andreaskoe
 ## Install
 
 Prerequisites:
+
 1. [Torch7](http://torch.ch/docs/getting-started.html)
 2. [PCL](http://pointclouds.org/downloads/linux.html)
 
 Install using LuaRocks:
 
 ```bash
-$ luarocks install torch-pcl
+$ luarocks install pcl
 ```
 
 ## Some Examples
@@ -21,7 +22,7 @@ $ luarocks install torch-pcl
 ### Load a PCD file and acess values as torch tensor.
 
 ```lua
-require 'torch-pcl'
+local pcl = require 'pcl'
 cloud = pcl.PointCloud(pcl.PointXYZ)
 cloud:loadPCDFile('data/bunny.pcd')
 pt = cloud:points()  -- get tensor view to points
@@ -33,6 +34,7 @@ print(pt)
 Capture cloud point with OpenNI2 device and show result live in a cloud viewer window.
 
 ```lua
+local pcl = require 'pcl'
 local s = pcl.OpenNI2Stream()
 local v = pcl.CloudViewer()
 s:start()

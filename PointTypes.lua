@@ -70,7 +70,7 @@ for i,v in ipairs(supported_keys) do
   ffi.cdef(specialized)
 end
 
-pcl.lib = ffi.load(package.searchpath('libtorch-pcl', package.cpath))
+pcl.lib = ffi.load(package.searchpath('libpcl', package.cpath))
 
 pcl.PointXYZ            = ffi.typeof('PointXYZ')            -- float x, y, z;
 pcl.PointXYZI           = ffi.typeof('PointXYZI')           -- float x, y, z, intensity;

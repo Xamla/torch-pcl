@@ -1,8 +1,9 @@
 local ffi = require 'ffi'
-local utils = require 'torch-pcl.pclutils'
-local pcl = require 'torch-pcl.PointTypes'
+local class = require 'class'
+local utils = require 'pcl.utils'
+local pcl = require 'pcl.PointTypes'
 
-local PointCloud = torch.class('PointCloud')
+local PointCloud = class('PointCloud')
 
 local func_by_type = {}
 

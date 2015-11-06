@@ -2,10 +2,10 @@ require 'torch'
 require 'paths'
 local ffi = require 'ffi'
 
-local pcl = require 'torch-pcl.PointTypes'
-require 'torch-pcl.PointCloud'
-require 'torch-pcl.CloudViewer'
-require 'torch-pcl.OpenNI2Stream'
+local pcl = require 'pcl.PointTypes'
+require 'pcl.PointCloud'
+require 'pcl.CloudViewer'
+require 'pcl.OpenNI2Stream'
 
 --[[
 local obj = PointCloud.new(pcl.PointXYZ, torch.FloatTensor({{ 4,3,2,1 }, { 5,3,2, 1 }}))

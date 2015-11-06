@@ -1,4 +1,4 @@
-local pcl = require 'torch-pcl.PointTypes'
+local pcl = require 'pcl.PointTypes'
 
 local utils = {}
 

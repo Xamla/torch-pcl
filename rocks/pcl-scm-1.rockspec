@@ -1,4 +1,4 @@
-package = "torch-pcl"
+package = "pcl"
 version = "scm-1"
 
 source = {
@@ -14,7 +14,8 @@ description = {
 }
 
 dependencies = {
-   "torch >= 7.0"
+   "torch >= 7.0",
+   "class"
 }
 
 build = {
