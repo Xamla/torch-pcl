@@ -36,6 +36,8 @@ function init()
   for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_PointCloud_TYPE_KEY_", PointCloud_method_names, v)
   end
+  
+  pcl.PointCloud = PointCloud
 end
 
 init()

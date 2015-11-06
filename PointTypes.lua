@@ -2,26 +2,26 @@ local ffi = require 'ffi'
 
 local pcl = {}
 
-local PCL_POINT4D = "union __attribute__((aligned(16))) { float data[4]; struct { float x; float y; float z; }; };"
-local PCL_NORMAL4D = "union __attribute__((aligned(16))) { float data_n[4]; float normal[3]; struct { float normal_x; float normal_y; float normal_z; }; };"
+local PCL_POINT4D = "union __attribute__((aligned(16))) { struct { float x; float y; float z; }; float data[4]; };"
+local PCL_NORMAL4D = "union __attribute__((aligned(16))) { struct { float normal_x; float normal_y; float normal_z; }; float normal[3]; float data_n[4]; };"
 local PCL_RGB = "union { union { struct { uint8_t b; uint8_t g; uint8_t r; uint8_t a; }; float rgb; }; uint32_t rgba; };"
 
 local cdef = "enum NormType { L1, L2_SQR, L2, LINF, JM, B, SUBLINEAR, CS, DIV, PF, K, KL, HIK }; \z
-typedef struct { "..PCL_RGB.." } RGB; \z
-typedef struct { float x; float y; } PointXY; \z
-typedef struct { float u; float v; } PointUV; \z
-typedef struct { "..PCL_POINT4D.." union { struct { float strength; }; float data_c[4]; }; } InterestPoint; \z
-typedef struct { "..PCL_POINT4D.."} PointXYZ; \z
-typedef struct { "..PCL_POINT4D.." union { struct { float intensity; }; float data_c[4]; }; } PointXYZI; \z
-typedef struct { "..PCL_POINT4D.." uint32_t label; } PointXYZL; \z
-typedef struct { "..PCL_POINT4D..PCL_RGB.." } PointXYZRGBA; \z
-typedef struct { "..PCL_POINT4D..PCL_RGB.." uint32_t label; } PointXYZRGBL; \z
-typedef struct { "..PCL_POINT4D.." union { struct { float curvature; }; float data_c[4]; }; } Normal; \z
-typedef struct { "..PCL_NORMAL4D.." } Axis; \z
-typedef struct { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } PointNormal; \z
-typedef struct { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBNormal; \z
-typedef struct { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal; \z
-typedef struct { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;" ..
+typedef struct RGB { "..PCL_RGB.." } RGB; \z
+typedef struct PointXY { float x; float y; } PointXY; \z
+typedef struct PointUV { float u; float v; } PointUV; \z
+typedef struct InterestPoint { "..PCL_POINT4D.." union { struct { float strength; }; float data_c[4]; }; } InterestPoint; \z
+typedef struct PointXYZ { "..PCL_POINT4D.."} PointXYZ; \z
+typedef struct PointXYZI { "..PCL_POINT4D.." union { struct { float intensity; }; float data_c[4]; }; } PointXYZI; \z
+typedef struct PointXYZL { "..PCL_POINT4D.." uint32_t label; } PointXYZL; \z
+typedef struct PointXYZRGBA { "..PCL_POINT4D..PCL_RGB.." } PointXYZRGBA; \z
+typedef struct PointXYZRGBL { "..PCL_POINT4D..PCL_RGB.." uint32_t label; } PointXYZRGBL; \z
+typedef struct Normal { "..PCL_POINT4D.." union { struct { float curvature; }; float data_c[4]; }; } Normal; \z
+typedef struct Axis { "..PCL_NORMAL4D.." } Axis; \z
+typedef struct PointNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } PointNormal; \z
+typedef struct PointXYZRGBNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBNormal; \z
+typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal; \z
+typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;" ..
 [[
 void* pcl_CloudViewer_new(const char *window_name);
 void pcl_CloudViewer_delete(void *self);

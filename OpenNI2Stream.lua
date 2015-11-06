@@ -17,6 +17,8 @@ function init()
   for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods("pcl_OpenNI2Stream_TYPE_KEY_", OpenNI2Stream_method_names, v)
   end
+  
+  pcl.OpenNI2Stream = OpenNI2Stream
 end
 
 init()

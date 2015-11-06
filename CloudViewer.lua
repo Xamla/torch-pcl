@@ -24,6 +24,8 @@ function init()
 
   ft.new = pcl.lib["pcl_CloudViewer_new"]
   ft.delete = pcl.lib["pcl_CloudViewer_delete"]
+  
+  pcl.CloudViewer = CloudViewer
 end
 
 init()
