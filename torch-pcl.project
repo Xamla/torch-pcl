@@ -135,12 +135,11 @@
     </Configuration>
   </Settings>
   <VirtualDirectory Name="lua">
-    <File Name="CloudViewer.lua"/>
-    <File Name="init.lua"/>
-    <File Name="pcl.lua"/>
+    <File Name="utils.lua"/>
+    <File Name="PointTypes.lua"/>
     <File Name="PointCloud.lua"/>
     <File Name="OpenNI2Stream.lua"/>
-    <File Name="PointTypes.lua"/>
-    <File Name="pclutils.lua"/>
+    <File Name="init.lua"/>
+    <File Name="CloudViewer.lua"/>
   </VirtualDirectory>
 </CodeLite_Project>

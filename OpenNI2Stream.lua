@@ -1,8 +1,8 @@
 local ffi = require 'ffi'
-local pcl = require 'PointTypes'
-local utils = require 'pclutils'
+local pcl = require 'torch-pcl.PointTypes'
+local utils = require 'torch-pcl.pclutils'
 
-local OpenNI2Stream = torch.class('pcl.OpenNI2Stream')
+local OpenNI2Stream = torch.class('OpenNI2Stream')
 
 local func_by_type = {}
 

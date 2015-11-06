@@ -1,5 +1,7 @@
 local ffi = require 'ffi'
 
+local pcl = {}
+
 local PCL_POINT4D = "union __attribute__((aligned(16))) { float data[4]; struct { float x; float y; float z; }; };"
 local PCL_NORMAL4D = "union __attribute__((aligned(16))) { float data_n[4]; float normal[3]; struct { float normal_x; float normal_y; float normal_z; }; };"
 local PCL_RGB = "union { union { struct { uint8_t b; uint8_t g; uint8_t r; uint8_t a; }; float rgb; }; uint32_t rgba; };"

@@ -1,7 +1,8 @@
 local ffi = require 'ffi'
-local utils = require 'pclutils'
+local pcl = require 'torch-pcl.PointTypes'
+local utils = require 'torch-pcl.pclutils'
 
-local CloudViewer = torch.class('pcl.CloudViewer')
+local CloudViewer = torch.class('CloudViewer')
 
 local func_by_type = {}
 local ft = {}
