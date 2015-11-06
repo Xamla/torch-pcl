@@ -1,4 +1,4 @@
-package = "pcl"
+package = "torch-pcl"
 version = "scm-1"
 
 source = {
@@ -6,7 +6,7 @@ source = {
 }
 
 description = {
-   summary = "Point Cloud Library (PCL) bindings for Torch",
+   summary = "[pre-alpha] Point Cloud Library (PCL) bindings for Torch",
    detailed = [[
    ]],
    homepage = "https://github.com/andreaskoepf/torch-pcl",
