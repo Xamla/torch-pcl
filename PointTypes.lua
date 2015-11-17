@@ -31,7 +31,6 @@ void pcl_OpenNI2Stream_XYZRGBA_delete(void* self);
 void pcl_OpenNI2Stream_XYZRGBA_start(void* self);
 void pcl_OpenNI2Stream_XYZRGBA_stop(void* self);
 void* pcl_OpenNI2Stream_XYZRGBA_read(void* self, int timeout_milliseconds);
-
 ]]
 ffi.cdef(cdef)
 
@@ -69,6 +68,12 @@ for i,v in ipairs(supported_keys) do
   local specialized = string.gsub(generic_declarations, 'TYPE_KEY', v)
   ffi.cdef(specialized)
 end
+
+local specialized_declarations = 
+[[
+int pcl_PointCloud_XYZRGBA_copyRGBA(void *cloud, void* output);
+]]
+ffi.cdef(specialized_declarations)
 
 pcl.lib = ffi.load(package.searchpath('libpcl', package.cpath))
 

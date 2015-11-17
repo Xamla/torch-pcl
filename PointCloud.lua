@@ -30,7 +30,8 @@ function init()
     "loadPLYFile",
     "savePLYFile",
     "loadOBJFile",
-    "savePNGFile"
+    "savePNGFile",
+    "copyRGBA"
   }
 
   for k,v in pairs(utils.type_key_map) do
