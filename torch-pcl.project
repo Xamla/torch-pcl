@@ -142,4 +142,7 @@
     <File Name="init.lua"/>
     <File Name="CloudViewer.lua"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="test">
+    <File Name="test/test_readPointCloudData.lua"/>
+  </VirtualDirectory>
 </CodeLite_Project>

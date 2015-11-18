@@ -101,6 +101,30 @@ PCLIMP(void, PointCloud, toPCLPointCloud2)(pcl::PointCloud<_PointT>::Ptr *self, 
 {
   pcl::toPCLPointCloud2<_PointT>(**self, *msg);}
 
+PCLIMP(int, PointCloud, readXYZfloat)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor* output)
+{
+  if (!self || !output)
+    return -1;
+    
+  const pcl::PointCloud<_PointT>& c = **self;
+
+  if (!THFloatTensor_isContiguous(output))
+    return -2;
+
+  THFloatTensor_resize3d(output, c.height, c.width, 3);
+  float *output_data = THFloatTensor_data(output);
+  
+  for (pcl::PointCloud<_PointT>::const_iterator i = c.begin(); i != c.end(); ++i)
+  {
+    const _PointT& p = *i;
+    *output_data++ = p.x;
+    *output_data++ = p.y;
+    *output_data++ = p.z;
+  }
+  
+  return 0;
+}
+
 /*PCLIMP(void*, PointCloud, fromTensor)(THTensor* tensor) 
 {
   
