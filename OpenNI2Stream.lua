@@ -43,7 +43,6 @@ end
 function OpenNI2Stream:read(timeout_milliseconds)
   timeout_milliseconds = timeout_milliseconds or 1000
   local frame = self.f.read(self.o, timeout_milliseconds)
-  print(frame)
   if frame ~= nil then
     frame = pcl.PointCloud(self.pointType, frame)
   end
