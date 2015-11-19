@@ -59,7 +59,7 @@ int pcl_PointCloud_TYPE_KEY_loadPLYFile(void *cloud, const char *fn);
 int pcl_PointCloud_TYPE_KEY_savePLYFile(void *cloud, const char *fn, bool binary);
 int pcl_PointCloud_TYPE_KEY_loadOBJFile(void *cloud, const char *fn);
 void pcl_PointCloud_TYPE_KEY_savePNGFile(void *cloud, const char *fn, const char* field_name);
-int pcl_PointCloud_TYPE_KEY_readXYZfloat(void *cloud, void *output);
+int pcl_PointCloud_TYPE_KEY_readXYZfloat(void *cloud, struct THFloatTensor *output);
 
 void pcl_CloudViewer_TYPE_KEY_showCloud(void *self, void *cloud, const char *cloudname);
 ]]
@@ -72,9 +72,8 @@ end
 
 local specialized_declarations = 
 [[
-
-int pcl_PointCloud_XYZRGBA_readRGBAfloat(void *cloud, void *output);
-int pcl_PointCloud_XYZRGBA_readRGBAbyte(void *cloud, void *output);
+int pcl_PointCloud_XYZRGBA_readRGBAfloat(void *cloud, struct THFloatTensor *output);
+int pcl_PointCloud_XYZRGBA_readRGBAbyte(void *cloud, struct THByteTensor *output);
 ]]
 ffi.cdef(specialized_declarations)
 

@@ -68,15 +68,15 @@ function PointCloud:__init(pointType, width, height)
     self.c = self.f.new(width, height)
   end
   ffi.gc(self.c, self.f.delete)
-
 end
 
 function PointCloud:readXYZ(t)
   local t = t or torch.FloatTensor()
-  if torch.type(t) ~= 'torch.FloatTensor' then
+  if torch.type(t) == 'torch.FloatTensor' then
+    self.f.readXYZfloat(self.c, t:cdata())
+  else
     error('torch.FloatTensor expected')
   end
-  self.f.readXYZfloat(self.c, t:cdata())
   return t
 end
 
@@ -89,6 +89,7 @@ function PointCloud:readRGBA(t)
   else
     error('unsupported tensor type')
   end
+  return t
 end
 
 function PointCloud:clone()
