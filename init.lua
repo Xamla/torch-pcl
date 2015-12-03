@@ -8,6 +8,24 @@ require 'pcl.CloudViewer'
 require 'pcl.OpenNI2Stream'
 require 'pcl.PCA'
 
+function pcl.rand(width, height, pointType)
+  if pcl.isPointType(height) or type(height) == 'string' then
+    pointType = height
+    height = 1
+  else
+    height = height or 1
+  end
+  local pc = pcl.PointCloud(pointType or pcl.PointXYZ, width, height)
+  if width > 0 and height > 0 then
+    pc:points()[{{},{},{1,3}}]:rand(height, width, 3)
+  end
+  return pc
+end
+
+function pcl.isPointCloud(obj)
+  return torch.isTypeOf(obj, pcl.PointCloud)
+end
+
 --[[
 local obj = PointCloud.new(pcl.PointXYZ, torch.FloatTensor({{ 4,3,2,1 }, { 5,3,2, 1 }}))
 print(obj:points())
@@ -21,18 +39,6 @@ obj:add(obj2)
 print(obj:points())
 ]]
 
-
--- TODO:
--- loading a point cloud file and get points as torch tensors
--- local cloud = pcl.io.loadPCDFile('')
-
-function pcl:test()
-  local pc = pcl.PointCloud(pcl.PointXYZ)
-  pc:loadPCDFile('data/bunny.pcd')
-  local t = pc:points()
-  print(t)
-end
-
 function pcl.test2()
   local s = pcl.OpenNI2Stream()
   local v = pcl.CloudViewer()
@@ -45,5 +51,7 @@ function pcl.test2()
   end
   s:stop()
 end
+
+
 
 return pcl

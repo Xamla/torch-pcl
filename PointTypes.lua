@@ -92,14 +92,39 @@ ffi.cdef(specialized_declarations)
 
 pcl.lib = ffi.load(package.searchpath('libpcl', package.cpath))
 
-pcl.PointXYZ            = ffi.typeof('PointXYZ')            -- float x, y, z;
-pcl.PointXYZI           = ffi.typeof('PointXYZI')           -- float x, y, z, intensity;
-pcl.PointXYZRGBA        = ffi.typeof('PointXYZRGBA')        -- float x, y, z; uint32_t rgba;
-pcl.PointXY             = ffi.typeof('PointXY')             -- float x, y;
-pcl.Normal              = ffi.typeof('Normal')              -- float normal[3], curvature;
-pcl.PointNormal         = ffi.typeof('PointNormal')         -- float x, y, z; float normal[3], curvature;
-pcl.PointXYZRGBNormal   = ffi.typeof('PointXYZRGBNormal')   -- float x, y, z, rgb, normal[3], curvature;
-pcl.PointXYZINormal     = ffi.typeof('PointXYZINormal')     -- float x, y, z, intensity, normal[3], curvature;
+local pointTypeNames = { 
+  'PointXYZ',             -- float x, y, z;
+  'PointXYZI',            -- float x, y, z, intensity;
+  'PointXYZRGBA',         -- float x, y, z; uint32_t rgba;
+  'PointXY',              -- float x, y;
+  'Normal',               -- float normal[3], curvature;
+  'PointNormal',          -- float x, y, z; float normal[3], curvature;
+  'PointXYZRGBNormal',    -- float x, y, z, rgb, normal[3], curvature;
+  'PointXYZINormal'       -- float x, y, z, intensity, normal[3], curvature;
+}
+
+local nameByType = {}
+pcl.pointTypeByName = {}
+
+function pcl.pointType(pointType)
+  if type(pointType) == 'string' then
+    pointType = pcl.pointTypeByName[string.lower(pointType)]
+  end
+  return pointType or pcl.PointXYZ  
+end
+
+for i,n in ipairs(pointTypeNames) do
+  local t = ffi.typeof(n) 
+  pcl[n] = t
+  nameByType[t] = n
+  pcl.pointTypeByName[string.lower(n)] = t
+  n = string.gsub(n, 'Point', '')
+  pcl.pointTypeByName[string.lower(n)] = t
+end
+
+function pcl.isPointType(t)
+  return nameByType[t] ~= nil
+end
 
 local function createpairs(fields)
   return function(self)
@@ -112,6 +137,8 @@ local function createpairs(fields)
     end
   end
 end
+
+pcl.metatype = {}
 
 -- PointXYZ metatype
 local PointXYZ = {
@@ -132,7 +159,8 @@ PointXYZ.__pairs = createpairs(PointXYZ.fields)
 function PointXYZ:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZ.prototype[i] end end
 function PointXYZ:__newindex(i, v) self.data[i-1] = v end
 function PointXYZ:__tostring() return string.format('{ x:%f, y:%f, z:%f }', self.x, self.y, self.z) end 
-ffi.metatype("PointXYZ", PointXYZ)
+ffi.metatype(pcl.PointXYZ, PointXYZ)
+pcl.metatype[pcl.PointXYZ] = PointXYZ
 
 -- PointXYZI metatype
 local PointXYZI = {
@@ -153,7 +181,8 @@ PointXYZI.__pairs = createpairs(PointXYZI.fields)
 function PointXYZI:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZI.prototype[i] end end
 function PointXYZI:__newindex(i, v) self.data[i-1] = v end
 function PointXYZI:__tostring() return string.format('{ x:%f, y:%f, z:%f, intensity:%f }', self.x, self.y, self.z, self.intensity) end 
-ffi.metatype("PointXYZI", PointXYZI)
+ffi.metatype(pcl.PointXYZI, PointXYZI)
+pcl.metatype[pcl.PointXYZI] = PointXYZI
 
 -- PointXYZRGBA metatype
 local PointXYZRGBA = {
@@ -174,6 +203,7 @@ PointXYZRGBA.__pairs = createpairs(PointXYZRGBA.fields)
 function PointXYZRGBA:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBA.prototype[i] end end
 function PointXYZRGBA:__newindex(i, v) self.data[i-1] = v end
 function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba:%08X }', self.x, self.y, self.z, self.rgba) end 
-ffi.metatype("PointXYZRGBA", PointXYZRGBA)
+ffi.metatype(pcl.PointXYZRGBA, PointXYZRGBA)
+pcl.metatype[pcl.PointXYZRGBA] = PointXYZRGBA
 
 return pcl

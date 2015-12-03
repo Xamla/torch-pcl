@@ -1,9 +1,9 @@
 local ffi = require 'ffi'
-local class = require 'class'
+local torch = require 'torch'
 local pcl = require 'pcl.PointTypes'
 local utils = require 'pcl.utils'
 
-local OpenNI2Stream = class('OpenNI2Stream')
+local OpenNI2Stream = torch.class('pcl.OpenNI2Stream', pcl)
 
 local func_by_type = {}
 
@@ -17,8 +17,6 @@ function init()
   for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods("pcl_OpenNI2Stream_TYPE_KEY_", OpenNI2Stream_method_names, v)
   end
-  
-  pcl.OpenNI2Stream = OpenNI2Stream
 end
 
 init()

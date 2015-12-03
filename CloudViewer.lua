@@ -1,9 +1,9 @@
 local ffi = require 'ffi'
-local class = require 'class'
+local torch = require 'torch'
 local pcl = require 'pcl.PointTypes'
 local utils = require 'pcl.utils'
 
-local CloudViewer = class('CloudViewer')
+local CloudViewer = torch.class('pcl.CloudViewer', pcl)
 
 local func_by_type = {}
 local ft = {}
@@ -17,11 +17,9 @@ function init()
     func_by_type[k] = utils.create_typed_methods("pcl_CloudViewer_TYPE_KEY_", CloudViewer_method_names, v)
   end
 
-  ft.new = pcl.lib["pcl_CloudViewer_new"]
-  ft.delete = pcl.lib["pcl_CloudViewer_delete"]
-  ft.wasStopped = pcl.lib["pcl_CloudViewer_wasStopped"]
-  
-  pcl.CloudViewer = CloudViewer
+  ft.new = pcl.lib.pcl_CloudViewer_new
+  ft.delete = pcl.lib.pcl_CloudViewer_delete
+  ft.wasStopped = pcl.lib.pcl_CloudViewer_wasStopped
 end
 
 init()

@@ -1,9 +1,9 @@
 local ffi = require 'ffi'
-local class = require 'class'
+local torch = require 'torch'
 local utils = require 'pcl.utils'
 local pcl = require 'pcl.PointTypes'
 
-local PointCloud = class('PointCloud')
+local PointCloud = torch.class('pcl.PointCloud', pcl)
 
 local func_by_type = {}
 
@@ -39,19 +39,18 @@ function init()
   for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_PointCloud_TYPE_KEY_", PointCloud_method_names, v)
   end
-  
-  pcl.PointCloud = PointCloud
 end
 
 init()
 
 function PointCloud:__init(pointType, width, height)
-  pointType = pointType or pcl.PointXYZ
+  pointType = pcl.pointType(pointType)
   width = width or 0
   height = height or 1
+  rawset(self, 'f', func_by_type[pointType])
   self.pointType = pointType
-  self.f = func_by_type[pointType]
   if torch.isTensor(width) then
+    width = width:float()
     local sz = width:size()
     local w,h
     if width:nDimension() == 3 then
@@ -60,14 +59,12 @@ function PointCloud:__init(pointType, width, height)
       w, h = sz[1], 1
     end
     self.c = self.f.new(w, h)
-    ffi.gc(self.c, self.f.delete)
     self:points():copy(width)
   elseif type(width) == 'cdata' then
     self.c = width
   else
     self.c = self.f.new(width, height)
   end
-  ffi.gc(self.c, self.f.delete)
 end
 
 function PointCloud:cdata()
@@ -102,24 +99,29 @@ function PointCloud:clone()
 end
 
 function PointCloud:__index(idx)
-  local v = PointCloud[column]
-  if not v then
-    local f, c = self.f, self.c
-    if type(column) == 'number' then
-      v = f.at1D(c, idx-1)
-    else
-      v = f.at2D(c, idx[1]-1, row[2]-1)
+  local v = rawget(self, idx)
+  if not v then 
+    v = PointCloud[idx]
+    if not v then
+      local f, c = rawget(self, 'f'), rawget(self, 'c')
+      if type(idx) == 'number' then
+        v = f.at1D(c, idx-1)
+      elseif type(idx) == 'table' then
+        v = f.at2D(c, idx[1]-1, row[2]-1)
+      end
     end
   end
   return v
 end
 
 function PointCloud:__newindex(idx, v)
-  local f, c = self.f, self.c
-  if type(column) == 'number' then
+  local f, c = rawget(self, 'f'), rawget(self, 'c')
+  if type(idx) == 'number' then
     f.at1D(c, idx-1):set(v)
-  else
+  elseif type(idx) == 'table' then
     f.at2D(c, idx[1]-1, row[2]-1):set(v)
+  else
+    rawset(self, idx, v)
   end
 end
 
@@ -129,6 +131,10 @@ end
 
 function PointCloud:height()
   return self.f.height(self.c)
+end
+
+function PointCloud:size()
+  return torch.LongStorage({self:height(), self:width()})
 end
 
 function PointCloud:isDense()

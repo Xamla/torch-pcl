@@ -149,5 +149,6 @@
     <File Name="test/test_readPointCloudData.lua"/>
     <File Name="test/test_cloudViewer.lua"/>
     <File Name="test/test_basics.lua"/>
+    <File Name="test/luaunit.lua"/>
   </VirtualDirectory>
 </CodeLite_Project>

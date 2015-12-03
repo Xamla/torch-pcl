@@ -1,9 +1,9 @@
 local ffi = require 'ffi'
-local class = require 'class'
-local pcl = require 'pcl.PointTypes'
+local torch = require 'torch'
 local utils = require 'pcl.utils'
+local pcl = require 'pcl.PointTypes'
 
-local PCA = class('PCA')
+local PCA = torch.class('pcl.PCA', pcl)
 
 local func_by_type = {}
 
@@ -13,7 +13,7 @@ function init()
     'new',
     'clone',
     'delete',
-    'set_input',
+    'set_inputCloud',
     'get_mean',
     'get_eigenVectors',
     'get_eigenValues',
@@ -31,13 +31,17 @@ function init()
   for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods("pcl_PCA_TYPE_KEY_", PCA_method_names, v)
   end
-  
-  pcl.PCA = PCA
 end
 
 init()
 
 function PCA:__init(pointType, basis_only)
+  local cloud
+  if torch.isTypeOf(pointType, pcl.PointCloud) then
+    cloud = pointType
+    pointType = cloud.pointType
+  end
+  
   pointType = pointType or pcl.PointXYZ
   basis_only = basis_only or false
   self.pointType = pointType
@@ -48,7 +52,10 @@ function PCA:__init(pointType, basis_only)
   else
     self.o = self.f.new(basis_only)
   end
-  ffi.gc(self.o, self.f.delete)
+
+  if cloud then
+    self:set_inputCloud(cloud)
+  end
 end
 
 function PCA:cdata()
@@ -60,8 +67,8 @@ function PCA:clone()
   return PCA.new(self.pointType, clone)
 end
 
-function PCA:set_input(cloud)
-  self.f.set_input(self.o, cloud:cdata())
+function PCA:set_inputCloud(cloud)
+  self.f.set_inputCloud(self.o, cloud:cdata())
 end
 
 function PCA:get_mean(t)
