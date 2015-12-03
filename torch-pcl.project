@@ -144,5 +144,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>
+    <File Name="test/test_cloudViewer.lua"/>
   </VirtualDirectory>
 </CodeLite_Project>

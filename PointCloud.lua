@@ -48,7 +48,7 @@ init()
 function PointCloud:__init(pointType, width, height)
   pointType = pointType or pcl.PointXYZ
   width = width or 0
-  height = height or 0
+  height = height or 1
   self.pointType = pointType
   self.f = func_by_type[pointType]
   if torch.isTensor(width) then

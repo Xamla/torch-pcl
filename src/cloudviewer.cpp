@@ -11,3 +11,8 @@ PCLIMP(void, CloudViewer, delete)(boost::shared_ptr<pcl::visualization::CloudVie
 {
   delete viewer;
 }
+
+PCLIMP(bool, CloudViewer, wasStopped)(boost::shared_ptr<pcl::visualization::CloudViewer> *viewer, int millis_to_wait)
+{
+  return (*viewer)->wasStopped(millis_to_wait);
+}

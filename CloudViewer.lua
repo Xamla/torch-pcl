@@ -13,17 +13,13 @@ function init()
     "showCloud"
   }
   
-  local generic_names = {}
-  for i,n in ipairs(CloudViewer_method_names) do
-    generic_names[n] = "pcl_CloudViewer_TYPE_KEY_" .. n
-  end
-  
   for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_CloudViewer_TYPE_KEY_", CloudViewer_method_names, v)
   end
 
   ft.new = pcl.lib["pcl_CloudViewer_new"]
   ft.delete = pcl.lib["pcl_CloudViewer_delete"]
+  ft.wasStopped = pcl.lib["pcl_CloudViewer_wasStopped"]
   
   pcl.CloudViewer = CloudViewer
 end
@@ -36,8 +32,12 @@ function CloudViewer:__init(window_name)
 end
 
 function CloudViewer:showCloud(cloud, name)
-  local f = func_by_type[cloud.pointType];
+  local f = func_by_type[cloud.pointType]
   if f then
-    f.showCloud(self.v, cloud.c, name);
+    f.showCloud(self.v, cloud.c, name)
   end
+end
+
+function CloudViewer:wasStopped(millis_to_wait)
+  return ft.wasStopped(self.v, millis_to_wait or 1)
 end

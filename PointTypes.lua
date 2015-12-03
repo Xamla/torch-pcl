@@ -25,6 +25,7 @@ typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, 
 [[
 void* pcl_CloudViewer_new(const char *window_name);
 void pcl_CloudViewer_delete(void *self);
+bool pcl_CloudViewer_wasStopped(void *self, int millis_to_wait);
 
 void* pcl_OpenNI2Stream_XYZRGBA_new(const char* device_id, int max_backlog);
 void pcl_OpenNI2Stream_XYZRGBA_delete(void* self);
