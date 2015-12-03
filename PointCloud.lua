@@ -70,6 +70,10 @@ function PointCloud:__init(pointType, width, height)
   ffi.gc(self.c, self.f.delete)
 end
 
+function PointCloud:cdata()
+  return self.c
+end
+
 function PointCloud:readXYZ(t)
   local t = t or torch.FloatTensor()
   if torch.type(t) == 'torch.FloatTensor' then
@@ -97,18 +101,26 @@ function PointCloud:clone()
   return PointCloud.new(self.pointType, clone)
 end
 
-function PointCloud:__index(column, row)
+function PointCloud:__index(idx)
   local v = PointCloud[column]
-  if not v and type(column) == 'number' then
-    local f = self.f
-    local c = self.c
-    if not row then
-      v = f.at1D(c, column-1)
+  if not v then
+    local f, c = self.f, self.c
+    if type(column) == 'number' then
+      v = f.at1D(c, idx-1)
     else
-      v = f.at2D(c, column-1, row-1)
+      v = f.at2D(c, idx[1]-1, row[2]-1)
     end
   end
   return v
+end
+
+function PointCloud:__newindex(idx, v)
+  local f, c = self.f, self.c
+  if type(column) == 'number' then
+    f.at1D(c, idx-1):set(v)
+  else
+    f.at2D(c, idx[1]-1, row[2]-1):set(v)
+  end
 end
 
 function PointCloud:width()

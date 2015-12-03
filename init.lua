@@ -6,6 +6,7 @@ local pcl = require 'pcl.PointTypes'
 require 'pcl.PointCloud'
 require 'pcl.CloudViewer'
 require 'pcl.OpenNI2Stream'
+require 'pcl.PCA'
 
 --[[
 local obj = PointCloud.new(pcl.PointXYZ, torch.FloatTensor({{ 4,3,2,1 }, { 5,3,2, 1 }}))

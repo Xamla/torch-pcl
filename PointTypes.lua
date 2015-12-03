@@ -63,6 +63,18 @@ void pcl_PointCloud_TYPE_KEY_savePNGFile(void *cloud, const char *fn, const char
 int pcl_PointCloud_TYPE_KEY_readXYZfloat(void *cloud, struct THFloatTensor *output);
 
 void pcl_CloudViewer_TYPE_KEY_showCloud(void *self, void *cloud, const char *cloudname);
+
+typedef struct PCA_TYPE_KEY {} PCA_TYPE_KEY;
+PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_new(bool basis_only);
+PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_clone(PCA_TYPE_KEY *self);
+void pcl_PCA_TYPE_KEY_delete(PCA_TYPE_KEY *self);
+void pcl_PCA_TYPE_KEY_set_inputCloud(PCA_TYPE_KEY *self, void *cloud);
+void pcl_PCA_TYPE_KEY_get_mean(PCA_TYPE_KEY *self, struct THFloatTensor* output);
+void pcl_PCA_TYPE_KEY_get_eigenVectors(PCA_TYPE_KEY *self, struct THFloatTensor *output);
+void pcl_PCA_TYPE_KEY_get_eigenValues(PCA_TYPE_KEY *self, struct THFloatTensor *output);
+void pcl_PCA_TYPE_KEY_get_coefficients(PCA_TYPE_KEY *self, struct THFloatTensor* output);
+void pcl_PCA_TYPE_KEY_project_cloud(PCA_TYPE_KEY *self, void *input, void *output);
+void pcl_PCA_TYPE_KEY_reconstruct_cloud(PCA_TYPE_KEY *self, void *input, void *output);
 ]]
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA' }
@@ -89,6 +101,18 @@ pcl.PointNormal         = ffi.typeof('PointNormal')         -- float x, y, z; fl
 pcl.PointXYZRGBNormal   = ffi.typeof('PointXYZRGBNormal')   -- float x, y, z, rgb, normal[3], curvature;
 pcl.PointXYZINormal     = ffi.typeof('PointXYZINormal')     -- float x, y, z, intensity, normal[3], curvature;
 
+local function createpairs(fields)
+  return function(self)
+    local k = nil
+    return function()
+      local _
+      k, n = next(fields, k)
+      local v = self[k]
+      return n,v
+    end
+  end
+end
+
 -- PointXYZ metatype
 local PointXYZ = {
   prototype = {
@@ -97,11 +121,14 @@ local PointXYZ = {
       for i=1,3 do p[i] = t[i] end
       return p
     end,
-    totensor = function(self) return torch.FloatTensor({ self.x, self.y, self.z }) end
+    totensor = function(self) return torch.FloatTensor({ self.x, self.y, self.z }) end,
+    set = function(self, v) ffi.copy(self, v, ffi.sizeof(pcl.PointXYZ)) end
   },
-  __len = function(self) return 3 end
+  __len = function(self) return 3 end,
+  fields = { 'x', 'y', 'z' }
 }
 
+PointXYZ.__pairs = createpairs(PointXYZ.fields)
 function PointXYZ:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZ.prototype[i] end end
 function PointXYZ:__newindex(i, v) self.data[i-1] = v end
 function PointXYZ:__tostring() return string.format('{ x:%f, y:%f, z:%f }', self.x, self.y, self.z) end 
@@ -115,11 +142,14 @@ local PointXYZI = {
       for i=1,4 do p[i] = t[i] end
       return p
     end,
-    totensor = function(self) return torch.FloatTensor({ self.x, self.y, self.z, self.intensity }) end
+    totensor = function(self) return torch.FloatTensor({ self.x, self.y, self.z, self.intensity }) end,
+    set = function(self, v) ffi.copy(self, v, ffi.sizeof(pcl.PointXYZI)) end
   },
-  __len = function(self) return 4 end
+  __len = function(self) return 4 end,
+  fields = { 'x', 'y', 'z', 'i' }
 }
 
+PointXYZI.__pairs = createpairs(PointXYZI.fields)
 function PointXYZI:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZI.prototype[i] end end
 function PointXYZI:__newindex(i, v) self.data[i-1] = v end
 function PointXYZI:__tostring() return string.format('{ x:%f, y:%f, z:%f, intensity:%f }', self.x, self.y, self.z, self.intensity) end 
@@ -133,11 +163,14 @@ local PointXYZRGBA = {
       for i=1,4 do p[i] = t[i] end
       return p
     end,
-    totensor = function(self) return torch.FloatTensor({ self.x, self.y, self.z, self.rgb }) end
+    totensor = function(self) return torch.FloatTensor({ self.x, self.y, self.z, self.rgb }) end,
+    set = function(self, v) ffi.copy(self, v, ffi.sizeof(pcl.PointXYZRGBA)) end
   },
-  __len = function(self) return 4 end
+  __len = function(self) return 4 end,
+  fields = { 'x', 'y', 'z', 'rgba' }
 }
 
+PointXYZRGBA.__pairs = createpairs(PointXYZRGBA.fields)
 function PointXYZRGBA:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBA.prototype[i] end end
 function PointXYZRGBA:__newindex(i, v) self.data[i-1] = v end
 function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba:%08X }', self.x, self.y, self.z, self.rgba) end 

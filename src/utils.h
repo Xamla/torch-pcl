@@ -29,4 +29,18 @@ inline Eigen::Vector3f Tensor2Vec3f(THFloatTensor *tensor)
   );
 }
 
+template<int rows, int cols> void viewMatrix(Eigen::Matrix<float, rows, cols>& m, THFloatTensor* output)
+{
+  // create new storage that views into the matrix
+  THFloatStorage* storage = NULL;
+  if ((Eigen::Matrix<float, rows, cols>::Options & Eigen::RowMajor) == Eigen::RowMajor)
+    storage = THFloatStorage_newWithData(m.data(), (m.rows() * m.rowStride()));
+  else
+    storage = THFloatStorage_newWithData(m.data(), (m.cols() * m.colStride()));
+    
+  storage->flag = TH_STORAGE_REFCOUNTED;
+  THFloatTensor_setStorage2d(output, storage, 0, rows, m.rowStride(), cols, m.colStride());
+  THFloatStorage_free(storage);   // tensor took ownership
+}
+
 #endif
