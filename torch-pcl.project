@@ -52,6 +52,7 @@
     <File Name="init.lua"/>
     <File Name="CloudViewer.lua"/>
     <File Name="PCA.lua"/>
+    <File Name="Affine3.lua"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

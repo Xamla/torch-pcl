@@ -7,6 +7,7 @@ require 'pcl.PointCloud'
 require 'pcl.CloudViewer'
 require 'pcl.OpenNI2Stream'
 require 'pcl.PCA'
+require 'pcl.Affine3'
 
 function pcl.rand(width, height, pointType)
   if pcl.isPointType(height) or type(height) == 'string' then
