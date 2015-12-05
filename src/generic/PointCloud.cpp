@@ -49,6 +49,16 @@ PCLIMP(void, PointCloud, clear)(pcl::PointCloud<_PointT>::Ptr *self)
   (*self)->clear();
 }
 
+PCLIMP(void, PointCloud, reserve)(pcl::PointCloud<_PointT>::Ptr* self, size_t n)
+{
+  (*self)->reserve(n);
+}
+
+PCLIMP(uint32_t, PointCloud, size)(pcl::PointCloud<_PointT>::Ptr* self)
+{
+  return static_cast<uint32_t>((*self)->size());
+}
+
 PCLIMP(bool, PointCloud, empty)(pcl::PointCloud<_PointT>::Ptr *self)
 {
   return (*self)->empty();
@@ -57,6 +67,43 @@ PCLIMP(bool, PointCloud, empty)(pcl::PointCloud<_PointT>::Ptr *self)
 PCLIMP(bool, PointCloud, isOrganized)(pcl::PointCloud<_PointT>::Ptr *self)
 {
   return (*self)->isOrganized();
+}
+
+PCLIMP(void, PointCloud, push_back)(pcl::PointCloud<_PointT>::Ptr* self, const _PointT& pt)
+{
+  (*self)->push_back(pt);
+}
+
+PCLIMP(void, PointCloud, insert)(pcl::PointCloud<_PointT>::Ptr* self, size_t position, const _PointT& pt, size_t n)
+{
+  if (n == 0)
+    return;
+    
+  pcl::PointCloud<_PointT>& cloud = **self;
+  pcl::PointCloud<_PointT>::iterator it;
+  if (position >= cloud.size())
+    it = cloud.end();
+  else
+    it = cloud.begin() + position;
+  cloud.insert(it, n, pt);
+}
+
+PCLIMP(void, PointCloud, erase)(pcl::PointCloud<_PointT>::Ptr* self, size_t begin, size_t end)
+{
+  if (begin >= end)
+    return;
+    
+  pcl::PointCloud<_PointT>& cloud = **self;
+  pcl::PointCloud<_PointT>::iterator b, e;
+  if (begin >= cloud.size())
+    b = cloud.end();
+  else
+    b = cloud.begin() + begin;
+  if (end >= cloud.size())
+    e = cloud.end();
+  else
+    e = cloud.begin() + end;
+  cloud.erase(b, e);
 }
 
 PCLIMP(_PointsBuffer, PointCloud, points)(pcl::PointCloud<_PointT>::Ptr *self)

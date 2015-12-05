@@ -11,6 +11,7 @@ function TestBasics:testAddPointCloud()
   cloudA:add(cloudB)
   luaunit.assertEquals(cloudA:height(), 1)
   luaunit.assertEquals(cloudA:width(), 2)
+  luaunit.assertEquals(cloudA:size(), 2)
   luaunit.assertEquals(cloudB[1].x, 1)
 end
 
@@ -22,6 +23,48 @@ function TestBasics:testPointTypeString()
   luaunit.assertEquals(c2.pointType, pcl.PointXYZI)
   luaunit.assertEquals(c3.pointType, pcl.PointXYZRGBA)
   luaunit.assertNotEquals(c3.pointType, pcl.PointXYZ)
+end
+
+function TestBasics:testPointType()
+  local x = pcl.PointXYZ():set({3,2,1})
+  luaunit.assertTrue(x == {3,2,1})
+  luaunit.assertEquals(x, pcl.PointXYZ(3,2,1))
+  local y = pcl.PointXYZ():set({99,99,99})
+  luaunit.assertEquals(y, pcl.PointXYZ(99,99,99))
+  luaunit.assertNotEquals(y, pcl.PointXYZ(99,99,98))
+  
+  local z = pcl.PointXYZRGBA(1,2,3,0xaabbccdd)
+  luaunit.assertEquals(z.rgba, 0xaabbccdd)
+  luaunit.assertEquals(z.a, 0xaa)
+  
+  local w = pcl.PointXYZI(7,6,5,123.5)
+  luaunit.assertTrue(w == {7,6,5,0,123.5})
+  
+  -- smaller point to the right
+  luaunit.assertTrue(pcl.PointXYZI(1,2,3,4) == pcl.PointXYZ(1,2,3))
+  luaunit.assertTrue(pcl.PointXYZRGBA(1,2,3) == pcl.PointXYZ(1,2,3))
+end
+
+function TestBasics:testPushBackInsertErase()
+  local c = pcl.PointCloud('xyz')
+  for i=1,10 do
+    c:push_back(pcl.PointXYZ(i,i+1,i+2))
+  end
+  luaunit.assertEquals(c:size(), 10)
+  c:erase(1)
+  luaunit.assertEquals(c:size(), 9)
+  luaunit.assertEquals(c[1].x, 2)
+  luaunit.assertEquals(c[1].y, 3)
+  luaunit.assertEquals(c[1][3], 4)
+  c:erase(2, 5)
+  luaunit.assertEquals(c[2][1], 6)
+  c:insert(3, pcl.PointXYZ({8,7,5}), 100)
+  luaunit.assertEquals(c:size(), 106)
+  luaunit.assertTrue(c[3] == pcl.PointXYZ(8,7,5))
+  luaunit.assertTrue(c[102] == pcl.PointXYZ(8,7,5))
+  luaunit.assertFalse(c[103] == pcl.PointXYZ(8,7,5))
+  c:insert(1, pcl.PointXYZ(-1,-2,-3))
+  luaunit.assertTrue(c[1] == {-1, -2, -3})
 end
 
 function TestBasics:testFromTensor()

@@ -1,7 +1,6 @@
 #include <pcl/point_types.h>
 #include <pcl/common/pca.h>
 
-
 #define PCA_ptr boost::shared_ptr<pcl::PCA<_PointT> >
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
 
@@ -26,7 +25,6 @@ PCLIMP(void, PCA, set)(PCA_ptr *self, PCA_ptr *other)
   **self = **other;
 }
 */
-
 
 PCLIMP(void, PCA, set_inputCloud)(PCA_ptr *self, PointCloud_ptr *cloud)
 {

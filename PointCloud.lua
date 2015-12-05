@@ -18,8 +18,13 @@ function init()
     "at1D",
     "at2D",
     "clear",
+    "reserve",
+    "size",
     "empty",
     "isOrganized",
+    "push_back",
+    "insert",
+    "erase",
     "points",
     "sensorOrientation",
     "sensorOrigin", 
@@ -46,7 +51,6 @@ init()
 function PointCloud:__init(pointType, width, height)
   pointType = pcl.pointType(pointType)
   width = width or 0
-  height = height or 1
   rawset(self, 'f', func_by_type[pointType])
   self.pointType = pointType
   if torch.isTensor(width) then
@@ -63,6 +67,7 @@ function PointCloud:__init(pointType, width, height)
   elseif type(width) == 'cdata' then
     self.c = width
   else
+    height = height or width and width > 0 and 1 or 0
     self.c = self.f.new(width, height)
   end
 end
@@ -133,10 +138,6 @@ function PointCloud:height()
   return self.f.height(self.c)
 end
 
-function PointCloud:size()
-  return torch.LongStorage({self:height(), self:width()})
-end
-
 function PointCloud:isDense()
   return self.f.isDense(self.c)
 end
@@ -145,12 +146,32 @@ function PointCloud:clear()
   self.f.clear(self.c)
 end
 
+function PointCloud:reserve(n)
+  self.f.reserve(self.c, n)
+end
+
+function PointCloud:size()
+  return self.f.size(self.c);
+end
+
 function PointCloud:empty()
   return self.f.empty(self.c)
 end
 
 function PointCloud:isOrganized()
   return self.f.isOrganized(self.c)
+end
+
+function PointCloud:push_back(pt)
+  self.f.push_back(self.c, pt);
+end
+
+function PointCloud:insert(pos, pt, n)
+  self.f.insert(self.c, pos-1, pt, n or 1)
+end
+
+function PointCloud:erase(begin_pos, end_pos)
+  self.f.erase(self.c, begin_pos-1, (end_pos or begin_pos + 1)-1)
 end
 
 function PointCloud:points()

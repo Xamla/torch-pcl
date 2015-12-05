@@ -4,7 +4,7 @@ local pcl = {}
 
 local PCL_POINT4D = "union __attribute__((aligned(16))) { struct { float x; float y; float z; }; float data[4]; };"
 local PCL_NORMAL4D = "union __attribute__((aligned(16))) { struct { float normal_x; float normal_y; float normal_z; }; float normal[3]; float data_n[4]; };"
-local PCL_RGB = "union { union { struct { uint8_t b; uint8_t g; uint8_t r; uint8_t a; }; float rgb; }; uint32_t rgba; };"
+local PCL_RGB = "union { uint32_t rgba; union { struct { uint8_t b; uint8_t g; uint8_t r; uint8_t a; }; float rgb; }; };"
 
 local cdef = "enum NormType { L1, L2_SQR, L2, LINF, JM, B, SUBLINEAR, CS, DIV, PF, K, KL, HIK }; \z
 typedef struct RGB { "..PCL_RGB.." } RGB; \z
@@ -37,44 +37,50 @@ ffi.cdef(cdef)
 
 local generic_declarations = 
 [[
-void* pcl_PointCloud_TYPE_KEY_new(uint32_t width, uint32_t height);
-void* pcl_PointCloud_TYPE_KEY_clone(void *self);
-void pcl_PointCloud_TYPE_KEY_delete(void *self);
-uint32_t pcl_PointCloud_TYPE_KEY_width(void *self);
-uint32_t pcl_PointCloud_TYPE_KEY_height(void *self);
-bool pcl_PointCloud_TYPE_KEY_isDense(void *self);
-PointTYPE_KEY& pcl_PointCloud_TYPE_KEY_at1D(void *self, int n);
-PointTYPE_KEY& pcl_PointCloud_TYPE_KEY_at2D(void *self, int column, int row);
-void pcl_PointCloud_TYPE_KEY_clear(void *self);
-bool pcl_PointCloud_TYPE_KEY_empty(void *self);
-bool pcl_PointCloud_TYPE_KEY_isOrganized(void* self);
-_PointsBuffer pcl_PointCloud_TYPE_KEY_points(void *self);
-void pcl_PointCloud_TYPE_KEY_add(void *self, void *other);
-THFloatStorage* pcl_PointCloud_TYPE_KEY_sensorOrigin(void *self);
-THFloatStorage* pcl_PointCloud_TYPE_KEY_sensorOrientation(void *self);
+typedef struct PointCloud_TYPE_KEY {} PointCloud_TYPE_KEY;
+PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_new(uint32_t width, uint32_t height);
+PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_clone(PointCloud_TYPE_KEY *self);
+void pcl_PointCloud_TYPE_KEY_delete(PointCloud_TYPE_KEY *self);
+uint32_t pcl_PointCloud_TYPE_KEY_width(PointCloud_TYPE_KEY *self);
+uint32_t pcl_PointCloud_TYPE_KEY_height(PointCloud_TYPE_KEY *self);
+bool pcl_PointCloud_TYPE_KEY_isDense(PointCloud_TYPE_KEY *self);
+PointTYPE_KEY& pcl_PointCloud_TYPE_KEY_at1D(PointCloud_TYPE_KEY *self, int n);
+PointTYPE_KEY& pcl_PointCloud_TYPE_KEY_at2D(PointCloud_TYPE_KEY *self, int column, int row);
+void pcl_PointCloud_TYPE_KEY_clear(PointCloud_TYPE_KEY *self);
+void pcl_PointCloud_TYPE_KEY_reserve(PointCloud_TYPE_KEY *self, size_t n);
+uint32_t pcl_PointCloud_TYPE_KEY_size(PointCloud_TYPE_KEY *self);
+bool pcl_PointCloud_TYPE_KEY_empty(PointCloud_TYPE_KEY *self);
+bool pcl_PointCloud_TYPE_KEY_isOrganized(PointCloud_TYPE_KEY* self);
+void pcl_PointCloud_TYPE_KEY_push_back(PointCloud_TYPE_KEY* self, const PointTYPE_KEY& pt);
+void pcl_PointCloud_TYPE_KEY_insert(PointCloud_TYPE_KEY* self, size_t position, const PointTYPE_KEY& pt, size_t n);
+void pcl_PointCloud_TYPE_KEY_erase(PointCloud_TYPE_KEY* self, size_t begin, size_t end);
+_PointsBuffer pcl_PointCloud_TYPE_KEY_points(PointCloud_TYPE_KEY *self);
+void pcl_PointCloud_TYPE_KEY_add(PointCloud_TYPE_KEY *self, PointCloud_TYPE_KEY *other);
+THFloatStorage *pcl_PointCloud_TYPE_KEY_sensorOrigin(PointCloud_TYPE_KEY *self);
+THFloatStorage *pcl_PointCloud_TYPE_KEY_sensorOrientation(PointCloud_TYPE_KEY *self);
 void pcl_PointCloud_TYPE_KEY_fromPCLPointCloud2(void *cloud, void *msg);
 void pcl_PointCloud_TYPE_KEY_toPCLPointCloud2(void *cloud, void *msg);
-int pcl_PointCloud_TYPE_KEY_loadPCDFile(void *cloud, const char *fn);
-int pcl_PointCloud_TYPE_KEY_savePCDFile(void *cloud, const char *fn, bool binary);
-int pcl_PointCloud_TYPE_KEY_loadPLYFile(void *cloud, const char *fn);
-int pcl_PointCloud_TYPE_KEY_savePLYFile(void *cloud, const char *fn, bool binary);
-int pcl_PointCloud_TYPE_KEY_loadOBJFile(void *cloud, const char *fn);
-void pcl_PointCloud_TYPE_KEY_savePNGFile(void *cloud, const char *fn, const char* field_name);
-int pcl_PointCloud_TYPE_KEY_readXYZfloat(void *cloud, struct THFloatTensor *output);
+int pcl_PointCloud_TYPE_KEY_loadPCDFile(PointCloud_TYPE_KEY *cloud, const char *fn);
+int pcl_PointCloud_TYPE_KEY_savePCDFile(PointCloud_TYPE_KEY *cloud, const char *fn, bool binary);
+int pcl_PointCloud_TYPE_KEY_loadPLYFile(PointCloud_TYPE_KEY *cloud, const char *fn);
+int pcl_PointCloud_TYPE_KEY_savePLYFile(PointCloud_TYPE_KEY *cloud, const char *fn, bool binary);
+int pcl_PointCloud_TYPE_KEY_loadOBJFile(PointCloud_TYPE_KEY *cloud, const char *fn);
+void pcl_PointCloud_TYPE_KEY_savePNGFile(PointCloud_TYPE_KEY *cloud, const char *fn, const char* field_name);
+int pcl_PointCloud_TYPE_KEY_readXYZfloat(PointCloud_TYPE_KEY *cloud, struct THFloatTensor *output);
 
-void pcl_CloudViewer_TYPE_KEY_showCloud(void *self, void *cloud, const char *cloudname);
+void pcl_CloudViewer_TYPE_KEY_showCloud(void *self, PointCloud_TYPE_KEY *cloud, const char *cloudname);
 
 typedef struct PCA_TYPE_KEY {} PCA_TYPE_KEY;
 PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_new(bool basis_only);
 PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_clone(PCA_TYPE_KEY *self);
 void pcl_PCA_TYPE_KEY_delete(PCA_TYPE_KEY *self);
-void pcl_PCA_TYPE_KEY_set_inputCloud(PCA_TYPE_KEY *self, void *cloud);
+void pcl_PCA_TYPE_KEY_set_inputCloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
 void pcl_PCA_TYPE_KEY_get_mean(PCA_TYPE_KEY *self, struct THFloatTensor* output);
 void pcl_PCA_TYPE_KEY_get_eigenVectors(PCA_TYPE_KEY *self, struct THFloatTensor *output);
 void pcl_PCA_TYPE_KEY_get_eigenValues(PCA_TYPE_KEY *self, struct THFloatTensor *output);
 void pcl_PCA_TYPE_KEY_get_coefficients(PCA_TYPE_KEY *self, struct THFloatTensor* output);
-void pcl_PCA_TYPE_KEY_project_cloud(PCA_TYPE_KEY *self, void *input, void *output);
-void pcl_PCA_TYPE_KEY_reconstruct_cloud(PCA_TYPE_KEY *self, void *input, void *output);
+void pcl_PCA_TYPE_KEY_project_cloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output);
+void pcl_PCA_TYPE_KEY_reconstruct_cloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output);
 ]]
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA' }
@@ -140,24 +146,73 @@ end
 
 pcl.metatype = {}
 
+-- compare fields
+local function eq(a,b)
+  local l
+  if torch.isTensor(b) then
+    if b:dim() ~= 1 then
+      error('1D tensor expected')
+    end
+    l = b:size(1)
+  else
+    l = #b
+  end
+  
+  if not l then return false end
+  
+  for i=1,l do
+    if a[i] ~= b[i] then
+      return false
+    end
+  end
+  
+  return true
+end
+
+local function set(dst, v)
+  if type(v) == 'cdata' and ffi.istype(v, dst) then
+    ffi.copy(dst, v, ffi.sizeof(dst)) 
+  elseif type(v) == 'table' then
+    for i=1,#v do
+      dst[i] = v[i]
+    end
+  elseif torch.isTensor(v) then
+    if v:dim() ~= 1 then
+      error('1D tensor expected')
+    end
+    for i=1,v:size(1) do
+      dst[i] = v[i]
+    end
+  end
+  return dst
+end
+
+local function len(self)
+  return ffi.sizeof(self) / ffi.sizeof('float')
+end
+
+local function totensor(self)
+  local t = torch.FloatTensor(#self)
+  for i=1,#self do
+    t[i] = self[i]
+  end
+  return t
+end
+
 -- PointXYZ metatype
 local PointXYZ = {
   prototype = {
-    fromtensor = function(t) 
-      local p = pcl.PointXYZ() 
-      for i=1,3 do p[i] = t[i] end
-      return p
-    end,
-    totensor = function(self) return torch.FloatTensor({ self.x, self.y, self.z }) end,
-    set = function(self, v) ffi.copy(self, v, ffi.sizeof(pcl.PointXYZ)) end
+    totensor = totensor,
+    set = set,
   },
-  __len = function(self) return 3 end,
-  fields = { 'x', 'y', 'z' }
+  __len = len,
+  __eq = eq,
+  fields = { 'x', 'y', 'z', 'w' }
 }
 
 PointXYZ.__pairs = createpairs(PointXYZ.fields)
 function PointXYZ:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZ.prototype[i] end end
-function PointXYZ:__newindex(i, v) self.data[i-1] = v end
+function PointXYZ:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
 function PointXYZ:__tostring() return string.format('{ x:%f, y:%f, z:%f }', self.x, self.y, self.z) end 
 ffi.metatype(pcl.PointXYZ, PointXYZ)
 pcl.metatype[pcl.PointXYZ] = PointXYZ
@@ -165,21 +220,17 @@ pcl.metatype[pcl.PointXYZ] = PointXYZ
 -- PointXYZI metatype
 local PointXYZI = {
   prototype = {
-    fromtensor = function(t) 
-      local p = pcl.PointXYZI() 
-      for i=1,4 do p[i] = t[i] end
-      return p
-    end,
-    totensor = function(self) return torch.FloatTensor({ self.x, self.y, self.z, self.intensity }) end,
-    set = function(self, v) ffi.copy(self, v, ffi.sizeof(pcl.PointXYZI)) end
+    totensor = totensor,
+    set = set,
   },
-  __len = function(self) return 4 end,
-  fields = { 'x', 'y', 'z', 'i' }
+  __len = len,
+  __eq = eq,
+  fields = { 'x', 'y', 'z', 'w', 'i', '_1', '_2', '_3' }
 }
 
 PointXYZI.__pairs = createpairs(PointXYZI.fields)
 function PointXYZI:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZI.prototype[i] end end
-function PointXYZI:__newindex(i, v) self.data[i-1] = v end
+function PointXYZI:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
 function PointXYZI:__tostring() return string.format('{ x:%f, y:%f, z:%f, intensity:%f }', self.x, self.y, self.z, self.intensity) end 
 ffi.metatype(pcl.PointXYZI, PointXYZI)
 pcl.metatype[pcl.PointXYZI] = PointXYZI
@@ -187,22 +238,18 @@ pcl.metatype[pcl.PointXYZI] = PointXYZI
 -- PointXYZRGBA metatype
 local PointXYZRGBA = {
   prototype = {
-    fromtensor = function(t) 
-      local p = pcl.PointXYZI() 
-      for i=1,4 do p[i] = t[i] end
-      return p
-    end,
-    totensor = function(self) return torch.FloatTensor({ self.x, self.y, self.z, self.rgb }) end,
-    set = function(self, v) ffi.copy(self, v, ffi.sizeof(pcl.PointXYZRGBA)) end
+    tensor = totensor,
+    set = set,
   },
-  __len = function(self) return 4 end,
-  fields = { 'x', 'y', 'z', 'rgba' }
+  __eq = eq,
+  __len = len,
+  fields = { 'x', 'y', 'z', 'w', 'rgba', '_1', '_2', '_3' }
 }
 
 PointXYZRGBA.__pairs = createpairs(PointXYZRGBA.fields)
 function PointXYZRGBA:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBA.prototype[i] end end
-function PointXYZRGBA:__newindex(i, v) self.data[i-1] = v end
-function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba:%08X }', self.x, self.y, self.z, self.rgba) end 
+function PointXYZRGBA:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
+function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba: %08X }', self.x, self.y, self.z, self.rgba) end 
 ffi.metatype(pcl.PointXYZRGBA, PointXYZRGBA)
 pcl.metatype[pcl.PointXYZRGBA] = PointXYZRGBA
 
