@@ -47,7 +47,7 @@ end
 function Primitive.createCylinder(height, radius, facets, samples, resolution)
   local output = pcl.PointCloud('XYZ');
   f.createCylinder(output:cdata(), height or 1, radius or 0.5, facets or 32, 
-  samples or Primitive.DEFAULT_SAMPLES, 
+  samples or Primitive.DEFAULT_SAMPLES,
   resolution or Primitive.DEFAULT_RESOLUTION)
   return output
 end
@@ -58,6 +58,22 @@ function Primitive.createCone(height, radius, facets, samples, resolution)
   samples or Primitive.DEFAULT_SAMPLES, 
   resolution or Primitive.DEFAULT_RESOLUTION)
   return output
+end
+
+function Primitive.createTetrahedron(samples, resolution)
+  return Primitive.createPlatonicSolid(Primitive.Platonic.TETRAHEDRON, samples, resolution)
+end
+
+function Primitive.createOctahedron(samples, resolution)
+  return Primitive.createPlatonicSolid(Primitive.Platonic.OCTAHEDRON, samples, resolution)
+end
+
+function Primitive.createIcosahedron(samples, resolution)
+  return Primitive.createPlatonicSolid(Primitive.Platonic.ICOSAHEDRON, samples, resolution)
+end
+
+function Primitive.createDodecahedron(samples, resolution)
+  return Primitive.createPlatonicSolid(Primitive.Platonic.DODECAHEDRON, samples, resolution)
 end
 
 function Primitive.createPlatonicSolid(solidType, samples, resolution)

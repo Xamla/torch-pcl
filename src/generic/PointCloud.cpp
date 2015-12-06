@@ -1,4 +1,6 @@
+#include <pcl/common/common.h>
 #include <pcl/common/projection_matrix.h>
+#include <pcl/common/transforms.h>
 #include <pcl/point_types.h>
 #include <pcl/conversions.h>
 
@@ -134,9 +136,28 @@ PCLIMP(THFloatStorage*, PointCloud, sensorOrientation)(pcl::PointCloud<_PointT>:
   return storage;
 }
 
-PCLIMP(void, PointCloud, add)(pcl::PointCloud<_PointT>::Ptr* self, pcl::PointCloud<_PointT>::Ptr *other)
+PCLIMP(void, PointCloud, add)(pcl::PointCloud<_PointT>::Ptr *self, pcl::PointCloud<_PointT>::Ptr *other)
 {
   **self += **other;
+}
+
+PCLIMP(void, PointCloud, transform)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor *mat, pcl::PointCloud<_PointT>::Ptr *output)
+{
+  // check dimensionality of input matrix
+  THArgCheck(mat != NULL && mat->nDimension == 2 && mat->size[0] == 4 && mat->size[1] == 4, 2, "4x4 matrix expected");
+  
+  // make sure tensor is contiguous
+  mat = THFloatTensor_newContiguous(mat);
+  
+  // fill Eigen matrix 
+  Eigen::Map<Eigen::Matrix<float,4,4,Eigen::RowMajor> > m(THFloatTensor_data(mat));
+  pcl::transformPointCloud(**self, **output, m);
+  THFloatTensor_free(mat);
+}
+
+PCLIMP(void, PointCloud, getMinMax3D)(pcl::PointCloud<_PointT>::Ptr *self, _PointT &min, _PointT &max)
+{
+  pcl::getMinMax3D(**self, min, max);
 }
 
 PCLIMP(void, PointCloud, fromPCLPointCloud2)(pcl::PointCloud<_PointT>::Ptr *self, pcl::PCLPointCloud2 *msg)

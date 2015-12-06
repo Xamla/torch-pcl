@@ -28,6 +28,8 @@ local function init()
     "points",
     "sensorOrientation",
     "sensorOrigin", 
+    "transform",
+    "getMinMax3D",
     "add",
     "fromPCLPointCloud2",
     "loadPCDFile",
@@ -196,6 +198,16 @@ function PointCloud:sensorOrientation()
   t:cdata().storage = s
   t:resize(4)
   return t
+end
+
+function PointCloud:transform(mat, output)
+  self.f.transform(self.c, mat:cdata(), output or self.c)
+end
+
+function PointCloud:getMinMax3D()
+  local min, max = self.pointType(), self.pointType()
+  self.f.getMinMax3D(self.c, min, max)
+  return min, max
 end
 
 function PointCloud:add(other)
