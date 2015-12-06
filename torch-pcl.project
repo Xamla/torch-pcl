@@ -37,6 +37,7 @@
     <File Name="src/utils.h"/>
     <File Name="src/generic.cpp"/>
     <File Name="src/cloudviewer.cpp"/>
+    <File Name="src/mesh_sampling.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
@@ -53,6 +54,14 @@
     <File Name="CloudViewer.lua"/>
     <File Name="PCA.lua"/>
     <File Name="Affine3.lua"/>
+    <File Name="CMakeLists.txt"/>
+    <File Name="Primitive.lua"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="test">
+    <File Name="test/test_readPointCloudData.lua"/>
+    <File Name="test/test_cloudViewer.lua"/>
+    <File Name="test/test_basics.lua"/>
+    <File Name="test/luaunit.lua"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -69,7 +78,8 @@
         <IncludePath Value="."/>
         <IncludePath Value="/home/koepf/torch/install/include"/>
         <IncludePath Value="/usr/include/pcl-1.7"/>
-        <IncludePath Value="/usr/include/eigen3/"/>
+        <IncludePath Value="/usr/include/eigen3"/>
+        <IncludePath Value="/usr/include/vtk-5.8"/>
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
@@ -146,10 +156,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="test">
-    <File Name="test/test_readPointCloudData.lua"/>
-    <File Name="test/test_cloudViewer.lua"/>
-    <File Name="test/test_basics.lua"/>
-    <File Name="test/luaunit.lua"/>
-  </VirtualDirectory>
 </CodeLite_Project>

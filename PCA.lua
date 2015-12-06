@@ -7,7 +7,7 @@ local PCA = torch.class('pcl.PCA', pcl)
 
 local func_by_type = {}
 
-function init()
+local function init()
 
   local PCA_method_names = {
     'new',

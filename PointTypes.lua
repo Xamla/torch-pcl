@@ -23,6 +23,10 @@ typedef struct PointXYZRGBNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struc
 typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal; \z
 typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;" ..
 [[
+typedef struct PointCloud_XYZ {} PointCloud_XYZ;
+typedef struct PointCloud_XYZI {} PointCloud_XYZI;
+typedef struct PointCloud_XYZRGBA {} PointCloud_XYZRGBA;
+
 void* pcl_CloudViewer_new(const char *window_name);
 void pcl_CloudViewer_delete(void *self);
 bool pcl_CloudViewer_wasStopped(void *self, int millis_to_wait);
@@ -32,12 +36,19 @@ void pcl_OpenNI2Stream_XYZRGBA_delete(void* self);
 void pcl_OpenNI2Stream_XYZRGBA_start(void* self);
 void pcl_OpenNI2Stream_XYZRGBA_stop(void* self);
 void* pcl_OpenNI2Stream_XYZRGBA_read(void* self, int timeout_milliseconds);
+
+void pcl_Primitive_XYZ_createSphere(PointCloud_XYZ *output, double radius, double thetaRes, double phiRes, int samples, float resolution);
+void pcl_Primitive_XYZ_createCube(PointCloud_XYZ *output, double x, double y, double z, int samples, float resolution);
+void pcl_Primitive_XYZ_createCylinder(PointCloud_XYZ *output, double height, double radius, int facets, int samples, float resolution);
+void pcl_Primitive_XYZ_createCone(PointCloud_XYZ *output, double height, double radius, int facets, int samples, float resolution);
+void pcl_Primitive_XYZ_createPlatonicSolid(PointCloud_XYZ *output, int solidType, int samples, float resolution);
+void pcl_Primitive_XYZ_createPlane(PointCloud_XYZ *output, double x1, double y1, double z1, double x2, double y2, double z2, int samples, float resolution);
+void pcl_Primitive_XYZ_createDisk(PointCloud_XYZ *output, double innerRadius, double outerRadius, int radialResolution,int samples, float resolution);
 ]]
 ffi.cdef(cdef)
 
 local generic_declarations = 
 [[
-typedef struct PointCloud_TYPE_KEY {} PointCloud_TYPE_KEY;
 PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_new(uint32_t width, uint32_t height);
 PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_clone(PointCloud_TYPE_KEY *self);
 void pcl_PointCloud_TYPE_KEY_delete(PointCloud_TYPE_KEY *self);

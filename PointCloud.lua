@@ -7,7 +7,7 @@ local PointCloud = torch.class('pcl.PointCloud', pcl)
 
 local func_by_type = {}
 
-function init()
+local function init()
   local PointCloud_method_names = {
     "new",
     "clone",

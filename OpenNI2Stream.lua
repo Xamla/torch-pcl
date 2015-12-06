@@ -7,7 +7,7 @@ local OpenNI2Stream = torch.class('pcl.OpenNI2Stream', pcl)
 
 local func_by_type = {}
 
-function init()
+local function init()
   local OpenNI2Stream_method_names = { 'new', 'delete', 'start', 'stop', 'read' }
   local base_name = 'pcl_OpenNI2Stream_XYZRGBA_'
   

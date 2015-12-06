@@ -8,7 +8,7 @@ local CloudViewer = torch.class('pcl.CloudViewer', pcl)
 local func_by_type = {}
 local ft = {}
 
-function init()
+local function init()
   local CloudViewer_method_names = {
     "showCloud"
   }
