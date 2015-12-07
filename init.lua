@@ -7,7 +7,7 @@ require 'pcl.PointCloud'
 require 'pcl.CloudViewer'
 require 'pcl.OpenNI2Stream'
 require 'pcl.PCA'
-require 'pcl.Affine3'
+require 'pcl.affine'
 require 'pcl.Primitive'
 
 function pcl.rand(width, height, pointType)
