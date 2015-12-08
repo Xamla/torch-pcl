@@ -54,8 +54,8 @@
     <File Name="CloudViewer.lua"/>
     <File Name="PCA.lua"/>
     <File Name="CMakeLists.txt"/>
-    <File Name="Primitive.lua"/>
     <File Name="affine.lua"/>
+    <File Name="primitive.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>

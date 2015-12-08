@@ -194,6 +194,7 @@ PCLIMP(void, Primitive, createPlane)(pcl::PointCloud<pcl::PointXYZ>::Ptr *output
   int samples, float resolution)
 {
   vtkSmartPointer<vtkPlaneSource> plane = vtkSmartPointer<vtkPlaneSource>::New();
+  plane->SetOrigin(0, 0, 0);
   plane->SetPoint1(x1, y1, z1);
   plane->SetPoint2(x2, y2, z2);
   plane->Update();

@@ -201,7 +201,12 @@ function PointCloud:sensorOrientation()
 end
 
 function PointCloud:transform(mat, output)
-  self.f.transform(self.c, mat:cdata(), output or self.c)
+  if torch.isTypeOf(mat, pcl.affine.Transform) then
+    mat = mat:totensor()
+  end
+  output = output or self.c
+  self.f.transform(self.c, mat:cdata(), output)
+  return output
 end
 
 function PointCloud:getMinMax3D()

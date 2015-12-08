@@ -97,10 +97,10 @@ end
 
 function PCA:project(input, output)
   ouput = output or input
-  self.f.project_cloud(self.c, input:cadat(), output:cdata())
+  self.f.project_cloud(self.c, input:cdata(), output:cdata())
 end
 
 function PCA:reconstruct(input, output)
   output = output or input
-  self.f.reconstruct_cloud(self.c, input:cadat(), output:cdata())
+  self.f.reconstruct_cloud(self.c, input:cdata(), output:cdata())
 end

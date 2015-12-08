@@ -16,32 +16,38 @@ function affine.invert(M)
 end
 
 function affine.scale(x, y, z)
-  if type(x) == 'table' then
+  if type(x) == 'table' or torch.isTensor(x) then
     x,y,z = x[1],x[2],x[3]
-  end  
-  local S = torch.FloatTensor(4, 4):zero()
+  end
+  y = y or x
+  z = z or x
+  local S = torch.eye(4):float()
   S[{1,1}] = x
   S[{2,2}] = y
   S[{3,3}] = z
-  S[{4,4}] = 1
   return S
 end
 
 function affine.translate(x, y, z)
-  if type(x) == 'table' then
+  if type(x) == 'table' or torch.isTensor(x) then
     x,y,z = x[1],x[2],x[3]
   end  
-  local T = torch.FloatTensor(4, 4):zero()
+  local T = torch.eye(4):float()
   T[{1,4}] = x
   T[{2,4}] = y
   T[{3,4}] = z
-  T[{4,4}] = 1
   return T
 end
 
-function affine.rotateEuler(x, y, z)
-  if type(x) == 'table' then
+function affine.rotateEuler(x, y, z, deg)
+  if type(x) == 'table' or torch.isTensor(x) then
     x,y,z = x[1],x[2],x[3]
+    deg = y
+  end
+  if deg then
+    x = math.rad(x)
+    y = math.rad(y)
+    z = math.rad(z)
   end
   local cos,sin = math.cos,math.sin
   local X = torch.FloatTensor({
@@ -65,9 +71,12 @@ function affine.rotateEuler(x, y, z)
   return X * Y * Z
 end
 
-function affine.rotateAxis(axis, theta)
+function affine.rotateAxis(axis, theta, deg)
   if not torch.isTensor(axis) then
     axis = torch.FloatTensor(axis)
+  end
+  if deg then
+    theta = math.rad(theta)
   end
   local n = axis:norm()
   if n == 0 then
@@ -85,47 +94,6 @@ function affine.rotateAxis(axis, theta)
   return R
 end
 
---[[
-mode: e = euler, a = axis, q = quaternion
-'e', x, y, z
-'e', v
-'a' x, y, z, theta
-'a' v, theta
-]]
-function affine.rotate(mode, ...)
-  if mode == 'e' or mode == 'ed' then
-    local x,y,z
-    if select('#', ...) == 1 then
-      local v = select(1, ...)  -- table or tensor
-      x,y,z = v[1],v[2],v[3]
-    else
-      x,y,z = unpack(...)
-    end
-    if mode == 'ed' then
-      x,y,z = math.rad(x),math.rad(y),math.rad(z)
-    end
-    return affine.rotateEuler(x,y,z)
-  elseif mode == 'a' or mode == 'ad' then
-    local v, theta
-    if select('#', ...) == 2 then
-      v = select(1, ...)
-      theta = select(2, ...)
-    else
-      local x = select(1, ...)
-      local y = select(2, ...)
-      local z = select(3, ...)
-      v = {x,y,z}
-      theta = select(4, ...)
-    end
-    if mode == 'ad' then
-      theta = math.rad(theta)
-    end
-    return affine.rotateAxis(v, theta)
-  elseif mode == 'q' then
-    -- todo
-  end
-end
-
 local Transform = torch.class('pcl.affine.Transform', affine)
 
 function Transform:__init(M)
@@ -136,14 +104,14 @@ function Transform:premul(X)
   if torch.isTypeOf(X, affine.Transform) then
     X = X:totensor()
   end
-  self.M:addmm(X, self.M)
+  self.M:set(X * self.M)
 end
 
 function Transform:postmul(X)
   if torch.isTypeOf(X, affine.Transform) then
     X = X:totensor()
   end
-  self.M:addmm(self.M, X)
+  self.M:set(self.M * X)
 end
 
 function Transform:totensor()
@@ -161,7 +129,8 @@ end
 local TRANSFORM_NAMES = { 
   'scale', 
   'translate',
-  'rotate'
+  'rotateEuler',
+  'rotateAxis'
 }
 
 for i,n in ipairs(TRANSFORM_NAMES) do
