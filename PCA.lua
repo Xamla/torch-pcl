@@ -21,7 +21,6 @@ local function init()
     'project_cloud',
     'reconstruct_cloud'
   }
-  local base_name = 'pcl_PCL_XYZRGBA_'
   
   local supported_types = {}
   supported_types[pcl.PointXYZ] = 'XYZ'
@@ -30,10 +29,14 @@ local function init()
   
   for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods("pcl_PCA_TYPE_KEY_", PCA_method_names, v)
-  end
+  end    
 end
 
 init()
+
+function pcl.PointCloud:pca()
+  return pcl.PCA(self)
+end
 
 function PCA:__init(pointType, basis_only)
   local cloud
@@ -54,7 +57,7 @@ function PCA:__init(pointType, basis_only)
   end
 
   if cloud then
-    self:set_inputCloud(cloud)
+    self:setInputCloud(cloud)
   end
 end
 
@@ -67,40 +70,42 @@ function PCA:clone()
   return PCA.new(self.pointType, clone)
 end
 
-function PCA:set_inputCloud(cloud)
+function PCA:setInputCloud(cloud)
   self.f.set_inputCloud(self.o, cloud:cdata())
 end
 
-function PCA:get_mean(t)
-  t = t or torch.FloatTensor()
+function PCA:getMean()
+  local t = torch.FloatTensor()
   self.f.get_mean(self.o, t:cdata())
   return t;
 end
 
-function PCA:get_eigenVectors(t)
-  t = t or torch.FloatTensor()
+function PCA:getEigenVectors()
+  local t = torch.FloatTensor()
   self.f.get_eigenVectors(self.o, t:cdata())
   return t;
 end
 
-function PCA:get_eigenValues(t)
-  t = t or torch.FloatTensor()
+function PCA:getEigenValues()
+  local t = torch.FloatTensor()
   self.f.get_eigenValues(self.o, t:cdata())
   return t;
 end
 
-function PCA:get_coefficients(t)
-  t = t or torch.FloatTensor()
+function PCA:getCoefficients()
+  local t = torch.FloatTensor()
   self.f.get_coefficients(self.o, t:cdata())
   return t;
 end
 
 function PCA:project(input, output)
-  ouput = output or input
-  self.f.project_cloud(self.c, input:cdata(), output:cdata())
+  output = output or input
+  self.f.project_cloud(self.o, input:cdata(), output:cdata())
+  return output
 end
 
 function PCA:reconstruct(input, output)
   output = output or input
-  self.f.reconstruct_cloud(self.c, input:cdata(), output:cdata())
+  self.f.reconstruct_cloud(self.o, input:cdata(), output:cdata())
+  return output
 end

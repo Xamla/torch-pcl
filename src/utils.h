@@ -29,11 +29,11 @@ inline Eigen::Vector3f Tensor2Vec3f(THFloatTensor *tensor)
   );
 }
 
-template<int rows, int cols> void viewMatrix(Eigen::Matrix<float, rows, cols>& m, THFloatTensor* output)
+template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<float, rows, cols, options>& m, THFloatTensor* output)
 {
   // create new storage that views into the matrix
   THFloatStorage* storage = NULL;
-  if ((Eigen::Matrix<float, rows, cols>::Options & Eigen::RowMajor) == Eigen::RowMajor)
+  if ((Eigen::Matrix<float, rows, cols, options>::Options & Eigen::RowMajor) == Eigen::RowMajor)
     storage = THFloatStorage_newWithData(m.data(), (m.rows() * m.rowStride()));
   else
     storage = THFloatStorage_newWithData(m.data(), (m.cols() * m.colStride()));
@@ -41,6 +41,14 @@ template<int rows, int cols> void viewMatrix(Eigen::Matrix<float, rows, cols>& m
   storage->flag = TH_STORAGE_REFCOUNTED;
   THFloatTensor_setStorage2d(output, storage, 0, rows, m.rowStride(), cols, m.colStride());
   THFloatStorage_free(storage);   // tensor took ownership
+}
+
+template<int rows, int cols> void copyMatrix(const Eigen::Matrix<float, rows, cols>& m, THFloatTensor* output)
+{
+  THFloatTensor_resize2d(output, m.rows(), m.cols());
+  output = THFloatTensor_newContiguous(output);  
+  Eigen::Map<Eigen::Matrix<float, rows, cols, Eigen::RowMajor> >(THFloatTensor_data(output)) = m;
+  THFloatTensor_free(output);
 }
 
 #endif

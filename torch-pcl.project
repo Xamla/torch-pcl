@@ -28,6 +28,8 @@
       <File Name="src/generic/filters.cpp"/>
       <File Name="src/generic/pca.cpp"/>
       <File Name="src/generic/PointCloud.cpp"/>
+      <File Name="src/generic/icp.cpp"/>
+      <File Name="PointTypes.lua"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -47,7 +49,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="lua">
     <File Name="utils.lua"/>
-    <File Name="PointTypes.lua"/>
     <File Name="PointCloud.lua"/>
     <File Name="OpenNI2Stream.lua"/>
     <File Name="init.lua"/>
@@ -56,6 +57,7 @@
     <File Name="CMakeLists.txt"/>
     <File Name="affine.lua"/>
     <File Name="primitive.lua"/>
+    <File Name="ICP.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>

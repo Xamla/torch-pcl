@@ -94,6 +94,18 @@ void pcl_PCA_TYPE_KEY_get_eigenValues(PCA_TYPE_KEY *self, struct THFloatTensor *
 void pcl_PCA_TYPE_KEY_get_coefficients(PCA_TYPE_KEY *self, struct THFloatTensor* output);
 void pcl_PCA_TYPE_KEY_project_cloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output);
 void pcl_PCA_TYPE_KEY_reconstruct_cloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output);
+
+typedef struct ICP_TYPE_KEY {} ICP_TYPE_KEY;
+ICP_TYPE_KEY* pcl_ICP_TYPE_KEY_new();
+void pcl_ICP_TYPE_KEY_delete(ICP_TYPE_KEY *self);
+void pcl_ICP_TYPE_KEY_setInputSource(ICP_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_ICP_TYPE_KEY_setInputTarget(ICP_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_ICP_TYPE_KEY_setMaxCorrespondenceDistance(ICP_TYPE_KEY *self, double distance);
+void pcl_ICP_TYPE_KEY_setMaximumIterations(ICP_TYPE_KEY *self, int count);
+void pcl_ICP_TYPE_KEY_setTransformationEpsilon(ICP_TYPE_KEY *self, double epsilon);
+void pcl_ICP_TYPE_KEY_setEuclideanFitnessEpsilon(ICP_TYPE_KEY *self, double epsilon);
+void pcl_ICP_TYPE_KEY_getFinalTransformation(ICP_TYPE_KEY *self, THFloatTensor* output);
+void pcl_ICP_TYPE_KEY_align(ICP_TYPE_KEY *self, PointCloud_TYPE_KEY* output);
 ]]
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA' }

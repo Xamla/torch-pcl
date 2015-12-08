@@ -7,6 +7,7 @@ require 'pcl.PointCloud'
 require 'pcl.CloudViewer'
 require 'pcl.OpenNI2Stream'
 require 'pcl.PCA'
+require 'pcl.ICP'
 require 'pcl.affine'
 require 'pcl.primitive'
 
@@ -28,32 +29,15 @@ function pcl.isPointCloud(obj)
   return torch.isTypeOf(obj, pcl.PointCloud)
 end
 
---[[
-local obj = PointCloud.new(pcl.PointXYZ, torch.FloatTensor({{ 4,3,2,1 }, { 5,3,2, 1 }}))
-print(obj:points())
-print(obj[1])
-print(obj[2])
-
-
-local obj2 = PointCloud.new(pcl.PointXYZ, 3, 3)
-print(obj2:points())
-obj:add(obj2)
-print(obj:points())
-]]
-
-function pcl.test2()
-  local s = pcl.OpenNI2Stream()
-  local v = pcl.CloudViewer()
-  s:start()
-  for i=1,10000 do
-    local c = s:read(5000)
-    if c ~= nil then
-      v:showCloud(c)
-    end
+function pcl.transformCloud(source, destination, transform)
+  if not pcl.isPointCloud(source) then
+    error('point cloud expected')
   end
-  s:stop()
+  return source:transform(transform, destination)
 end
 
-
+function pcl.getMinMax3D(cloud)
+  return cloud:getMinMax3D()
+end
 
 return pcl

@@ -85,8 +85,14 @@ function TestBasics:testLoadPCD()
 end
 
 function TestBasics:testPCA()
-  local pca = pcl.PCA(pcl.rand(1000, pcl.PointXYZ))
-  luaunit.assertAlmostEquals(pca:get_mean()[{{1,3}}]:mean(), 0.5, 0.2)
+  local c = pcl.rand(1000, pcl.PointXYZ)
+  
+  local pca = pcl.PCA()
+  pca:setInputCloud(c)
+  luaunit.assertAlmostEquals(pca:getMean()[{{1,3}}]:mean(), 0.5, 0.2)
+  
+  local pca2 = c:pca()
+  luaunit.assertAlmostEquals(pca:getMean()[{{1,3}}]:mean(), pca2:getMean()[{{1,3}}]:mean(), 0.2)
 end
 
 os.exit( luaunit.LuaUnit.run() )
