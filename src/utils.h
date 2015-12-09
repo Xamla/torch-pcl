@@ -29,6 +29,16 @@ inline Eigen::Vector3f Tensor2Vec3f(THFloatTensor *tensor)
   );
 }
 
+template<int rows, int cols>
+inline Eigen::Matrix<float, rows, cols> Tensor2Mat(THFloatTensor *tensor)
+{
+  THArgCheck(tensor != NULL && tensor->nDimension == 2 && tensor->size[0] == rows && tensor->size[1] == cols, 1, "invalid tensor");
+  tensor = THFloatTensor_newContiguous(tensor);
+  Eigen::Matrix<float, rows, cols> output(Eigen::Map<Eigen::Matrix<float, rows, cols, Eigen::RowMajor> >(THFloatTensor_data(tensor)));
+  THFloatTensor_free(tensor);
+  return output;
+}
+
 template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<float, rows, cols, options>& m, THFloatTensor* output)
 {
   // create new storage that views into the matrix
@@ -46,7 +56,7 @@ template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<float, r
 template<int rows, int cols> void copyMatrix(const Eigen::Matrix<float, rows, cols>& m, THFloatTensor* output)
 {
   THFloatTensor_resize2d(output, m.rows(), m.cols());
-  output = THFloatTensor_newContiguous(output);  
+  output = THFloatTensor_newContiguous(output);
   Eigen::Map<Eigen::Matrix<float, rows, cols, Eigen::RowMajor> >(THFloatTensor_data(output)) = m;
   THFloatTensor_free(output);
 }

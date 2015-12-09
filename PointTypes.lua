@@ -105,7 +105,8 @@ void pcl_ICP_TYPE_KEY_setMaximumIterations(ICP_TYPE_KEY *self, int count);
 void pcl_ICP_TYPE_KEY_setTransformationEpsilon(ICP_TYPE_KEY *self, double epsilon);
 void pcl_ICP_TYPE_KEY_setEuclideanFitnessEpsilon(ICP_TYPE_KEY *self, double epsilon);
 void pcl_ICP_TYPE_KEY_getFinalTransformation(ICP_TYPE_KEY *self, THFloatTensor* output);
-void pcl_ICP_TYPE_KEY_align(ICP_TYPE_KEY *self, PointCloud_TYPE_KEY* output);
+double pcl_ICP_TYPE_KEY_getFitnessScore(ICP_TYPE_KEY *self, double max_range);
+void pcl_ICP_TYPE_KEY_align(ICP_TYPE_KEY *self, PointCloud_TYPE_KEY* output, void* guess);
 ]]
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA' }
@@ -277,5 +278,26 @@ function PointXYZRGBA:__newindex(i, v) if i > 0 and i <= #self then self.data[i-
 function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba: %08X }', self.x, self.y, self.z, self.rgba) end 
 ffi.metatype(pcl.PointXYZRGBA, PointXYZRGBA)
 pcl.metatype[pcl.PointXYZRGBA] = PointXYZRGBA
+
+pcl.range = {
+  double = {
+    min = -1.7976931348623157E+308, 
+    max =  1.7976931348623157E+308,
+    eps =  2.22507385850720138e-308
+  },
+  float = {
+    min = -3.402823e+38,
+    max =  3.402823e+38,
+    eps =  1.175494351e-38
+  },
+  int32 = {
+    min = −2147483648,
+    max =  2147483647
+  },
+  int64 = {
+    min = −9223372036854775808,
+    max =  9223372036854775807
+  }    
+}
 
 return pcl

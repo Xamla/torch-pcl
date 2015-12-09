@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="torch-pcl" Database="">
+  <Environment>
+    <![CDATA[]]>
+  </Environment>
   <Project Name="torch-pcl" Path="torch-pcl.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
@@ -9,7 +12,4 @@
       <Project Name="torch-pcl" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
-  <Environment>
-    <![CDATA[]]>
-  </Environment>
 </CodeLite_Workspace>

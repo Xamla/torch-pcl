@@ -19,6 +19,7 @@ local function init()
     'setTransformationEpsilon',
     'setEuclideanFitnessEpsilon',
     'getFinalTransformation',
+    'getFitnessScore', 
     'align'
   }
 
@@ -82,8 +83,15 @@ function ICP:getFinalTransformation()
   return t
 end
 
-function ICP:align(output)
+function ICP:getFitnessScore(max_range)
+  return self.f.getFitnessScore(self.o, max_range or pcl.range.double.max)
+end
+
+function ICP:align(output, initial_guess)
   output = output or pcl.PointCloud(self.pointType)
-  self.f.align(self.o, output:cdata())
+  if initial_guess then
+    initial_guess = initial_guess:cdata()
+  end
+  self.f.align(self.o, output:cdata(), initial_guess)
   return output
 end

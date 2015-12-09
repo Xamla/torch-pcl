@@ -95,4 +95,19 @@ function TestBasics:testPCA()
   luaunit.assertAlmostEquals(pca:getMean()[{{1,3}}]:mean(), pca2:getMean()[{{1,3}}]:mean(), 0.2)
 end
 
+function TestBasics:testICP()
+  local cloudIn = pcl.rand(10, 10, pcl.PointXYZ)
+  local cloudOut = pcl.PointCloud(pcl.PointXYZ)
+  local T = pcl.affine.translate(0.5,0,0)
+  cloudIn:transform(T, cloudOut)
+  luaunit.assertTrue((cloudIn:points() - cloudOut:points()):abs():sum() > 1)
+  icp = pcl.ICP()
+  icp:setInputSource(cloudIn)
+  icp:setInputTarget(cloudOut)
+  local cloudFinal = icp:align(cloudFinal)
+  local finalTransformation = icp:getFinalTransformation()
+  luaunit.assertTrue((finalTransformation - T):abs():sum() < 0.1)
+  luaunit.assertAlmostEquals(icp:getFitnessScore(), 0, 0.01)
+end  
+
 os.exit( luaunit.LuaUnit.run() )

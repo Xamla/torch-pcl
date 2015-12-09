@@ -205,7 +205,7 @@ function PointCloud:transform(mat, output)
     mat = mat:totensor()
   end
   output = output or self.c
-  self.f.transform(self.c, mat:cdata(), output)
+  self.f.transform(self.c, mat:cdata(), output:cdata())
   return output
 end
 

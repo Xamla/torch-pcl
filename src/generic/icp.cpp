@@ -50,9 +50,17 @@ PCLIMP(void, ICP, getFinalTransformation)(ICP_ptr *self, THFloatTensor* output)
   copyMatrix(transformation, output);
 }
 
-PCLIMP(void, ICP, align)(ICP_ptr *self, PointCloud_ptr* output)
+PCLIMP(double, ICP, getFitnessScore)(ICP_ptr *self, double max_range)
 {
-  (*self)->align(**output);
+  return (*self)->getFitnessScore(max_range);
+}
+
+PCLIMP(void, ICP, align)(ICP_ptr *self, PointCloud_ptr *output, THFloatTensor *guess)
+{
+  if (!guess)
+    (*self)->align(**output);
+  else
+    (*self)->align(**output, Tensor2Mat<4,4>(guess));
 }
 
 #undef ICP_ptr
