@@ -204,7 +204,7 @@ function PointCloud:transform(mat, output)
   if torch.isTypeOf(mat, pcl.affine.Transform) then
     mat = mat:totensor()
   end
-  output = output or self.c
+  output = output or self
   self.f.transform(self.c, mat:cdata(), output:cdata())
   return output
 end

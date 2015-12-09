@@ -83,6 +83,18 @@ int pcl_PointCloud_TYPE_KEY_readXYZfloat(PointCloud_TYPE_KEY *cloud, struct THFl
 
 void pcl_CloudViewer_TYPE_KEY_showCloud(void *self, PointCloud_TYPE_KEY *cloud, const char *cloudname);
 
+void pcl_Filter_TYPE_KEY_passThroughassThrough(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative);
+void pcl_Filter_TYPE_KEY_cropBox(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation);
+void pcl_Filter_TYPE_KEY_voxelGrid(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, float lx, float ly, float lz);
+<<<<<<< Updated upstream
+void pcl_Filter_TYPE_KEY_statisticalOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int meanK, double stddevMulThresh, bool negative);
+=======
+void pcl_Filter_TYPE_KEY_statisticalOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int meanK, double stddevMulThresh);
+>>>>>>> Stashed changes
+void pcl_Filter_TYPE_KEY_randomSample(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, unsigned int count);
+void pcl_Filter_TYPE_KEY_medianFilter(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int windowSize);
+void pcl_Filter_TYPE_KEY_radiusOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, double radius, int minNeighbors);
+
 typedef struct PCA_TYPE_KEY {} PCA_TYPE_KEY;
 PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_new(bool basis_only);
 PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_clone(PCA_TYPE_KEY *self);
@@ -290,14 +302,30 @@ pcl.range = {
     max =  3.402823e+38,
     eps =  1.175494351e-38
   },
+  int16 = {
+    min = -32768,
+    max =  32767
+  },
+  uint16 = {
+    min =  0,
+    max =  0xffff
+  },
   int32 = {
     min = −2147483648,
     max =  2147483647
   },
+  uint32 = {
+    min =  0,
+    max =  0xffffffff
+  },
   int64 = {
     min = −9223372036854775808,
     max =  9223372036854775807
-  }    
+  }, 
+  uint64 = {
+    min =  0,
+    max =  0xffffffffffffffff
+  }
 }
 
 return pcl

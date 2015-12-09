@@ -58,6 +58,7 @@
     <File Name="primitive.lua"/>
     <File Name="ICP.lua"/>
     <File Name="PointTypes.lua"/>
+    <File Name="filter.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>

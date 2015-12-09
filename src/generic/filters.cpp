@@ -7,20 +7,19 @@
 #include <pcl/filters/median_filter.h>
 #include <pcl/filters/radius_outlier_removal.h>
 
-PCLIMP(void*, Filter, PassThrough)(pcl::PointCloud<_PointT>::Ptr *input, const char* fieldName, float min, float max, bool negative)
+#define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
+
+PCLIMP(void, Filter, passThrough)(PointCloud_ptr *input, PointCloud_ptr *output, const char* fieldName, float min, float max, bool negative)
 {
   pcl::PassThrough<_PointT> f;
   f.setInputCloud(*input);
+  f.setNegative(negative);
   f.setFilterFieldName(fieldName);
   f.setFilterLimits(min, max);
-  f.setNegative(negative);
-  
-  pcl::PointCloud<_PointT>::Ptr filtered(new pcl::PointCloud<_PointT>());
-  f.filter(*filtered);
-  return new pcl::PointCloud<_PointT>::Ptr(filtered);
+  f.filter(*output);
 }
 
-PCLIMP(void*, Filter, CropBox)(pcl::PointCloud<_PointT>::Ptr *input, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation)
+PCLIMP(void, Filter, cropBox)(PointCloud_ptr *input, PointCloud_ptr *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation)
 {
   pcl::CropBox<_PointT> f;
   f.setInputCloud(*input);
@@ -28,62 +27,50 @@ PCLIMP(void*, Filter, CropBox)(pcl::PointCloud<_PointT>::Ptr *input, THFloatTens
   f.setMax(Tensor2Vec4f(max));
   f.setRotation(Tensor2Vec3f(rotation));
   f.setTranslation(Tensor2Vec3f(translation));
-  
-  pcl::PointCloud<_PointT>::Ptr filtered(new pcl::PointCloud<_PointT>());
-  f.filter(*filtered);
-  return new pcl::PointCloud<_PointT>::Ptr(filtered);
+  f.filter(*output);
 }
 
-PCLIMP(void*, Filter, VoxelGrid)(pcl::PointCloud<_PointT>::Ptr *input, float lx, float ly, float lz)
+PCLIMP(void, Filter, voxelGrid)(PointCloud_ptr *input, PointCloud_ptr *output, float lx, float ly, float lz)
 {
   pcl::VoxelGrid<_PointT> f;
   f.setInputCloud(*input);
   f.setLeafSize(lx, ly, lz);
-  
-  pcl::PointCloud<_PointT>::Ptr filtered(new pcl::PointCloud<_PointT>());
-  f.filter(*filtered);
-  return new pcl::PointCloud<_PointT>::Ptr(filtered);
+  f.filter(*output);
 }
 
-PCLIMP(void*, Filter, StatisticalOutlierRemoval)(pcl::PointCloud<_PointT>::Ptr *input, int meanK, double stddevMulThresh)
+PCLIMP(void, Filter, statisticalOutlierRemoval)(PointCloud_ptr *input, PointCloud_ptr *output, int meanK, double stddevMulThresh, bool negative)
 {
   pcl::StatisticalOutlierRemoval<_PointT> f;
   f.setInputCloud(*input);
-  f.setMeanK(meanK);
-  f.setStddevMulThresh(stddevMulThresh);
-  
-  pcl::PointCloud<_PointT>::Ptr filtered(new pcl::PointCloud<_PointT>());
-  f.filter(*filtered);
-  return new pcl::PointCloud<_PointT>::Ptr(filtered);
+  f.setMeanK(meanK or 2);
+  f.setStddevMulThresh(stddevMulThresh or 0);
+  f.setNegative(negative);
+  f.filter(*output);
 }
 
-PCLIMP(void*, Filter, RandomSample)(pcl::PointCloud<_PointT>::Ptr *input, unsigned int count)
+PCLIMP(void, Filter, randomSample)(PointCloud_ptr *input, PointCloud_ptr *output, unsigned int count)
 {
   pcl::RandomSample<_PointT> f;
+  f.setInputCloud(*input);
   f.setSample(count);
-  
-  pcl::PointCloud<_PointT>::Ptr filtered(new pcl::PointCloud<_PointT>());
-  f.filter(*filtered);
-  return new pcl::PointCloud<_PointT>::Ptr(filtered);
+  f.filter(*output);
 }
 
-PCLIMP(void*, Filter, MedianFilter)(pcl::PointCloud<_PointT>::Ptr *input, int windowSize)
+PCLIMP(void, Filter, medianFilter)(PointCloud_ptr *input, PointCloud_ptr *output, int windowSize)
 {
   pcl::MedianFilter<_PointT> f;
+  f.setInputCloud(*input);
   f.setWindowSize(windowSize);
-  
-  pcl::PointCloud<_PointT>::Ptr filtered(new pcl::PointCloud<_PointT>());
-  f.filter(*filtered);
-  return new pcl::PointCloud<_PointT>::Ptr(filtered);
+  f.filter(*output);
 }
 
-PCLIMP(void*, Filter, RadiusOutlierRemoval)(pcl::PointCloud<_PointT>::Ptr *input, double radius, int minNeighbors)
+PCLIMP(void, Filter, radiusOutlierRemoval)(PointCloud_ptr *input, PointCloud_ptr *output, double radius, int minNeighbors)
 {
   pcl::RadiusOutlierRemoval<_PointT> f;
+  f.setInputCloud(*input);
   f.setRadiusSearch(radius);
   f.setMinNeighborsInRadius(minNeighbors);
-  
-  pcl::PointCloud<_PointT>::Ptr filtered(new pcl::PointCloud<_PointT>());
-  f.filter(*filtered);
-  return new pcl::PointCloud<_PointT>::Ptr(filtered);
+  f.filter(*output);
 }
+
+#undef PointCloud_ptr
