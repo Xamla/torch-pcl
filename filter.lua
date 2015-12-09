@@ -13,6 +13,7 @@ local function init()
   local method_names = {
     'passThrough',
     'cropBox',
+    'cropSphere',
     'voxelGrid',
     'statisticalOutlierRemoval',
     'randomSample',
@@ -32,45 +33,65 @@ end
 
 init()
 
-local function check_arg(argName, check, errorMsg)
-  if not check then
-    error("Invalid argument '" .. argName .. " ': " .. errorMsg)
-  end
+local function check_input_type(input)
+  utils.check_arg('input', pcl.isPointCloud(input), 'point cloud expected')
+  local output = pcl.PointCloud(input.pointType)
+  return func_by_type[input.pointType], output
 end
 
-local function check_inout_type(input, output)
-  check_arg('input', pcl.isPointCloud(input), 'point cloud expected')
-  check_arg('output', pcl.isPointCloud(output), 'point cloud expected')
-  
-  if input.pointType != outptu.pointType
-  
-  return func_by_type[input.pointType]
+-- safe accessor for cdata()
+local function cdata(x)
+  return x and x:cdata() or pcl.NULL
 end
 
-function filter.passThrough(input, output, fieldName, min, max, negative)
-  output = output or input
-  local f = check_inout_type(input, output)
-  
-  if type(fieldName) ~= 'string' then
-    error('Invalid argument fieldName: string expected')
+local function tensor(x)
+  if type(x) == 'table' then
+    x = torch.FloatTensor(x)
   end
+  return x
+end
+
+function filter.passThrough(input, fieldName, min, max, negative)
+  local f, output = check_input_type(input)
+  utils.check_arg('fieldName', type(fieldName) == 'string', 'string expected')
   min = min or pcl.range.double.min
   max = max or pcl.range.double.max
-  f.passThrough(input:cdata(), output:cdata(), fieldName, min, max, negative or false);
+  f.passThrough(input:cdata(), output:cdata(), fieldName, min, max, negative or false)
   return output
 end
 
-function filter.cropBox(input, output, min, max, rotation, translation)
-  output = output or input
-  local f = check_inout_type(input, output)
+function filter.cropBox(input, min, max, rotation, translation, transform, negative)
+  local f, output = check_input_type(input)
+
+  min = tensor(min)
+  max = tensor(max)
+  rotation = tensor(rotation)
+  translation = tensor(translation)
   
-  f.cropBox(input:cdata(), output:cdata(), min, max, rotation, translation);
+  if torch.isTypeOf(transform, pcl.affine.Transform) then
+    transform = transform:totensor()
+  end
+  
+  transform = tensor(transform)
+
+  f.cropBox(input:cdata(), output:cdata(), cdata(min), cdata(max), cdata(rotation), cdata(translation), cdata(transform), negative or false)
+
   return output
 end
 
-function filter.voxelGrid(input, output, lx, ly, lz)
-  output = output or input
-  local f = check_inout_type(input, output)
+function filter.cropSphere(input, center, radius, transform, negative)
+  local f, output = check_input_type(input)
+  
+  center = tensor(center)
+  transform = tensor(transform)
+  
+  f.cropSphere(input:cdata(), output:cdata(), cdata(center), radius or 1, cdata(transform), negative or false)
+  
+  return output
+end
+
+function filter.voxelGrid(input, lx, ly, lz)
+  local f, output = check_input_type(input)
   lx = lx or 1
   ly = ly or lx
   lz = lz or lx
@@ -78,30 +99,26 @@ function filter.voxelGrid(input, output, lx, ly, lz)
   return output
 end
 
-function filter.statisticalOutlierRemoval(input, output, meanK, stddevMulThresh, negative)
-  output = output or input
-  local f = check_inout_type(input, output)
-  f.statisticalOutlierRemoval(input:cdata(), output:cdata(), meanK, stddevMulThresh or 1, negative or false)
+function filter.statisticalOutlierRemoval(input, meanK, stddevMulThresh, negative)
+  local f, output = check_input_type(input)
+  f.statisticalOutlierRemoval(input:cdata(), output:cdata(), meanK or 2, stddevMulThresh or 1, negative or false)
   return output
 end
 
-function filter.randomSample(input, output, count)
-  output = output or input
-  local f = check_inout_type(input, output)
+function filter.randomSample(input, count)
+  local f, output = check_input_type(input)
   f.randomSample(input:cdata(), output:cdata(), count or pcl.range.uint32.max)
   return output
 end
 
-function filter.medianFilter(input, output, windowSize)
-  output = output or input
-  local f = check_inout_type(input, output)
+function filter.medianFilter(input, windowSize)
+  local f, output = check_input_type(input)
   f.medianFilter(input:cdata(), output:cdata(), windowSize or 5)
   return output
 end
 
-function filter.radiusOutlierRemoval(input, output, radius, minNeighbors)
-  output = output or input
-  local f = check_inout_type(input, output)
-  f.radiusOutlierRemoval(input:cdata(), output:cdata(), radius or 0, minNeighbors or 1)
+function filter.radiusOutlierRemoval(input, radius, minNeighbors, negative)
+  local f, output = check_input_type(input)
+  f.radiusOutlierRemoval(input:cdata(), output:cdata(), radius or 1, minNeighbors or 1, negative or false)
   return output
 end

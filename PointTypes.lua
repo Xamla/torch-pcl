@@ -1,6 +1,7 @@
 local ffi = require 'ffi'
 
 local pcl = {}
+pcl.NULL = ffi.NULL or nil
 
 local PCL_POINT4D = "union __attribute__((aligned(16))) { struct { float x; float y; float z; }; float data[4]; };"
 local PCL_NORMAL4D = "union __attribute__((aligned(16))) { struct { float normal_x; float normal_y; float normal_z; }; float normal[3]; float data_n[4]; };"
@@ -83,17 +84,14 @@ int pcl_PointCloud_TYPE_KEY_readXYZfloat(PointCloud_TYPE_KEY *cloud, struct THFl
 
 void pcl_CloudViewer_TYPE_KEY_showCloud(void *self, PointCloud_TYPE_KEY *cloud, const char *cloudname);
 
-void pcl_Filter_TYPE_KEY_passThroughassThrough(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative);
-void pcl_Filter_TYPE_KEY_cropBox(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation);
+void pcl_Filter_TYPE_KEY_passThrough(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative);
+void pcl_Filter_TYPE_KEY_cropBox(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, THFloatTensor *transform, bool negative);
+void pcl_Filter_TYPE_KEY_cropSphere(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THFloatTensor *center, double radius, THFloatTensor *transform, bool negative);
 void pcl_Filter_TYPE_KEY_voxelGrid(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, float lx, float ly, float lz);
-<<<<<<< Updated upstream
 void pcl_Filter_TYPE_KEY_statisticalOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int meanK, double stddevMulThresh, bool negative);
-=======
-void pcl_Filter_TYPE_KEY_statisticalOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int meanK, double stddevMulThresh);
->>>>>>> Stashed changes
 void pcl_Filter_TYPE_KEY_randomSample(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, unsigned int count);
 void pcl_Filter_TYPE_KEY_medianFilter(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int windowSize);
-void pcl_Filter_TYPE_KEY_radiusOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, double radius, int minNeighbors);
+void pcl_Filter_TYPE_KEY_radiusOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, double radius, int minNeighbors, bool negative);
 
 typedef struct PCA_TYPE_KEY {} PCA_TYPE_KEY;
 PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_new(bool basis_only);

@@ -35,4 +35,10 @@ function utils.create_typed_methods(prefix, names, type_key)
   return map
 end
 
+function utils.check_arg(argName, check, errorMsg)
+  if not check then
+    error("Invalid argument '" .. argName .. " ': " .. errorMsg)
+  end
+end
+
 return utils

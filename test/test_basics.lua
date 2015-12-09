@@ -108,6 +108,20 @@ function TestBasics:testICP()
   local finalTransformation = icp:getFinalTransformation()
   luaunit.assertTrue((finalTransformation - T):abs():sum() < 0.1)
   luaunit.assertAlmostEquals(icp:getFitnessScore(), 0, 0.01)
-end  
+end
+
+function TestBasics:testFilterDefaultValues()
+  local p = pcl.rand(100, 100)
+  
+  pcl.filter.cropBox(p)
+  pcl.filter.cropSphere(p)
+  pcl.filter.medianFilter(p)
+  pcl.filter.statisticalOutlierRemoval(p)
+  --pcl.filter.radiusOutlierRemoval(p)
+  pcl.filter.passThrough(p, 'x')
+  pcl.filter.randomSample(p)
+  pcl.filter.voxelGrid(p)
+  
+end
 
 os.exit( luaunit.LuaUnit.run() )

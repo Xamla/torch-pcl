@@ -13,19 +13,19 @@ extern "C" {
 inline Eigen::Vector4f Tensor2Vec4f(THFloatTensor *tensor)
 {
   return Eigen::Vector4f(
+    THFloatTensor_get1d(tensor, 0),
     THFloatTensor_get1d(tensor, 1),
     THFloatTensor_get1d(tensor, 2),
-    THFloatTensor_get1d(tensor, 3),
-    THFloatTensor_get1d(tensor, 4)
+    THFloatTensor_get1d(tensor, 3)
   );
 }
 
 inline Eigen::Vector3f Tensor2Vec3f(THFloatTensor *tensor)
 {
   return Eigen::Vector3f(
+    THFloatTensor_get1d(tensor, 0),
     THFloatTensor_get1d(tensor, 1),
-    THFloatTensor_get1d(tensor, 2),
-    THFloatTensor_get1d(tensor, 3)
+    THFloatTensor_get1d(tensor, 2)
   );
 }
 

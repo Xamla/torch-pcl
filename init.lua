@@ -3,6 +3,7 @@ require 'paths'
 local ffi = require 'ffi'
 
 local pcl = require 'pcl.PointTypes'
+local utils = require 'pcl.utils'
 require 'pcl.PointCloud'
 require 'pcl.CloudViewer'
 require 'pcl.OpenNI2Stream'
@@ -10,6 +11,7 @@ require 'pcl.PCA'
 require 'pcl.ICP'
 require 'pcl.affine'
 require 'pcl.primitive'
+require 'pcl.filter'
 
 function pcl.rand(width, height, pointType)
   if pcl.isPointType(height) or type(height) == 'string' then
@@ -26,13 +28,11 @@ function pcl.rand(width, height, pointType)
 end
 
 function pcl.isPointCloud(obj)
-  return torch.isTypeOf(obj, pcl.PointCloud)
+  return obj and torch.isTypeOf(obj, pcl.PointCloud)
 end
 
 function pcl.transformCloud(source, destination, transform)
-  if not pcl.isPointCloud(source) then
-    error('point cloud expected')
-  end
+  utils.check_arg('source', pcl.isPointCloud(source), 'point cloud expected')
   return source:transform(transform, destination)
 end
 
