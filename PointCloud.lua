@@ -51,6 +51,11 @@ end
 init()
 
 function PointCloud:__init(pointType, width, height)
+  if type(pointType) == 'number' then
+    widthr = pointType
+    pointType = pcl.PointXYZ
+  end
+  
   pointType = pcl.pointType(pointType)
   width = width or 0
   rawset(self, 'f', func_by_type[pointType])
@@ -217,6 +222,10 @@ end
 
 function PointCloud:add(other)
   self.f.add(self.c, other.c)
+end
+
+function PointCloud:removeNaN(indices, inplace)
+  return pcl.filter.removeNaNFromPointCloud(self, indices, inplace or true)
 end
 
 function PointCloud:fromPCLPointCloud2(src_msg)

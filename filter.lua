@@ -11,6 +11,7 @@ local func_by_type = {}
 local function init()
 
   local method_names = {
+    'removeNaNFromPointCloud',
     'passThrough',
     'cropBox',
     'cropSphere',
@@ -33,9 +34,9 @@ end
 
 init()
 
-local function check_input_type(input)
+local function check_input_type(input, inplace)
   utils.check_arg('input', pcl.isPointCloud(input), 'point cloud expected')
-  local output = pcl.PointCloud(input.pointType)
+  local output = inplace and input or pcl.PointCloud(input.pointType)
   return func_by_type[input.pointType], output
 end
 
@@ -49,6 +50,12 @@ local function tensor(x)
     x = torch.FloatTensor(x)
   end
   return x
+end
+
+function filter.removeNaNFromPointCloud(input, indices, inplace)
+  local f, output = check_input_type(input)
+  f.removeNaNFromPointCloud(input:cdata(), output:cdata(), cdata(indices))
+  return output
 end
 
 function filter.passThrough(input, fieldName, min, max, negative)

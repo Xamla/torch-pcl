@@ -97,4 +97,14 @@ PCLIMP(void, Filter, radiusOutlierRemoval)(PointCloud_ptr *input, PointCloud_ptr
   f.filter(**output);
 }
 
+PCLIMP(void, Filter, removeNaNFromPointCloud)(PointCloud_ptr *input, PointCloud_ptr *output, THIntTensor *index)
+{
+  std::vector<int> _index;
+  pcl::removeNaNFromPointCloud(**input, **output, _index);
+  if (index)
+  {
+    intVector2Tensor(_index, index);
+  }
+}
+
 #undef PointCloud_ptr

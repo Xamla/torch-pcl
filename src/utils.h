@@ -56,9 +56,16 @@ template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<float, r
 template<int rows, int cols> void copyMatrix(const Eigen::Matrix<float, rows, cols>& m, THFloatTensor* output)
 {
   THFloatTensor_resize2d(output, m.rows(), m.cols());
-  output = THFloatTensor_newContiguous(output);
-  Eigen::Map<Eigen::Matrix<float, rows, cols, Eigen::RowMajor> >(THFloatTensor_data(output)) = m;
-  THFloatTensor_free(output);
+  THFloatTensor* output_ = THFloatTensor_newContiguous(output);
+  Eigen::Map<Eigen::Matrix<float, rows, cols, Eigen::RowMajor> >(THFloatTensor_data(output_)) = m;
+  THFloatTensor_set(output, output_);
+  THFloatTensor_free(output_);
+}
+
+inline void intVector2Tensor(const std::vector<int> &v, THIntTensor *output)
+{
+  THIntTensor_resize1d(output, v.size());
+  std::copy(v.begin(), v.end(), THIntTensor_data(output));
 }
 
 #endif

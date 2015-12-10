@@ -169,7 +169,7 @@ PCLIMP(void, PointCloud, toPCLPointCloud2)(pcl::PointCloud<_PointT>::Ptr *self, 
 {
   pcl::toPCLPointCloud2<_PointT>(**self, *msg);}
 
-PCLIMP(int, PointCloud, readXYZfloat)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor* output)
+PCLIMP(int, PointCloud, readXYZfloat)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor *output)
 {
   if (!self || !output)
     return -1;

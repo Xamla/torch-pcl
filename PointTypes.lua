@@ -84,6 +84,7 @@ int pcl_PointCloud_TYPE_KEY_readXYZfloat(PointCloud_TYPE_KEY *cloud, struct THFl
 
 void pcl_CloudViewer_TYPE_KEY_showCloud(void *self, PointCloud_TYPE_KEY *cloud, const char *cloudname);
 
+void pcl_Filter_TYPE_KEY_removeNaNFromPointCloud(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THIntTensor *index);
 void pcl_Filter_TYPE_KEY_passThrough(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative);
 void pcl_Filter_TYPE_KEY_cropBox(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, THFloatTensor *transform, bool negative);
 void pcl_Filter_TYPE_KEY_cropSphere(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THFloatTensor *center, double radius, THFloatTensor *transform, bool negative);
