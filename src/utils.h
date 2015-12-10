@@ -7,8 +7,18 @@ extern "C" {
 
 #include <Eigen/StdVector>
 #include <Eigen/Geometry>
+#include <pcl/exceptions.h>
 
 #define PCLIMP(return_type, class_name, name) extern "C" return_type TH_CONCAT_4(pcl_, class_name, TYPE_KEY, name)
+
+class TorchPclException : public pcl::PCLException
+{
+  public:
+    TorchPclException(const std::string &error_description, const char *file_name = NULL, const char *function_name = NULL, unsigned line_number = 0)
+      : pcl::PCLException (error_description, file_name, function_name, line_number)
+    {
+    }
+};
 
 inline Eigen::Vector4f Tensor2Vec4f(THFloatTensor *tensor)
 {
@@ -56,13 +66,17 @@ template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<float, r
 template<int rows, int cols> void copyMatrix(const Eigen::Matrix<float, rows, cols> &m, THFloatTensor *output)
 {
   THFloatTensor_resize2d(output, m.rows(), m.cols());
+  THFloatTensor* output_ = THFloatTensor_newContiguous(output);
   Eigen::Map<Eigen::Matrix<float, rows, cols, Eigen::RowMajor> >(THFloatTensor_data(output)) = m;
+  THFloatTensor_freeCopyTo(output_, output);
 }
 
 inline void vector2Tensor(const std::vector<int> &v, THIntTensor *output)
 {
   THIntTensor_resize1d(output, v.size());
-  std::copy(v.begin(), v.end(), THIntTensor_data(output));
+  THIntTensor* output_ = THIntTensor_newContiguous(output);
+  std::copy(v.begin(), v.end(), THIntTensor_data(output_));
+  THIntTensor_freeCopyTo(output_, output);
 }
 
 #endif

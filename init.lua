@@ -31,6 +31,14 @@ function pcl.isPointCloud(obj)
   return obj and torch.isTypeOf(obj, pcl.PointCloud)
 end
 
+function pcl.isPoint(obj)
+  if obj and type(obj) == 'cdata' then
+    local ok,t = pcall(ffi.typeof, obj)
+    return ok and pcl.isPointType(t)
+  end
+  return false
+end
+
 function pcl.transformCloud(source, destination, transform)
   utils.check_arg('source', pcl.isPointCloud(source), 'point cloud expected')
   return source:transform(transform, destination)

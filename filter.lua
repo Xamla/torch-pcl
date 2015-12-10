@@ -47,7 +47,9 @@ local function cdata(x)
 end
 
 local function tensor(x)
-  if type(x) == 'table' then
+  if pcl.isPoint(x) then
+    x = x:totensor()
+  elseif type(x) == 'table' then
     x = torch.FloatTensor(x)
   end
   return x

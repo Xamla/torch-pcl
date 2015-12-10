@@ -5,19 +5,19 @@
 #include "generic/cloudviewer.cpp"
 #include "generic/openni2.cpp"
 
-PCLIMP(int, PointCloud, readRGBAbyte)(pcl::PointCloud<_PointT>::Ptr *self, THByteTensor* output)
+PCLIMP(void, PointCloud, readRGBAbyte)(pcl::PointCloud<_PointT>::Ptr *self, THByteTensor* output)
 {
-  if (!self || !output)
-    return -1;
+  if (!self || !*self)
+    PCL_THROW_EXCEPTION(TorchPclException, "Argument 'self' must not be null.");
+  if (!output)
+    PCL_THROW_EXCEPTION(TorchPclException, "Argument 'output' must not be null.");
     
   const pcl::PointCloud<_PointT>& c = **self;
 
-  if (!THByteTensor_isContiguous(output))
-    return -2;
-  
   THByteTensor_resize3d(output, c.height, c.width, 4);
   
-  unsigned char *output_data = THByteTensor_data(output);
+  THByteTensor *output_ = THByteTensor_newContiguous(output);
+  unsigned char *output_data = THByteTensor_data(output_);
   for (pcl::PointCloud<_PointT>::const_iterator i = c.begin(); i != c.end(); ++i)
   {
     const _PointT& p = *i;
@@ -27,22 +27,23 @@ PCLIMP(int, PointCloud, readRGBAbyte)(pcl::PointCloud<_PointT>::Ptr *self, THByt
     *output_data++ = p.a;
   }
   
-  return 0;
+  THByteTensor_freeCopyTo(output_, output);
 }
 
-PCLIMP(int, PointCloud, readRGBAfloat)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor* output)
+PCLIMP(void, PointCloud, readRGBAfloat)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor* output)
 {
-  if (!self || !output)
-    return -1;
+  if (!self || !*self)
+    PCL_THROW_EXCEPTION(TorchPclException, "Argument 'self' must not be null.");
+  if (!output)
+    PCL_THROW_EXCEPTION(TorchPclException, "Argument 'output' must not be null.");
     
   const pcl::PointCloud<_PointT>& c = **self;
   
-  if (!THFloatTensor_isContiguous(output))
-    return -2;
-
   THFloatTensor_resize3d(output, c.height, c.width, 4);
   
-  float *output_data = THFloatTensor_data(output);
+  THFloatTensor* output_ = THFloatTensor_newContiguous(output);
+
+  float *output_data = THFloatTensor_data(output_);
   for (pcl::PointCloud<_PointT>::const_iterator i = c.begin(); i != c.end(); ++i)
   {
     const _PointT& p = *i;
@@ -52,5 +53,5 @@ PCLIMP(int, PointCloud, readRGBAfloat)(pcl::PointCloud<_PointT>::Ptr *self, THFl
     *output_data++ = p.a / 255.0f;
   }
   
-  return 0;
+  THFloatTensor_freeCopyTo(output_, output);
 }
