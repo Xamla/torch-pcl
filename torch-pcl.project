@@ -42,6 +42,7 @@
     <File Name="src/CropSphere.h"/>
     <File Name="src/xyzrgbnormal.cpp"/>
     <File Name="src/normal.cpp"/>
+    <File Name="src/xyzinormal.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>

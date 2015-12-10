@@ -25,6 +25,7 @@ SET(src
   "${SOURCE_DIR}/xyzi.cpp"
   "${SOURCE_DIR}/xyzrgba.cpp"
   "${SOURCE_DIR}/normal.cpp"
+  "${SOURCE_DIR}/xyzinormal.cpp"
   "${SOURCE_DIR}/xyzrgbnormal.cpp"
 )
 

@@ -27,6 +27,9 @@ typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, 
 typedef struct PointCloud_XYZ {} PointCloud_XYZ;
 typedef struct PointCloud_XYZI {} PointCloud_XYZI;
 typedef struct PointCloud_XYZRGBA {} PointCloud_XYZRGBA;
+typedef struct PointCloud_Normal {} PointCloud_Normal;
+typedef struct PointCloud_XYZINormal {} PointCloud_XYZINormal;
+typedef struct PointCloud_XYZRGBNormal {} PointCloud_XYZRGBNormal;
 
 void* pcl_CloudViewer_new(const char *window_name);
 void pcl_CloudViewer_delete(void *self);
@@ -120,7 +123,7 @@ double pcl_ICP_TYPE_KEY_getFitnessScore(ICP_TYPE_KEY *self, double max_range);
 void pcl_ICP_TYPE_KEY_align(ICP_TYPE_KEY *self, PointCloud_TYPE_KEY* output, void* guess);
 ]]
 
-local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA' }
+local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'Normal', 'XYZINormal', 'XYZRGBNormal' }
 for i,v in ipairs(supported_keys) do
   local specialized = string.gsub(generic_declarations, 'TYPE_KEY', v)
   ffi.cdef(specialized)
@@ -289,6 +292,67 @@ function PointXYZRGBA:__newindex(i, v) if i > 0 and i <= #self then self.data[i-
 function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba: %08X }', self.x, self.y, self.z, self.rgba) end 
 ffi.metatype(pcl.PointXYZRGBA, PointXYZRGBA)
 pcl.metatype[pcl.PointXYZRGBA] = PointXYZRGBA
+
+-- PointNormal metatype
+local PointNormal = {
+  prototype = {
+    tensor = totensor,
+    set = set,
+  },
+  __eq = eq,
+  __len = len,
+  fields = { 'x', 'y', 'z', 'w', 'normal_x', 'normal_y', 'normal_z', '_1', 'curvature', '_2', '_3', '_4' }
+}
+
+PointNormal.__pairs = createpairs(PointNormal.fields)
+function PointNormal:__index(i) if type(i) == "number" then return self.data[i-1] else return PointNormal.prototype[i] end end
+function PointNormal:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
+function PointNormal:__tostring()
+  return string.format('{ x:%f, y:%f, z:%f, normal_x:%f, normal_y:%f, normal_z:%f, curvature:%f }', 
+    self.x, self.y, self.z, self.normal_x, self.normal_y, self.normal_z, self.curvature) 
+end 
+ffi.metatype(pcl.PointNormal, PointNormal)
+pcl.metatype[pcl.PointNormal] = PointNormal
+
+-- PointXYZINormal metatype
+local PointXYZINormal = {
+   prototype = {
+    tensor = totensor,
+    set = set,
+  },
+  __eq = eq,
+  __len = len,
+  fields = { 'x', 'y', 'z', 'w', 'normal_x', 'normal_y', 'normal_z', '_1', 'intensity', 'curvature', '_2', '_3' } 
+}
+PointXYZINormal.__pairs = createpairs(PointXYZINormal.fields)
+function PointXYZINormal:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZINormal.prototype[i] end end
+function PointXYZINormal:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
+function PointXYZINormal:__tostring()
+  return string.format('{ x:%f, y:%f, z:%f, normal_x:%f, normal_y:%f, normal_z:%f, intensity:%f, curvature:%f }', 
+    self.x, self.y, self.z, self.normal_x, self.normal_y, self.normal_z, self.intensity, self.curvature) 
+end 
+ffi.metatype(pcl.PointXYZINormal, PointXYZINormal)
+pcl.metatype[pcl.PointXYZINormal] = PointXYZINormal
+
+-- PointXYZRGBNormal metatype
+local PointXYZRGBNormal = {
+    prototype = {
+    tensor = totensor,
+    set = set,
+  },
+  __eq = eq,
+  __len = len,
+  fields = { 'x', 'y', 'z', 'w', 'normal_x', 'normal_y', 'normal_z', '_1', 'rgba', 'curvature', '_2', '_3' }
+}
+PointXYZRGBNormal.__pairs = createpairs(PointXYZRGBNormal.fields)
+function PointXYZRGBNormal:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBNormal.prototype[i] end end
+function PointXYZRGBNormal:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
+function PointXYZRGBNormal:__tostring()
+  return string.format('{ x:%f, y:%f, z:%f, normal_x:%f, normal_y:%f, normal_z:%f, rgba:%08X, curvature:%f }', 
+    self.x, self.y, self.z, self.normal_x, self.normal_y, self.normal_z, self.rgba, self.curvature) 
+end 
+ffi.metatype(pcl.PointXYZRGBNormal, PointXYZRGBNormal)
+pcl.metatype[pcl.PointXYZRGBNormal] = PointXYZRGBNormal
 
 pcl.range = {
   double = {
