@@ -176,9 +176,6 @@ PCLIMP(int, PointCloud, readXYZfloat)(pcl::PointCloud<_PointT>::Ptr *self, THFlo
     
   const pcl::PointCloud<_PointT>& c = **self;
 
-  if (!THFloatTensor_isContiguous(output))
-    return -2;
-
   THFloatTensor_resize3d(output, c.height, c.width, 3);
   float *output_data = THFloatTensor_data(output);
   

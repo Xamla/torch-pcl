@@ -11,6 +11,27 @@
 
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
 
+PCLIMP(void, Filter, removeNaNFromPointCloud)(PointCloud_ptr *input, PointCloud_ptr *output, THIntTensor *index)
+{
+  std::vector<int> _index;
+  if (output)
+    pcl::removeNaNFromPointCloud(**input, **output, _index);
+  else
+    pcl::removeNaNFromPointCloud(**input, _index);    // dry run, does not modify the input point cloud
+  if (index)
+    vector2Tensor(_index, index);
+}
+
+#ifdef _PointT_HAS_NORMALS
+PCLIMP(void, Filter, removeNaNNormalsFromPointCloud)(PointCloud_ptr *input, PointCloud_ptr *output, THIntTensor *index)
+{
+  std::vector<int> _index;
+  pcl::removeNaNNormalsFromPointCloud(**input, **output, _index);
+  if (index)
+    vector2Tensor(_index, index);
+}
+#endif
+
 PCLIMP(void, Filter, passThrough)(PointCloud_ptr *input, PointCloud_ptr *output, const char* fieldName, float min, float max, bool negative)
 {
   pcl::PassThrough<_PointT> f;
@@ -95,16 +116,6 @@ PCLIMP(void, Filter, radiusOutlierRemoval)(PointCloud_ptr *input, PointCloud_ptr
   f.setMinNeighborsInRadius(minNeighbors);
   f.setNegative(negative);
   f.filter(**output);
-}
-
-PCLIMP(void, Filter, removeNaNFromPointCloud)(PointCloud_ptr *input, PointCloud_ptr *output, THIntTensor *index)
-{
-  std::vector<int> _index;
-  pcl::removeNaNFromPointCloud(**input, **output, _index);
-  if (index)
-  {
-    intVector2Tensor(_index, index);
-  }
 }
 
 #undef PointCloud_ptr

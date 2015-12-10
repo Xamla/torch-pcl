@@ -12,6 +12,7 @@ local function init()
 
   local method_names = {
     'removeNaNFromPointCloud',
+    'removeNaNNormalsFromPointCloud',
     'passThrough',
     'cropBox',
     'cropSphere',
@@ -55,6 +56,13 @@ end
 function filter.removeNaNFromPointCloud(input, indices, inplace)
   local f, output = check_input_type(input)
   f.removeNaNFromPointCloud(input:cdata(), output:cdata(), cdata(indices))
+  return output
+end
+
+function filter.removeNaNNormalsFromPointCloud(input, indices, inplace)
+  local f, output = check_input_type(input)
+  utils.check_arg('input', f.removeNaNNormalsFromPointCloud, 'unsupported point type')
+  f.removeNaNNormalsFromPointCloud(input:cdata(), output:cdata(), cdata(indices))
   return output
 end
 

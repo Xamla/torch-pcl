@@ -39,7 +39,7 @@ inline Eigen::Matrix<float, rows, cols> Tensor2Mat(THFloatTensor *tensor)
   return output;
 }
 
-template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<float, rows, cols, options>& m, THFloatTensor* output)
+template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<float, rows, cols, options> &m, THFloatTensor *output)
 {
   // create new storage that views into the matrix
   THFloatStorage* storage = NULL;
@@ -53,16 +53,13 @@ template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<float, r
   THFloatStorage_free(storage);   // tensor took ownership
 }
 
-template<int rows, int cols> void copyMatrix(const Eigen::Matrix<float, rows, cols>& m, THFloatTensor* output)
+template<int rows, int cols> void copyMatrix(const Eigen::Matrix<float, rows, cols> &m, THFloatTensor *output)
 {
   THFloatTensor_resize2d(output, m.rows(), m.cols());
-  THFloatTensor* output_ = THFloatTensor_newContiguous(output);
-  Eigen::Map<Eigen::Matrix<float, rows, cols, Eigen::RowMajor> >(THFloatTensor_data(output_)) = m;
-  THFloatTensor_set(output, output_);
-  THFloatTensor_free(output_);
+  Eigen::Map<Eigen::Matrix<float, rows, cols, Eigen::RowMajor> >(THFloatTensor_data(output)) = m;
 }
 
-inline void intVector2Tensor(const std::vector<int> &v, THIntTensor *output)
+inline void vector2Tensor(const std::vector<int> &v, THIntTensor *output)
 {
   THIntTensor_resize1d(output, v.size());
   std::copy(v.begin(), v.end(), THIntTensor_data(output));

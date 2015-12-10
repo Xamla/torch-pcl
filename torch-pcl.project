@@ -40,6 +40,8 @@
     <File Name="src/cloudviewer.cpp"/>
     <File Name="src/mesh_sampling.cpp"/>
     <File Name="src/CropSphere.h"/>
+    <File Name="src/xyzrgbnormal.cpp"/>
+    <File Name="src/normal.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
