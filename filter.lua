@@ -54,13 +54,13 @@ local function tensor(x)
 end
 
 function filter.removeNaNFromPointCloud(input, indices, inplace)
-  local f, output = check_input_type(input)
+  local f, output = check_input_type(input, inplace)
   f.removeNaNFromPointCloud(input:cdata(), output:cdata(), cdata(indices))
   return output
 end
 
 function filter.removeNaNNormalsFromPointCloud(input, indices, inplace)
-  local f, output = check_input_type(input)
+  local f, output = check_input_type(input, inplace)
   utils.check_arg('input', f.removeNaNNormalsFromPointCloud, 'unsupported point type')
   f.removeNaNNormalsFromPointCloud(input:cdata(), output:cdata(), cdata(indices))
   return output

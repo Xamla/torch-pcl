@@ -9,8 +9,8 @@ function TestBasics:testAddPointCloud()
   cloudA[1]:set(pcl.PointXYZ(4,5,6))
   cloudB[1]:set(pcl.PointXYZ(1,2,3))
   cloudA:add(cloudB)
-  luaunit.assertEquals(cloudA:height(), 1)
-  luaunit.assertEquals(cloudA:width(), 2)
+  luaunit.assertEquals(cloudA:getHeight(), 1)
+  luaunit.assertEquals(cloudA:getWidth(), 2)
   luaunit.assertEquals(cloudA:size(), 2)
   luaunit.assertEquals(cloudB[1].x, 1)
 end
@@ -81,7 +81,7 @@ function TestBasics:testLoadPCD()
   local pc = pcl.PointCloud(pcl.PointXYZ)
   luaunit.assertTrue(pc:empty())
   pc:loadPCDFile('../data/bunny.pcd')
-  luaunit.assertEquals(pc:width(), 397)
+  luaunit.assertEquals(pc:getWidth(), 397)
 end
 
 function TestBasics:testPCA()
@@ -122,6 +122,30 @@ function TestBasics:testFilterDefaultValues()
   pcl.filter.randomSample(p)
   pcl.filter.voxelGrid(p)
   
+end
+
+function TestBasics:testNaNRemoval()
+  local p = pcl.rand(100)
+  luaunit.assertEquals(p:size(), 100)
+  
+  p[1].x = 0/0
+  p:setIsDense(false)
+  luaunit.assertFalse(p:getIsDense())
+  
+  -- inplace first
+  p:removeNaN()
+  luaunit.assertEquals(p:size(), 99)
+  luaunit.assertTrue(p:getIsDense())
+  
+  p[1].x = 0/0
+  p:setIsDense(false)
+  luaunit.assertFalse(p:getIsDense())
+  
+  local p2 = pcl.filter.removeNaNFromPointCloud(p)
+  luaunit.assertEquals(p:size(), 99)
+  luaunit.assertFalse(p:getIsDense())
+  luaunit.assertEquals(p2:size(), 98)
+  luaunit.assertTrue(p2:getIsDense())
 end
 
 os.exit( luaunit.LuaUnit.run() )

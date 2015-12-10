@@ -12,9 +12,10 @@ local function init()
     "new",
     "clone",
     "delete",
-    "width",
-    "height",
-    "isDense",
+    "getWidth",
+    "getHeight",
+    "getIsDense",
+    "setIsDense",
     "at1D",
     "at2D",
     "clear",
@@ -137,16 +138,20 @@ function PointCloud:__newindex(idx, v)
   end
 end
 
-function PointCloud:width()
-  return self.f.width(self.c)
+function PointCloud:getWidth()
+  return self.f.getWidth(self.c)
 end
 
-function PointCloud:height()
-  return self.f.height(self.c)
+function PointCloud:getHeight()
+  return self.f.getHeight(self.c)
 end
 
-function PointCloud:isDense()
-  return self.f.isDense(self.c)
+function PointCloud:getIsDense()
+  return self.f.getIsDense(self.c)
+end
+
+function PointCloud:setIsDense(value)
+  self.f.setIsDense(self.c, value)
 end
 
 function PointCloud:clear()
@@ -261,5 +266,5 @@ function PointCloud:savePNGFile(fn, field_name)
 end
 
 function PointCloud:__tostring()
-  return string.format("PointCloud (w:%d, h:%d)", self:width(), self:height())
+  return string.format("PointCloud (w:%d, h:%d)", self:getWidth(), self:getHeight())
 end

@@ -21,19 +21,24 @@ PCLIMP(void, PointCloud, delete)(pcl::PointCloud<_PointT>::Ptr *self)
   delete self;
 }
 
-PCLIMP(uint32_t, PointCloud, width)(pcl::PointCloud<_PointT>::Ptr *self)
+PCLIMP(uint32_t, PointCloud, getWidth)(pcl::PointCloud<_PointT>::Ptr *self)
 {
   return (*self)->width;
 }
 
-PCLIMP(uint32_t, PointCloud, height)(pcl::PointCloud<_PointT>::Ptr *self)
+PCLIMP(uint32_t, PointCloud, getHeight)(pcl::PointCloud<_PointT>::Ptr *self)
 {
   return (*self)->height;
 }
 
-PCLIMP(bool, PointCloud, isDense)(pcl::PointCloud<_PointT>::Ptr *self)
+PCLIMP(bool, PointCloud, getIsDense)(pcl::PointCloud<_PointT>::Ptr *self)
 {
   return (*self)->is_dense;
+}
+
+PCLIMP(void, PointCloud, setIsDense)(pcl::PointCloud<_PointT>::Ptr *self, bool value)
+{
+  (*self)->is_dense = value;
 }
 
 PCLIMP(_PointT&, PointCloud, at1D)(pcl::PointCloud<_PointT>::Ptr *self, int n)

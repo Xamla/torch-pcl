@@ -56,9 +56,10 @@ local generic_declarations =
 PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_new(uint32_t width, uint32_t height);
 PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_clone(PointCloud_TYPE_KEY *self);
 void pcl_PointCloud_TYPE_KEY_delete(PointCloud_TYPE_KEY *self);
-uint32_t pcl_PointCloud_TYPE_KEY_width(PointCloud_TYPE_KEY *self);
-uint32_t pcl_PointCloud_TYPE_KEY_height(PointCloud_TYPE_KEY *self);
-bool pcl_PointCloud_TYPE_KEY_isDense(PointCloud_TYPE_KEY *self);
+uint32_t pcl_PointCloud_TYPE_KEY_getWidth(PointCloud_TYPE_KEY *self);
+uint32_t pcl_PointCloud_TYPE_KEY_getHeight(PointCloud_TYPE_KEY *self);
+bool pcl_PointCloud_TYPE_KEY_getIsDense(PointCloud_TYPE_KEY *self);
+void pcl_PointCloud_TYPE_KEY_setIsDense(PointCloud_TYPE_KEY *self, bool value);
 PointTYPE_KEY& pcl_PointCloud_TYPE_KEY_at1D(PointCloud_TYPE_KEY *self, int n);
 PointTYPE_KEY& pcl_PointCloud_TYPE_KEY_at2D(PointCloud_TYPE_KEY *self, int column, int row);
 void pcl_PointCloud_TYPE_KEY_clear(PointCloud_TYPE_KEY *self);
