@@ -35,7 +35,7 @@ Capture cloud point with OpenNI2 device and show result live in a cloud viewer w
 
 ```lua
 local pcl = require 'pcl'
-local s = pcl.OpenNI2Stream()
+local s = pcl.OpenNI2Stream(pcl.PointXYZRGBA)
 local v = pcl.CloudViewer()
 s:start()
 for i=1,1000 do

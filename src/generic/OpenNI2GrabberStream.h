@@ -12,14 +12,20 @@ public:
   OpenNI2GrabberStream(const std::string& device_id, int max_backlog = 30)
     : maxBacklog(max_backlog)
     , grabber(device_id)
+    , callbackRegistered(false)
   {
-    boost::function<void (const CloudPointConstPtr&)> cb =
-         boost::bind (&OpenNI2GrabberStream::grabber_callback, this, _1);
-      grabber.registerCallback(cb);
   }
 
   void start()
   {
+    if (!callbackRegistered)
+    {
+      boost::function<void (const CloudPointConstPtr&)> cb =
+         boost::bind (&OpenNI2GrabberStream::grabber_callback, this, _1);
+      grabber.registerCallback(cb);
+      callbackRegistered = true;
+    }
+    
     boost::unique_lock<boost::mutex> lock(queueLock);
     if (!grabber.isRunning())
       grabber.start();
@@ -72,12 +78,18 @@ public:
     return CloudPointPtr();
   }
   
+  pcl::io::OpenNI2Grabber& getGrabber()
+  {
+    return grabber;
+  }
+  
 private:  
   int maxBacklog;
   std::deque<CloudPointPtr> queue;
   boost::mutex queueLock;
   boost::condition_variable framesAvailable;
   pcl::io::OpenNI2Grabber grabber;
+  bool callbackRegistered;
   
   void grabber_callback(const CloudPointConstPtr &cloud)
   {

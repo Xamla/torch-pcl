@@ -12,7 +12,9 @@ local function init()
   local base_name = 'pcl_OpenNI2Stream_XYZRGBA_'
   
   local supported_types = {}
-  supported_types[pcl.PointXYZRGBA] = "XYZRGBA"
+  supported_types[pcl.PointXYZ] = "XYZ"
+  supported_types[pcl.PointXYZI] = "XYZI"
+  supported_types[pcl.PointXYZRGBA] = "XYZRGBA" 
   
   for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods("pcl_OpenNI2Stream_TYPE_KEY_", OpenNI2Stream_method_names, v)
@@ -21,10 +23,10 @@ end
 
 init()
 
-function OpenNI2Stream:__init(device_id, max_backlog)
+function OpenNI2Stream:__init(pointType, device_id, max_backlog)
   device_id = device_id or ''
   max_backlog = max_backlog or 30
-  self.pointType = pcl.PointXYZRGBA
+  self.pointType = pointType or pcl.PointXYZ
   self.f = func_by_type[self.pointType]
   self.o = self.f.new(device_id, max_backlog)
   ffi.gc(self.o, self.f.delete)

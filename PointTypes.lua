@@ -24,6 +24,7 @@ typedef struct PointXYZRGBNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struc
 typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal; \z
 typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;" ..
 [[
+typedef struct OpenNI2CameraParameters { double focal_length_x; double focal_length_y; double principal_point_x; double principal_point_y; } OpenNI2CameraParameters;
 typedef struct PointCloud_XYZ {} PointCloud_XYZ;
 typedef struct PointCloud_XYZI {} PointCloud_XYZI;
 typedef struct PointCloud_XYZRGBA {} PointCloud_XYZRGBA;
@@ -35,12 +36,6 @@ void* pcl_CloudViewer_new(const char *window_name);
 void pcl_CloudViewer_delete(void *self);
 bool pcl_CloudViewer_wasStopped(void *self, int millis_to_wait);
 
-void* pcl_OpenNI2Stream_XYZRGBA_new(const char* device_id, int max_backlog);
-void pcl_OpenNI2Stream_XYZRGBA_delete(void* self);
-void pcl_OpenNI2Stream_XYZRGBA_start(void* self);
-void pcl_OpenNI2Stream_XYZRGBA_stop(void* self);
-void* pcl_OpenNI2Stream_XYZRGBA_read(void* self, int timeout_milliseconds);
-
 void pcl_Primitive_XYZ_createSphere(PointCloud_XYZ *output, double radius, double thetaRes, double phiRes, int samples, float resolution);
 void pcl_Primitive_XYZ_createCube(PointCloud_XYZ *output, double x, double y, double z, int samples, float resolution);
 void pcl_Primitive_XYZ_createCylinder(PointCloud_XYZ *output, double height, double radius, int facets, int samples, float resolution);
@@ -48,6 +43,7 @@ void pcl_Primitive_XYZ_createCone(PointCloud_XYZ *output, double height, double 
 void pcl_Primitive_XYZ_createPlatonicSolid(PointCloud_XYZ *output, int solidType, int samples, float resolution);
 void pcl_Primitive_XYZ_createPlane(PointCloud_XYZ *output, double x1, double y1, double z1, double x2, double y2, double z2, int samples, float resolution);
 void pcl_Primitive_XYZ_createDisk(PointCloud_XYZ *output, double innerRadius, double outerRadius, int radialResolution,int samples, float resolution);
+
 ]]
 ffi.cdef(cdef)
 
@@ -123,6 +119,18 @@ void pcl_ICP_TYPE_KEY_setEuclideanFitnessEpsilon(ICP_TYPE_KEY *self, double epsi
 void pcl_ICP_TYPE_KEY_getFinalTransformation(ICP_TYPE_KEY *self, THFloatTensor* output);
 double pcl_ICP_TYPE_KEY_getFitnessScore(ICP_TYPE_KEY *self, double max_range);
 void pcl_ICP_TYPE_KEY_align(ICP_TYPE_KEY *self, PointCloud_TYPE_KEY* output, void* guess);
+
+void* pcl_OpenNI2Stream_TYPE_KEY_new(const char* device_id, int max_backlog);
+void pcl_OpenNI2Stream_TYPE_KEY_delete(void* self);
+void pcl_OpenNI2Stream_TYPE_KEY_start(void* self);
+void pcl_OpenNI2Stream_TYPE_KEY_stop(void* self);
+void* pcl_OpenNI2Stream_TYPE_KEY_read(void* self, int timeout_milliseconds);
+void pcl_OpenNI2Stream_TYPE_KEY_getRGBCameraIntrinsics(void *self, OpenNI2CameraParameters& p);
+void pcl_OpenNI2Stream_TYPE_KEY_setRGBCameraIntrinsics(void *self, const OpenNI2CameraParameters& p);
+void pcl_OpenNI2Stream_TYPE_KEY_getDepthCameraIntrinsics(void *self, OpenNI2CameraParameters& p);
+void pcl_OpenNI2Stream_TYPE_KEY_setDepthCameraIntrinsics(void *self, const OpenNI2CameraParameters& p);
+const char* pcl_OpenNI2Stream_TYPE_KEY_getName(void *self);
+float pcl_OpenNI2Stream_TYPE_KEY_getFramesPerSecond(void *self);
 ]]
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'Normal', 'XYZINormal', 'XYZRGBNormal' }

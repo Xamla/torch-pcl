@@ -4,3 +4,4 @@
 #include "generic.cpp"
 #include "generic/cloudviewer.cpp"
 #include "mesh_sampling.cpp"
+#include "generic/openni2.cpp"

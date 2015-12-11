@@ -3,3 +3,4 @@
 #include "utils.h"
 #include "generic.cpp"
 #include "generic/cloudviewer.cpp"
+#include "generic/openni2.cpp"

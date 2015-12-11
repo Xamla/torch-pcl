@@ -43,6 +43,7 @@
     <File Name="src/xyzrgbnormal.cpp"/>
     <File Name="src/normal.cpp"/>
     <File Name="src/xyzinormal.cpp"/>
+    <File Name="src/openni2.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
