@@ -20,15 +20,11 @@ local function init()
     'statisticalOutlierRemoval',
     'randomSample',
     'medianFilter',
-    'radiusOutlierRemoval'
+    'radiusOutlierRemoval',
+    'voxelHistogram'
   }
 
-  local supported_types = {}
-  supported_types[pcl.PointXYZ] = 'XYZ'
-  supported_types[pcl.PointXYZI] = 'XYZI'
-  supported_types[pcl.PointXYZRGBA] = 'XYZRGBA'
-  
-  for k,v in pairs(supported_types) do
+  for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_Filter_TYPE_KEY_", method_names, v)
   end    
 end
@@ -138,4 +134,12 @@ function filter.radiusOutlierRemoval(input, radius, minNeighbors, negative)
   local f, output = check_input_type(input)
   f.radiusOutlierRemoval(input:cdata(), output:cdata(), radius or 1, minNeighbors or 1, negative or false)
   return output
+end
+
+function filter.voxelHistogram(input, w, h, t, center)
+  local f = check_input_type(input, true)
+  local output = torch.FloatTensor()
+  local origin = torch.FloatTensor()
+  local voxel_size = f.voxelHistogram(input:cdata(), output:cdata(), w, h, t, center or false, origin:cdata());
+  return output, origin, voxel_size
 end

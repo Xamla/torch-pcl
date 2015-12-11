@@ -97,6 +97,7 @@ void pcl_Filter_TYPE_KEY_statisticalOutlierRemoval(PointCloud_TYPE_KEY *input, P
 void pcl_Filter_TYPE_KEY_randomSample(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, unsigned int count);
 void pcl_Filter_TYPE_KEY_medianFilter(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int windowSize);
 void pcl_Filter_TYPE_KEY_radiusOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, double radius, int minNeighbors, bool negative);
+void pcl_Filter_TYPE_KEY_voxelHistogram(PointCloud_TYPE_KEY *input, THFloatTensor *output, int w, int h, int t, bool center, THFloatTensor *origin);
 
 typedef struct PCA_TYPE_KEY {} PCA_TYPE_KEY;
 PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_new(bool basis_only);

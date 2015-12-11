@@ -21,13 +21,8 @@ local function init()
     'project_cloud',
     'reconstruct_cloud'
   }
-  
-  local supported_types = {}
-  supported_types[pcl.PointXYZ] = 'XYZ'
-  supported_types[pcl.PointXYZI] = 'XYZI'
-  supported_types[pcl.PointXYZRGBA] = 'XYZRGBA'
-  
-  for k,v in pairs(supported_types) do
+
+  for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_PCA_TYPE_KEY_", PCA_method_names, v)
   end    
 end

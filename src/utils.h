@@ -67,7 +67,8 @@ template<int rows, int cols> void copyMatrix(const Eigen::Matrix<float, rows, co
 {
   THFloatTensor_resize2d(output, m.rows(), m.cols());
   THFloatTensor* output_ = THFloatTensor_newContiguous(output);
-  Eigen::Map<Eigen::Matrix<float, rows, cols, Eigen::RowMajor> >(THFloatTensor_data(output)) = m;
+  // there are strange static-asserts in Eigen to disallow specifying RowMajor for vectors...
+  Eigen::Map<Eigen::Matrix<float, rows, cols, (rows == 1 || cols == 1) ? Eigen::ColMajor : Eigen::RowMajor> >(THFloatTensor_data(output)) = m;
   THFloatTensor_freeCopyTo(output_, output);
 }
 
