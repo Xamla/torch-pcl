@@ -246,7 +246,7 @@ function PointCloud:loadPCDFile(fn)
 end
 
 function PointCloud:savePCDFile(fn, binary)
-  return self.f.savePCDFile(self.c, fn, binary)
+  return self.f.savePCDFile(self.c, fn, binary or true)
 end
 
 function PointCloud:loadPLYFile(fn)
@@ -254,7 +254,7 @@ function PointCloud:loadPLYFile(fn)
 end
 
 function PointCloud:savePLYFile(fn, binary)
-  return self.f.savePLYFile(self.c, fn, binary)
+  return self.f.savePLYFile(self.c, fn, binary or true)
 end
 
 function PointCloud:loadOBJFile(fn)

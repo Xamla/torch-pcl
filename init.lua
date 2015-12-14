@@ -20,11 +20,11 @@ function pcl.rand(width, height, pointType)
   else
     height = height or 1
   end
-  local pc = pcl.PointCloud(pointType or pcl.PointXYZ, width, height)
+  local c = pcl.PointCloud(pointType or pcl.PointXYZ, width, height)
   if width > 0 and height > 0 then
-    pc:points()[{{},{},{1,3}}]:rand(height, width, 3)
+    c:points()[{{},{},{1,3}}]:rand(height, width, 3)
   end
-  return pc
+  return c
 end
 
 function pcl.isPointCloud(obj)
@@ -37,6 +37,18 @@ function pcl.isPoint(obj)
     return ok and pcl.isPointType(t)
   end
   return false
+end
+
+function pcl.loadPCDFile(filename, pointType)
+  local c = pcl.PointCloud(pointType or pcl.PointXYZ)
+  c:loadPCDFile(filename)
+  return c
+end
+
+function pcl.loadPLYFile(filename, pointType)
+  local c = pcl.PointCloud(pointType or pcl.PointXYZ)
+  c:loadPLYFile(filename)
+  return c
 end
 
 function pcl.transformCloud(source, destination, transform)
