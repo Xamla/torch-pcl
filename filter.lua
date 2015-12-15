@@ -136,10 +136,10 @@ function filter.radiusOutlierRemoval(input, radius, minNeighbors, negative)
   return output
 end
 
-function filter.voxelHistogram(input, w, h, t, center)
+function filter.voxelHistogram(input, w, h, t, voxelSize, origin, center)
   local f = check_input_type(input, true)
   local output = torch.FloatTensor()
-  local origin = torch.FloatTensor()
-  local voxel_size = f.voxelHistogram(input:cdata(), output:cdata(), w, h, t, center or false, origin:cdata());
-  return output, origin, voxel_size
+  origin = origin or {0,0,0}
+  local count = f.voxelHistogram(input:cdata(), output:cdata(), w, h, t, voxelSize or 1, origin[1], origin[2], origin[3], center or false)
+  return output, count
 end

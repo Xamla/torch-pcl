@@ -150,14 +150,17 @@ end
 
 function TestBasics:testVoxelHistogram()
   local p = pcl.rand(1000)
-  local a,b,c = pcl.filter.voxelHistogram(p, 1, 1, 1)
-  local s = a:size()
-  luaunit.assertAlmostEquals(a:sum(), 1000, 0.01)
+  local o,c = pcl.filter.voxelHistogram(p, 1, 1, 1, 1)
+  local s = o:size()
+  luaunit.assertEquals(c, 1000)
+  luaunit.assertAlmostEquals(o:sum(), 1000, 0.01)
   luaunit.assertTrue(s[1] == 1 and s[2] == 1 and s[3] == 1)
   
-  local a,b,c = pcl.filter.voxelHistogram(p, 5, 5, 5)
-  luaunit.assertAlmostEquals(a:sum(), 1000, 0.01)
-  luaunit.assertTrue(a:max() < 80)
+  local o,c = pcl.filter.voxelHistogram(p, 5, 5, 5, 1.0/5, {0,0,0}, true)
+  luaunit.assertAlmostEquals(o:sum(), 1000/8, 50)
+  luaunit.assertAlmostEquals(o:sum(), c, 0.1)
+  luaunit.assertAlmostEquals(o[{{4,5},{},{}}]:sum(), 0, 0.1)
+  luaunit.assertTrue(o:max() < 30)
 end
 
 os.exit( luaunit.LuaUnit.run() )

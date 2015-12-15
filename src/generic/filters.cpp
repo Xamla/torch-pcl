@@ -118,7 +118,9 @@ PCLIMP(void, Filter, radiusOutlierRemoval)(PointCloud_ptr *input, PointCloud_ptr
   f.filter(**output);
 }
 
-PCLIMP(float, Filter, voxelHistogram)(PointCloud_ptr *input, THFloatTensor *output, int w, int h, int t, bool center, THFloatTensor *origin)
+PCLIMP(int, Filter, voxelHistogram)(PointCloud_ptr *input, THFloatTensor *output, 
+  int w = 48, int h = 48, int t = 48, float voxelSize = 1, 
+  float originX = 0, float originY = 0, float originZ = 0, bool center = false)
 {
   if (!input || !*input)
     PCL_THROW_EXCEPTION(TorchPclException, "invalid input cloud");
@@ -128,6 +130,9 @@ PCLIMP(float, Filter, voxelHistogram)(PointCloud_ptr *input, THFloatTensor *outp
   
   if (w <= 0 || h <= 0 || t <= 0)
     PCL_THROW_EXCEPTION(TorchPclException, "invalid volume specified");
+    
+  if (voxelSize <= 0)
+    PCL_THROW_EXCEPTION(TorchPclException, "voxel size must be positive");
   
   const pcl::PointCloud<_PointT>& cloud = **input;
   
@@ -136,21 +141,15 @@ PCLIMP(float, Filter, voxelHistogram)(PointCloud_ptr *input, THFloatTensor *outp
   THFloatTensor_zero(output_);
   float* data = THFloatTensor_data(output_);
   
-  Eigen::Vector4f lo, hi;
-  pcl::getMinMax3D(cloud, lo, hi);
-  Eigen::Vector4f sz = hi - lo;
-  float voxel_size = std::max(sz[0] / w, std::max(sz[1] / h, sz[2] / t));
-  
   const size_t zstride = static_cast<size_t>(THFloatTensor_stride(output_, 0));
   const size_t ystride = static_cast<size_t>(THFloatTensor_stride(output_, 1));
   const size_t xstride = static_cast<size_t>(THFloatTensor_stride(output_, 2));
 
   // offsets
-  Eigen::Vector4f offset;
+  Eigen::Vector4f offset(Eigen::Vector4f::Zero());
   if (center)
-    offset = (Eigen::Vector4f(w, h, t, 1) * voxel_size - sz) * 0.5;  else
-    offset = Eigen::Vector4f::Zero();
-
+    offset = -Eigen::Vector4f(w, h, t, 1) * 0.5;
+  int count = 0;
   for (pcl::PointCloud<_PointT>::const_iterator i = cloud.begin(); i != cloud.end(); ++i)
   {
     const _PointT& p = *i;
@@ -158,21 +157,23 @@ PCLIMP(float, Filter, voxelHistogram)(PointCloud_ptr *input, THFloatTensor *outp
       continue;
     
     // compute index
-    int x = std::max(0, std::min(static_cast<int>((p.x - lo[0] + offset[0]) / voxel_size), w-1));
-    int y = std::max(0, std::min(static_cast<int>((p.y - lo[1] + offset[1]) / voxel_size), h-1));
-    int z = std::max(0, std::min(static_cast<int>((p.z - lo[2] + offset[2]) / voxel_size), t-1));
+    int x = static_cast<int>(std::floor((p.x - originX) / voxelSize + offset[0]));
+    if (x < 0 || x >= w)
+      continue;
     
-    data[z * zstride + y * ystride + x * xstride] += 1;  }
-  
-  if (origin)
-  {
-    Eigen::Matrix<float, 4, 1> origin_ = lo - offset;
-    copyMatrix<4, 1>(origin_, origin);
-  }
+    int y = static_cast<int>(std::floor((p.y - originY) / voxelSize + offset[1]));
+    if (y < 0 || y >= h)
+      continue;
+      
+    int z = static_cast<int>(std::floor((p.z - originZ) / voxelSize + offset[2]));
+    if (z < 0 || z >= t)
+      continue;
+        
+    data[z * zstride + y * ystride + x * xstride] += 1;
+    ++count;  }
   
   THFloatTensor_freeCopyTo(output_, output);
-  
-  return voxel_size;
+  return count;
 }
 
 #undef PointCloud_ptr
