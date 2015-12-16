@@ -80,4 +80,12 @@ inline void vector2Tensor(const std::vector<int> &v, THIntTensor *output)
   THIntTensor_freeCopyTo(output_, output);
 }
 
+inline void vector2Tensor(const std::vector<float> &v, THFloatTensor *output)
+{
+  THFloatTensor_resize1d(output, v.size());
+  THFloatTensor* output_ = THFloatTensor_newContiguous(output);
+  std::copy(v.begin(), v.end(), THFloatTensor_data(output_));
+  THFloatTensor_freeCopyTo(output_, output);
+}
+
 #endif

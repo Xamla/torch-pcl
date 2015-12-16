@@ -3,3 +3,5 @@
 #include "generic/filters.cpp"
 #include "generic/pca.cpp"
 #include "generic/icp.cpp"
+#include "generic/kdtree.cpp"
+#include "generic/octree.cpp"

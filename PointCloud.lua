@@ -194,6 +194,10 @@ function PointCloud:points()
   return t
 end
 
+function PointCloud:pointsXYZ()
+  return self:points()[{{},{},{1,3}}]
+end
+
 function PointCloud:sensorOrigin()
   local t = torch.FloatTensor()
   local s = self.f.sensorOrigin(self.c)

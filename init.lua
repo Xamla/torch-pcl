@@ -12,6 +12,8 @@ require 'pcl.ICP'
 require 'pcl.affine'
 require 'pcl.primitive'
 require 'pcl.filter'
+require 'pcl.KdTreeFLANN'
+require 'pcl.OctreePointCloudSearch'
 
 function pcl.rand(width, height, pointType)
   if pcl.isPointType(height) or type(height) == 'string' then
@@ -22,7 +24,7 @@ function pcl.rand(width, height, pointType)
   end
   local c = pcl.PointCloud(pointType or pcl.PointXYZ, width, height)
   if width > 0 and height > 0 then
-    c:points()[{{},{},{1,3}}]:rand(height, width, 3)
+    c:pointsXYZ():rand(height, width, 3)
   end
   return c
 end
