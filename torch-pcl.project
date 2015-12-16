@@ -29,6 +29,8 @@
       <File Name="src/generic/pca.cpp"/>
       <File Name="src/generic/PointCloud.cpp"/>
       <File Name="src/generic/icp.cpp"/>
+      <File Name="src/generic/kdtree.cpp"/>
+      <File Name="src/generic/octree.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -64,6 +66,8 @@
     <File Name="ICP.lua"/>
     <File Name="PointTypes.lua"/>
     <File Name="filter.lua"/>
+    <File Name="KdTreeFLANN.lua"/>
+    <File Name="OctreePointCloudSearch.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>
