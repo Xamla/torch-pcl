@@ -53,7 +53,7 @@ init()
 
 function PointCloud:__init(pointType, width, height)
   if type(pointType) == 'number' then
-    widthr = pointType
+    width = pointType
     pointType = pcl.PointXYZ
   end
   

@@ -95,7 +95,7 @@ PCLIMP(int, OctreePointCloudSearch, nearestKSearch)(Octree_ptr *self, const _Poi
   return found;
 }
 
-PCLIMP(int, OctreePointCloudSearch, radiusSearch)(Octree_ptr *self, const _PointT &point, double radius, unsigned int max_nn, THIntTensor *indices, THFloatTensor *squaredDistances)
+PCLIMP(int, OctreePointCloudSearch, radiusSearch)(Octree_ptr *self, const _PointT &point, double radius, THIntTensor *indices, THFloatTensor *squaredDistances, unsigned int max_nn)
 {
   std::vector<int> indices_;
   std::vector<float> squaredDistances_;

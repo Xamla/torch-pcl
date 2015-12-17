@@ -163,4 +163,34 @@ function TestBasics:testVoxelHistogram()
   luaunit.assertTrue(o:max() < 30)
 end
 
+function TestBasics:testKdTreeFLANN()
+  local cloud = pcl.rand(1000)
+  local kd = pcl.KdTreeFLANN()
+  kd:setInputCloud(cloud)
+  
+  local indices = torch.IntTensor()
+  local squaredDistances = torch.FloatTensor()
+  
+  local function dist(a,b)
+    return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z)
+  end
+  
+  local p = pcl.PointXYZ(0.5, 0.5, 0.5)
+  kd:nearestKSearch(p, 10, indices, squaredDistances)
+  luaunit.assertEquals(10, indices:size(1))
+  luaunit.assertEquals(10, squaredDistances:size(1))
+  for i=1,10 do
+    luaunit.assertAlmostEquals(dist(cloud[indices[i]+1], p), squaredDistances[i], 0.01)
+  end
+  luaunit.assertTrue(squaredDistances:mean() < 0.1)
+  
+  local found = kd:radiusSearch(p, 0.2, indices, squaredDistances)
+  luaunit.assertEquals(found, indices:nElement())
+  luaunit.assertTrue(found > 0)
+  for i=1,10 do
+    luaunit.assertAlmostEquals(dist(cloud[indices[i]+1], p), squaredDistances[i], 0.01)
+    luaunit.assertTrue(dist(cloud[indices[i]+1], p) < 0.201)
+  end
+end
+
 os.exit( luaunit.LuaUnit.run() )

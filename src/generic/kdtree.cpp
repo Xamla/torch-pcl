@@ -72,7 +72,7 @@ PCLIMP(int, KdTreeFLANN, nearestKSearch)(KdTreeFLANN_ptr *self, const _PointT &p
   return found;
 }
 
-PCLIMP(int, KdTreeFLANN, radiusSearch)(KdTreeFLANN_ptr *self, const _PointT &point, double radius, unsigned int max_nn, THIntTensor *indices, THFloatTensor *squaredDistances)
+PCLIMP(int, KdTreeFLANN, radiusSearch)(KdTreeFLANN_ptr *self, const _PointT &point, double radius, THIntTensor *indices, THFloatTensor *squaredDistances, unsigned int max_nn)
 {
   std::vector<int> indices_;
   std::vector<float> squaredDistances_;
