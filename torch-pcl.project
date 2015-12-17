@@ -31,6 +31,7 @@
       <File Name="src/generic/icp.cpp"/>
       <File Name="src/generic/kdtree.cpp"/>
       <File Name="src/generic/octree.cpp"/>
+      <File Name="src/generic/incremental_icp.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -89,7 +90,7 @@
       <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="/home/koepf/torch/install/include"/>
-        <IncludePath Value="/usr/include/pcl-1.7"/>
+        <IncludePath Value="/usr/local/include/pcl-1.8"/>
         <IncludePath Value="/usr/include/eigen3"/>
         <IncludePath Value="/usr/include/vtk-5.8"/>
       </Compiler>

@@ -164,8 +164,8 @@ function TestBasics:testVoxelHistogram()
 end
 
 local function sqaure_dist(a,b)
-    return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z)
-  end
+  return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z)
+end
   
 function TestBasics:testKdTreeFLANN()
   local cloud = pcl.rand(1000)
