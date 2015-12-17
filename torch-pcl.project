@@ -31,7 +31,7 @@
       <File Name="src/generic/icp.cpp"/>
       <File Name="src/generic/kdtree.cpp"/>
       <File Name="src/generic/octree.cpp"/>
-      <File Name="src/generic/incremental_icp.cpp"/>
+      <File Name="src/generic/incremental_registration.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>

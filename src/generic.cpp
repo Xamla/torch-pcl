@@ -3,6 +3,6 @@
 #include "generic/filters.cpp"
 #include "generic/pca.cpp"
 #include "generic/icp.cpp"
-#include "generic/incremental_icp.cpp"
+#include "generic/incremental_registration.cpp"
 #include "generic/kdtree.cpp"
 #include "generic/octree.cpp"
