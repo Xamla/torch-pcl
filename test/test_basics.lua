@@ -163,6 +163,10 @@ function TestBasics:testVoxelHistogram()
   luaunit.assertTrue(o:max() < 30)
 end
 
+local function sqaure_dist(a,b)
+    return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z)
+  end
+  
 function TestBasics:testKdTreeFLANN()
   local cloud = pcl.rand(1000)
   local kd = pcl.KdTreeFLANN()
@@ -171,16 +175,12 @@ function TestBasics:testKdTreeFLANN()
   local indices = torch.IntTensor()
   local squaredDistances = torch.FloatTensor()
   
-  local function dist(a,b)
-    return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z)
-  end
-  
   local p = pcl.PointXYZ(0.5, 0.5, 0.5)
   kd:nearestKSearch(p, 10, indices, squaredDistances)
   luaunit.assertEquals(10, indices:size(1))
   luaunit.assertEquals(10, squaredDistances:size(1))
   for i=1,10 do
-    luaunit.assertAlmostEquals(dist(cloud[indices[i]+1], p), squaredDistances[i], 0.01)
+    luaunit.assertAlmostEquals(sqaure_dist(cloud[indices[i]+1], p), squaredDistances[i], 0.01)
   end
   luaunit.assertTrue(squaredDistances:mean() < 0.1)
   
@@ -188,8 +188,37 @@ function TestBasics:testKdTreeFLANN()
   luaunit.assertEquals(found, indices:nElement())
   luaunit.assertTrue(found > 0)
   for i=1,10 do
-    luaunit.assertAlmostEquals(dist(cloud[indices[i]+1], p), squaredDistances[i], 0.01)
-    luaunit.assertTrue(dist(cloud[indices[i]+1], p) < 0.201)
+    luaunit.assertAlmostEquals(sqaure_dist(cloud[indices[i]+1], p), squaredDistances[i], 0.01)
+    luaunit.assertTrue(sqaure_dist(cloud[indices[i]+1], p) < 0.201*0.201)
+  end
+end
+
+function TestBasics:testOctreePointCloudSearch()
+  local cloud = pcl.rand(1000)
+  local ot = pcl.OctreePointCloudSearch(0.001)
+  ot:setInputCloud(cloud)
+  ot:addPointsFromInputCloud()
+  
+  luaunit.assertTrue(ot:getLeafCount() > 950)
+  
+  local indices = torch.IntTensor()
+  local squaredDistances = torch.FloatTensor()
+  
+  local p = pcl.PointXYZ(0.5, 0.5, 0.5)
+  ot:nearestKSearch(p, 10, indices, squaredDistances)
+  luaunit.assertEquals(10, indices:size(1))
+  luaunit.assertEquals(10, squaredDistances:size(1))
+  for i=1,10 do
+    luaunit.assertAlmostEquals(sqaure_dist(cloud[indices[i]+1], p), squaredDistances[i], 0.01)
+  end
+  luaunit.assertTrue(squaredDistances:mean() < 0.1)
+  
+  local found = ot:radiusSearch(p, 0.2, indices, squaredDistances)
+  luaunit.assertEquals(found, indices:nElement())
+  luaunit.assertTrue(found > 0)
+  for i=1,10 do
+    luaunit.assertAlmostEquals(sqaure_dist(cloud[indices[i]+1], p), squaredDistances[i], 0.01)
+    luaunit.assertTrue(sqaure_dist(cloud[indices[i]+1], p) < 0.201*0.201)
   end
 end
 

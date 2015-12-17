@@ -148,8 +148,8 @@ void pcl_OctreePointCloudSearch_TYPE_KEY_deleteTree(OctreePointCloudSearch_TYPE_
 void pcl_OctreePointCloudSearch_TYPE_KEY_setMaxVoxelIndex(OctreePointCloudSearch_TYPE_KEY *self, unsigned int value);
 void pcl_OctreePointCloudSearch_TYPE_KEY_setTreeDepth(OctreePointCloudSearch_TYPE_KEY *self, unsigned int value);
 unsigned int pcl_OctreePointCloudSearch_TYPE_KEY_getTreeDepth(OctreePointCloudSearch_TYPE_KEY *self);
-size_t pcl_OctreePointCloudSearch_TYPE_KEY_getLeafCount(OctreePointCloudSearch_TYPE_KEY *self);
-size_t pcl_OctreePointCloudSearch_TYPE_KEY_getBranchCount(OctreePointCloudSearch_TYPE_KEY *self);
+unsigned int pcl_OctreePointCloudSearch_TYPE_KEY_getLeafCount(OctreePointCloudSearch_TYPE_KEY *self);
+unsigned int pcl_OctreePointCloudSearch_TYPE_KEY_getBranchCount(OctreePointCloudSearch_TYPE_KEY *self);
 int pcl_OctreePointCloudSearch_TYPE_KEY_nearestKSearch(OctreePointCloudSearch_TYPE_KEY *self, const PointTYPE_KEY &point, int k, THIntTensor *indices, THFloatTensor *squaredDistances);
 int pcl_OctreePointCloudSearch_TYPE_KEY_radiusSearch(OctreePointCloudSearch_TYPE_KEY *self, const PointTYPE_KEY &point, double radius, THIntTensor *indices, THFloatTensor *squaredDistances, unsigned int max_nn);
 

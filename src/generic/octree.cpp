@@ -69,14 +69,14 @@ PCLIMP(unsigned int, OctreePointCloudSearch, getTreeDepth)(Octree_ptr *self)
   return (*self)->getTreeDepth();
 }
 
-PCLIMP(size_t, OctreePointCloudSearch, getLeafCount)(Octree_ptr *self)
+PCLIMP(unsigned int, OctreePointCloudSearch, getLeafCount)(Octree_ptr *self)
 {
-  return (*self)->getLeafCount();
+  return static_cast<unsigned int>((*self)->getLeafCount());
 }
 
-PCLIMP(size_t, OctreePointCloudSearch, getBranchCount)(Octree_ptr *self)
+PCLIMP(unsigned int, OctreePointCloudSearch, getBranchCount)(Octree_ptr *self)
 {
-  return (*self)->getBranchCount();
+  return static_cast<unsigned int>((*self)->getBranchCount());
 }
 
 PCLIMP(int, OctreePointCloudSearch, nearestKSearch)(Octree_ptr *self, const _PointT &point, int k, THIntTensor *indices, THFloatTensor *squaredDistances)
