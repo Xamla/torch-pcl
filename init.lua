@@ -64,4 +64,12 @@ function pcl.getMinMax3D(cloud)
   return cloud:getMinMax3D()
 end
 
+function pcl.compute3DCentroid(cloud)
+  return cloud:compute3DCentroid()
+end
+
+function pcl.computeCovarianceMatrix(cloud, centroid)
+  return cloud:computeCovarianceMatrix(centroid)
+end
+
 return pcl

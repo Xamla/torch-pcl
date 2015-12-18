@@ -1,9 +1,11 @@
 #define _PointT pcl::PointXYZRGBA
+#define _PointNormalT pcl:PointXYZRGBANormal
 #define TYPE_KEY _XYZRGBA_
 #include "utils.h"
 #include "generic.cpp"
 #include "generic/cloudviewer.cpp"
 #include "generic/openni2.cpp"
+#include "generic/normal_estimation.cpp"
 
 PCLIMP(void, PointCloud, readRGBAbyte)(pcl::PointCloud<_PointT>::Ptr *self, THByteTensor* output)
 {

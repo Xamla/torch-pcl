@@ -53,4 +53,8 @@ function utils.check_arg(argName, check, errorMsg)
   end
 end
 
+function utils.opt(t)
+  return t and t:cdata() or ffi.NULL
+end
+
 return utils

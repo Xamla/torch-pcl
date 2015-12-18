@@ -22,21 +22,39 @@ class TorchPclException : public pcl::PCLException
 
 inline Eigen::Vector4f Tensor2Vec4f(THFloatTensor *tensor)
 {
-  return Eigen::Vector4f(
-    THFloatTensor_get1d(tensor, 0),
-    THFloatTensor_get1d(tensor, 1),
-    THFloatTensor_get1d(tensor, 2),
-    THFloatTensor_get1d(tensor, 3)
+  THFloatTensor *tensor_ = tensor;
+  if (THFloatTensor_nDimension(tensor) > 1)
+  {
+    tensor_ = THFloatTensor_new();
+    THFloatTensor_squeeze(tensor_, tensor);
+  }
+  Eigen::Vector4f v(
+    THFloatTensor_get1d(tensor_, 0),
+    THFloatTensor_get1d(tensor_, 1),
+    THFloatTensor_get1d(tensor_, 2),
+    THFloatTensor_get1d(tensor_, 3)
   );
+  if (tensor != tensor_)
+    THFloatTensor_free(tensor_);
+  return v;
 }
 
 inline Eigen::Vector3f Tensor2Vec3f(THFloatTensor *tensor)
 {
-  return Eigen::Vector3f(
-    THFloatTensor_get1d(tensor, 0),
-    THFloatTensor_get1d(tensor, 1),
-    THFloatTensor_get1d(tensor, 2)
+  THFloatTensor *tensor_ = tensor;
+  if (THFloatTensor_nDimension(tensor) > 1)
+  {
+    tensor_ = THFloatTensor_new();
+    THFloatTensor_squeeze(tensor_, tensor);
+  }
+  Eigen::Vector3f v(
+    THFloatTensor_get1d(tensor_, 0),
+    THFloatTensor_get1d(tensor_, 1),
+    THFloatTensor_get1d(tensor_, 2)
   );
+  if (tensor != tensor_)
+    THFloatTensor_free(tensor_);
+  return v;
 }
 
 template<int rows, int cols>

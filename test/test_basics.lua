@@ -264,4 +264,13 @@ function TestBasics:testOctreeSearch()
   end
 end
 
+function TestBasics:testCovariance()
+  local cloud = pcl.rand(1000)
+  local centroid = cloud:compute3DCentroid()
+  luaunit.assertAlmostEquals(centroid[{{1,3}}]:norm(), 0.86, 0.1)
+  
+  local cov = cloud:computeCovarianceMatrix(centroid)
+  print(cov)
+end
+
 os.exit( luaunit.LuaUnit.run() )

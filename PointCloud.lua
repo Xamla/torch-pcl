@@ -31,6 +31,8 @@ local function init()
     "sensorOrigin", 
     "transform",
     "getMinMax3D",
+    "compute3DCentroid",
+    "computeCovarianceMatrix",
     "add",
     "fromPCLPointCloud2",
     "loadPCDFile",
@@ -227,6 +229,21 @@ function PointCloud:getMinMax3D()
   local min, max = self.pointType(), self.pointType()
   self.f.getMinMax3D(self.c, min, max)
   return min, max
+end
+
+function PointCloud:compute3DCentroid()
+  local centroid = torch.FloatTensor()
+  self.f.compute3DCentroid(self.c, centroid:cdata())
+  return centroid
+end
+
+function PointCloud:computeCovarianceMatrix(centroid)
+  local covariance = torch.FloatTensor()
+  if not centroid then
+    centroid = self:compute3DCentroid()
+  end
+  self.f.computeCovarianceMatrix(self.c, utils.opt(centroid), covariance:cdata())
+  return covariance, centroid
 end
 
 function PointCloud:add(other)

@@ -33,6 +33,7 @@
       <File Name="src/generic/octree.cpp"/>
       <File Name="src/generic/incremental_registration.cpp"/>
       <File Name="src/generic/icp_nl.cpp"/>
+      <File Name="src/generic/normal_estimation.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>

@@ -165,6 +165,25 @@ PCLIMP(void, PointCloud, getMinMax3D)(pcl::PointCloud<_PointT>::Ptr *self, _Poin
   pcl::getMinMax3D(**self, min, max);
 }
 
+PCLIMP(void, PointCloud, compute3DCentroid)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor *output)
+{
+  Eigen::Vector4f centroid;
+  pcl::compute3DCentroid(**self, centroid);
+  copyMatrix(centroid, output);
+}
+
+PCLIMP(void, PointCloud, computeCovarianceMatrix)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor *centroid, THFloatTensor *output)
+{
+  Eigen::Vector4f centroid_;
+  if (centroid)
+    centroid_ = Tensor2Vec4f(centroid);
+  else
+    pcl::compute3DCentroid(**self, centroid_);
+  Eigen::Matrix3f covariance;
+  pcl::computeCovarianceMatrix(**self, centroid_, covariance);
+  copyMatrix(covariance, output);
+}
+
 PCLIMP(void, PointCloud, fromPCLPointCloud2)(pcl::PointCloud<_PointT>::Ptr *self, pcl::PCLPointCloud2 *msg)
 {
   pcl::fromPCLPointCloud2<_PointT>(*msg, **self);
