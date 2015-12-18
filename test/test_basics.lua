@@ -104,6 +104,7 @@ function TestBasics:testICP()
   icp = pcl.ICP()
   icp:setInputSource(cloudIn)
   icp:setInputTarget(cloudOut)
+      
   local cloudFinal = icp:align(cloudFinal)
   local finalTransformation = icp:getFinalTransformation()
   luaunit.assertTrue((finalTransformation - T):abs():sum() < 0.1)
@@ -127,24 +128,27 @@ function incrementalRegistrationTest(icp)
   reg:setRegistration(icp)
   for i=1,#frames do
     local frame = frames[i]
-    local b= reg:registerCloud(frame)
+    local b = reg:registerCloud(frame)
     local t = reg:getDeltaTransform()
-    luaunit.assertEquals(true, b)
+    luaunit.assertTrue(b)
     if i > 1 then
-      luaunit.assertAlmostEquals(t[{1,4}], -i/10, 0.01)
+      luaunit.assertAlmostEquals(t[{1,4}], -i/10, 0.05)
     end
   end
 end
 
 function TestBasics:testIncrementalICP()
   local icp = pcl.ICP()
+  icp:setMaxCorrespondenceDistance(0.5)
+  icp:setMaximumIterations(50)
   incrementalRegistrationTest(icp)
 end
 
 function TestBasics:testIncrementalICPNL()
   local icpnl = pcl.ICPNL()
-  icp:setMaximumIterations(50)
-  icp:setEuclideanFitnessEpsilon(0.0001)
+  icpnl:setMaximumIterations(50)
+  icpnl:setEuclideanFitnessEpsilon(0.001)
+  
   incrementalRegistrationTest(icpnl)
 end
 
@@ -205,9 +209,9 @@ local function sqaure_dist(a,b)
   return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z)
 end
   
-function TestBasics:testKdTreeFLANN()
+function TestBasics:testKdTreeSearch()
   local cloud = pcl.rand(1000)
-  local kd = pcl.KdTreeFLANN()
+  local kd = pcl.KdTree()
   kd:setInputCloud(cloud)
   
   local indices = torch.IntTensor()
@@ -231,9 +235,9 @@ function TestBasics:testKdTreeFLANN()
   end
 end
 
-function TestBasics:testOctreePointCloudSearch()
+function TestBasics:testOctreeSearch()
   local cloud = pcl.rand(1000)
-  local ot = pcl.OctreePointCloudSearch(0.001)
+  local ot = pcl.Octree(0.001)
   ot:setInputCloud(cloud)
   ot:addPointsFromInputCloud()
   

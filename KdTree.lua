@@ -3,7 +3,7 @@ local torch = require 'torch'
 local utils = require 'pcl.utils'
 local pcl = require 'pcl.PointTypes'
 
-local KdTreeFLANN = torch.class('pcl.KdTreeFLANN', pcl)
+local KdTree = torch.class('pcl.KdTree', pcl)
 
 local func_by_type = {}
 
@@ -31,7 +31,7 @@ end
 
 init()
 
-function KdTreeFLANN:__init(pointType, sorted)
+function KdTree:__init(pointType, sorted)
   if type(pointType) == 'boolean' then
     sorted = pointType
     pointType = pcl.PointXYZ
@@ -47,48 +47,48 @@ function KdTreeFLANN:__init(pointType, sorted)
   end
 end
 
-function KdTreeFLANN:cdata()
+function KdTree:cdata()
   return self.c
 end
 
-function KdTreeFLANN:clone()
+function KdTree:clone()
   local clone = self.f.clone(self.c)
-  return KdTreeFLANN.new(self.pointType, clone)
+  return KdTree.new(self.pointType, clone)
 end
 
-function KdTreeFLANN:setInputCloud(cloud)
+function KdTree:setInputCloud(cloud)
   self.f.setInputCloud(self.c, cloud:cdata())
 end
 
-function KdTreeFLANN:getEpsilon()
+function KdTree:getEpsilon()
   return self.f.getEpsilon(self.c)
 end
   
-function KdTreeFLANN:setEpsilon(eps)
+function KdTree:setEpsilon(eps)
   self.f.setEpsilon(self.c, eps)
 end
 
-function KdTreeFLANN:setMinPts(value)
+function KdTree:setMinPts(value)
   self.f.setMinPts(self.c, value)
 end
 
-function KdTreeFLANN:getMinPts()
+function KdTree:getMinPts()
   return self.f.getMinPts(self.c)
 end
   
-function KdTreeFLANN:setSortedResults(sorted)
+function KdTree:setSortedResults(sorted)
   self.f.setSortedResults(self.c, sorted)
 end
   
-function KdTreeFLANN:set(other)
+function KdTree:set(other)
   self.f.assign(self.c, other:cdata())
   return self
 end
     
-function KdTreeFLANN:nearestKSearch(point, k, indices, squaredDistances)
+function KdTree:nearestKSearch(point, k, indices, squaredDistances)
   return self.f.nearestKSearch(self.c, point, k, indices:cdata(), squaredDistances:cdata())
 end
 
-function KdTreeFLANN:radiusSearch(point, radius, indices, squaredDistances, max_nn)
+function KdTree:radiusSearch(point, radius, indices, squaredDistances, max_nn)
   return self.f.radiusSearch(self.c, point, radius, indices:cdata(), squaredDistances:cdata(), max_nn or 0)
 end

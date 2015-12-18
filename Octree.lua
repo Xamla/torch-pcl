@@ -3,7 +3,7 @@ local torch = require 'torch'
 local utils = require 'pcl.utils'
 local pcl = require 'pcl.PointTypes'
 
-local OctreePointCloudSearch = torch.class('pcl.OctreePointCloudSearch', pcl)
+local Octree = torch.class('pcl.Octree', pcl)
 
 local func_by_type = {}
 
@@ -36,7 +36,7 @@ end
 
 init()
 
-function OctreePointCloudSearch:__init(pointType, resolution)
+function Octree:__init(pointType, resolution)
   if type(pointType) == 'number' then
     resolution = pointType
     pointType = pcl.PointXYZ
@@ -49,66 +49,66 @@ function OctreePointCloudSearch:__init(pointType, resolution)
   self.c = self.f.new(resolution)
 end
 
-function OctreePointCloudSearch:cdata()
+function Octree:cdata()
   return self.c
 end
 
-function OctreePointCloudSearch:getResolution()
+function Octree:getResolution()
   return self.f.getResolution(self.c)
 end
 
-function OctreePointCloudSearch:getEpsilon()
+function Octree:getEpsilon()
   return self.f.getEpsilon(self.c)
 end
 
-function OctreePointCloudSearch:setEpsilon(eps)
+function Octree:setEpsilon(eps)
   self.f.setEpsilon(self.c, eps)
 end
 
-function OctreePointCloudSearch:setInputCloud(cloud)
+function Octree:setInputCloud(cloud)
   self.f.setInputCloud(self.c, cloud:cdata())
 end
 
-function OctreePointCloudSearch:addPointsFromInputCloud()
+function Octree:addPointsFromInputCloud()
   self.f.addPointsFromInputCloud(self.c)
 end
 
-function OctreePointCloudSearch:addPointToCloud(point, cloud)
+function Octree:addPointToCloud(point, cloud)
   self.f.addPointToCloud(self.c, point, cloud:cdata())
 end
 
-function OctreePointCloudSearch:isVoxelOccupiedAtPoint(p)
+function Octree:isVoxelOccupiedAtPoint(p)
   self.f.isVoxelOccupiedAtPoint(self.c, p)
 end
 
-function OctreePointCloudSearch:deleteTree()
+function Octree:deleteTree()
   self.f.deleteTree(self.c)
 end
 
-function OctreePointCloudSearch:setMaxVoxelIndex(max_index)
+function Octree:setMaxVoxelIndex(max_index)
   self.f.setMaxVoxelIndex(self.c, max_index)
 end
 
-function OctreePointCloudSearch:setTreeDepth(depth)
+function Octree:setTreeDepth(depth)
   return self.f.setTreeDepth(self.c, depth)
 end
 
-function OctreePointCloudSearch:getTreeDepth()
+function Octree:getTreeDepth()
   return self.f.getTreeDepth(self.c)
 end
 
-function OctreePointCloudSearch:getLeafCount()
+function Octree:getLeafCount()
   return self.f.getLeafCount(self.c)
 end
 
-function OctreePointCloudSearch:getBranchCount()
+function Octree:getBranchCount()
   return self.f.getBranchCount(self.c)
 end
 
-function OctreePointCloudSearch:nearestKSearch(point, k, indices, squaredDistances)
+function Octree:nearestKSearch(point, k, indices, squaredDistances)
   return self.f.nearestKSearch(self.c, point, k, indices:cdata(), squaredDistances:cdata())
 end
 
-function OctreePointCloudSearch:radiusSearch(point, radius, indices, squaredDistances, max_nn)
+function Octree:radiusSearch(point, radius, indices, squaredDistances, max_nn)
   return self.f.radiusSearch(self.c, point, radius, indices:cdata(), squaredDistances:cdata(), max_nn or 0)
 end
