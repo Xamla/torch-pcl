@@ -25,7 +25,7 @@ init()
 
 function OpenNI2Stream:__init(pointType, device_id, max_backlog)
   device_id = device_id or ''
-  max_backlog = max_backlog or 30
+  max_backlog = max_backlog or 2
   self.pointType = pointType or pcl.PointXYZ
   self.f = func_by_type[self.pointType]
   self.o = self.f.new(device_id, max_backlog)
@@ -45,6 +45,7 @@ function OpenNI2Stream:read(timeout_milliseconds)
   local frame = self.f.read(self.o, timeout_milliseconds)
   if frame ~= nil then
     frame = pcl.PointCloud(self.pointType, frame)
+    ffi.gc(frame:cdata(), rawget(frame, 'f').delete)
   end
   return frame
 end

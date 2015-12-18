@@ -34,5 +34,3 @@ PCLIMP(void, PointCloud, savePNGFile)(pcl::PointCloud<_PointT>::Ptr *self, const
 {
     pcl::io::savePNGFile(fn, **self, field_name);
 }
-
-

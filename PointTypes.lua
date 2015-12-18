@@ -95,7 +95,7 @@ void pcl_Filter_TYPE_KEY_medianFilter(PointCloud_TYPE_KEY *input, PointCloud_TYP
 void pcl_Filter_TYPE_KEY_radiusOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, double radius, int minNeighbors, bool negative);
 int pcl_Filter_TYPE_KEY_voxelHistogram(PointCloud_TYPE_KEY *input, THFloatTensor *output, int w, int h, int t, float voxelSize, float originX, float originY, float originZ, bool center);
 
-typedef struct PCA_TYPE_KEY {} PCA_TYPE_KEY;
+typedef struct {} PCA_TYPE_KEY;
 PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_new(bool basis_only);
 PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_clone(PCA_TYPE_KEY *self);
 void pcl_PCA_TYPE_KEY_delete(PCA_TYPE_KEY *self);
@@ -107,7 +107,7 @@ void pcl_PCA_TYPE_KEY_get_coefficients(PCA_TYPE_KEY *self, struct THFloatTensor*
 void pcl_PCA_TYPE_KEY_project_cloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output);
 void pcl_PCA_TYPE_KEY_reconstruct_cloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output);
 
-typedef struct ICP_TYPE_KEY {} ICP_TYPE_KEY;
+typedef struct {} ICP_TYPE_KEY;
 ICP_TYPE_KEY* pcl_ICP_TYPE_KEY_new();
 void pcl_ICP_TYPE_KEY_delete(ICP_TYPE_KEY *self);
 void pcl_ICP_TYPE_KEY_setInputSource(ICP_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
@@ -120,7 +120,30 @@ void pcl_ICP_TYPE_KEY_getFinalTransformation(ICP_TYPE_KEY *self, THFloatTensor* 
 double pcl_ICP_TYPE_KEY_getFitnessScore(ICP_TYPE_KEY *self, double max_range);
 void pcl_ICP_TYPE_KEY_align(ICP_TYPE_KEY *self, PointCloud_TYPE_KEY* output, void* guess);
 
-typedef struct KdTreeFLANN_TYPE_KEY {} KdTreeFLANN_TYPE_KEY;
+typedef struct {} ICPNL_TYPE_KEY;
+ICPNL_TYPE_KEY* pcl_ICPNL_TYPE_KEY_new();
+void pcl_ICPNL_TYPE_KEY_delete(ICPNL_TYPE_KEY *self);
+void pcl_ICPNL_TYPE_KEY_setInputSource(ICPNL_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_ICPNL_TYPE_KEY_setInputTarget(ICPNL_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_ICPNL_TYPE_KEY_setMaxCorrespondenceDistance(ICPNL_TYPE_KEY *self, double distance);
+void pcl_ICPNL_TYPE_KEY_setMaximumIterations(ICPNL_TYPE_KEY *self, int count);
+void pcl_ICPNL_TYPE_KEY_setTransformationEpsilon(ICPNL_TYPE_KEY *self, double epsilon);
+void pcl_ICPNL_TYPE_KEY_setEuclideanFitnessEpsilon(ICPNL_TYPE_KEY *self, double epsilon);
+void pcl_ICPNL_TYPE_KEY_getFinalTransformation(ICPNL_TYPE_KEY *self, THFloatTensor* output);
+double pcl_ICPNL_TYPE_KEY_getFitnessScore(ICPNL_TYPE_KEY *self, double max_range);
+void pcl_ICPNL_TYPE_KEY_align(ICPNL_TYPE_KEY *self, PointCloud_TYPE_KEY* output, void* guess);
+
+typedef struct {} IncrementalRegistration_TYPE_KEY;
+void* pcl_IncrementalRegistration_TYPE_KEY_new();
+void pcl_IncrementalRegistration_TYPE_KEY_delete(IncrementalRegistration_TYPE_KEY *self);
+void pcl_IncrementalRegistration_TYPE_KEY_setICP(IncrementalRegistration_TYPE_KEY *self, ICP_TYPE_KEY *icp);
+void pcl_IncrementalRegistration_TYPE_KEY_setICPNL(IncrementalRegistration_TYPE_KEY *self, ICPNL_TYPE_KEY *icpnl);
+void pcl_IncrementalRegistration_TYPE_KEY_reset(IncrementalRegistration_TYPE_KEY *self);
+bool pcl_IncrementalRegistration_TYPE_KEY_registerCloud(IncrementalRegistration_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud, THFloatTensor* delta_estimate);
+void pcl_IncrementalRegistration_TYPE_KEY_getDeltaTransform(IncrementalRegistration_TYPE_KEY *self, THFloatTensor* output);
+void pcl_IncrementalRegistration_TYPE_KEY_getAbsoluteTransform(IncrementalRegistration_TYPE_KEY *self, THFloatTensor* output);
+
+typedef struct {} KdTreeFLANN_TYPE_KEY;
 KdTreeFLANN_TYPE_KEY* pcl_KdTreeFLANN_TYPE_KEY_new(bool sorted);
 KdTreeFLANN_TYPE_KEY* pcl_KdTreeFLANN_TYPE_KEY_clone(KdTreeFLANN_TYPE_KEY *self);
 void pcl_KdTreeFLANN_TYPE_KEY_delete(KdTreeFLANN_TYPE_KEY *self);
@@ -134,7 +157,7 @@ void pcl_KdTreeFLANN_TYPE_KEY_assign(KdTreeFLANN_TYPE_KEY *self, KdTreeFLANN_TYP
 int pcl_KdTreeFLANN_TYPE_KEY_nearestKSearch(KdTreeFLANN_TYPE_KEY *self, const PointTYPE_KEY &point, int k, THIntTensor *indices, THFloatTensor *squaredDistances);
 int pcl_KdTreeFLANN_TYPE_KEY_radiusSearch(KdTreeFLANN_TYPE_KEY *self, const PointTYPE_KEY &point, double radius, THIntTensor *indices, THFloatTensor *squaredDistances, unsigned int max_nn);
 
-typedef struct OctreePointCloudSearch_TYPE_KEY {} OctreePointCloudSearch_TYPE_KEY;
+typedef struct {} OctreePointCloudSearch_TYPE_KEY;
 OctreePointCloudSearch_TYPE_KEY* pcl_OctreePointCloudSearch_TYPE_KEY_new(double resolution);
 void pcl_OctreePointCloudSearch_TYPE_KEY_delete(OctreePointCloudSearch_TYPE_KEY *self);
 double pcl_OctreePointCloudSearch_TYPE_KEY_getResolution(OctreePointCloudSearch_TYPE_KEY *self);

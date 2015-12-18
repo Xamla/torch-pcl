@@ -110,6 +110,44 @@ function TestBasics:testICP()
   luaunit.assertAlmostEquals(icp:getFitnessScore(), 0, 0.01)
 end
 
+function incrementalRegistrationTest(icp)
+  -- create 10 'frames'
+  local c = pcl.rand(100, 'xyz')
+  
+  local frames = {}
+  for i=1,10 do
+    local o = pcl.PointCloud('xyz')
+    local T = pcl.affine.translate(i/10,0,0)
+    c:transform(T, o)
+    table.insert(frames, o)
+    c = o
+  end
+  
+  local reg = pcl.IncrementalRegistration()
+  reg:setRegistration(icp)
+  for i=1,#frames do
+    local frame = frames[i]
+    local b= reg:registerCloud(frame)
+    local t = reg:getDeltaTransform()
+    luaunit.assertEquals(true, b)
+    if i > 1 then
+      luaunit.assertAlmostEquals(t[{1,4}], -i/10, 0.01)
+    end
+  end
+end
+
+function TestBasics:testIncrementalICP()
+  local icp = pcl.ICP()
+  incrementalRegistrationTest(icp)
+end
+
+function TestBasics:testIncrementalICPNL()
+  local icpnl = pcl.ICPNL()
+  icp:setMaximumIterations(50)
+  icp:setEuclideanFitnessEpsilon(0.0001)
+  incrementalRegistrationTest(icpnl)
+end
+
 function TestBasics:testFilterDefaultValues()
   local p = pcl.rand(100, 100)
   

@@ -26,10 +26,19 @@ function utils.create_typed_methods(prefix, names, type_key)
   
   -- check whether we have new and delete functions
   -- automatically register objects created by new with the gc 
-  local _new, _delete = map.new, map.delete
+  local _new, _clone, _delete = map.new, map.clone, map.delete
+  
   if _new and _delete then
     map.new = function(...)
       local obj = _new(...)
+      ffi.gc(obj, _delete)
+      return obj
+    end
+  end
+  
+  if _clone and _delete then
+    map.clone = function(...)
+      local obj = _clone(...)
       ffi.gc(obj, _delete)
       return obj
     end

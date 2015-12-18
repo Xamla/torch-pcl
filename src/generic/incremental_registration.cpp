@@ -3,6 +3,7 @@
 
 #define IncrementalReg_ptr boost::shared_ptr<pcl::registration::IncrementalRegistration<_PointT, float> >
 #define ICP_ptr boost::shared_ptr<pcl::IterativeClosestPoint<_PointT, _PointT> >
+#define ICPNL_ptr boost::shared_ptr<pcl::IterativeClosestPointNonLinear<_PointT, _PointT> >
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
 
 PCLIMP(void*, IncrementalRegistration, new)()
@@ -18,6 +19,11 @@ PCLIMP(void, IncrementalRegistration, delete)(IncrementalReg_ptr *self)
 PCLIMP(void, IncrementalRegistration, setICP)(IncrementalReg_ptr *self, ICP_ptr *icp)
 {
   (*self)->setRegistration(*icp);
+}
+
+PCLIMP(void, IncrementalRegistration, setICPNL)(IncrementalReg_ptr *self, ICPNL_ptr *icpnl)
+{
+  (*self)->setRegistration(*icpnl);
 }
 
 PCLIMP(void, IncrementalRegistration, reset)(IncrementalReg_ptr *self)
@@ -47,4 +53,5 @@ PCLIMP(void, IncrementalRegistration, getAbsoluteTransform)(IncrementalReg_ptr *
 
 #undef IncrementalReg_ptr
 #undef ICP_ptr
+#undef ICPNL_ptr
 #undef PointCloud_ptr
