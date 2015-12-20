@@ -7,7 +7,7 @@ local type_key_map = {}
 type_key_map[pcl.PointXYZ] = 'XYZ'
 type_key_map[pcl.PointXYZI] = 'XYZI'
 type_key_map[pcl.PointXYZRGBA] = 'XYZRGBA'
-type_key_map[pcl.PointNormal] = 'Normal'
+type_key_map[pcl.PointNormal] = 'XYZNormal'
 type_key_map[pcl.PointXYZINormal] = 'XYZINormal'
 type_key_map[pcl.PointXYZRGBNormal] = 'XYZRGBNormal'
 utils.type_key_map = type_key_map
@@ -16,7 +16,6 @@ function utils.create_typed_methods(prefix, names, type_key)
   local map = {}
   for i,n in ipairs(names) do
     local full_name = string.gsub(prefix .. n, 'TYPE_KEY', type_key)
-    
     -- use pcall since not all types support all functions
     local ok,v = pcall(function() return pcl.lib[full_name] end)
     if ok then
@@ -55,6 +54,16 @@ end
 
 function utils.opt(t)
   return t and t:cdata() or ffi.NULL
+end
+
+local normal_type_map = {}
+normal_type_map[pcl.PointXYZ] = pcl.PointNormal
+normal_type_map[pcl.PointXYZI] = pcl.PointXYZINormal
+normal_type_map[pcl.PointXYZRGBA] = pcl.PointXYZRGBNormal
+utils.normal_type_map = normal_type_map
+
+function utils.getNormalTypeFor(pointType)
+  return utils.normal_type_map[pointType]
 end
 
 return utils

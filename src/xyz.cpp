@@ -1,5 +1,5 @@
 #define _PointT pcl::PointXYZ
-#define _PointNormalT pcl:Normal
+#define _PointNormalT pcl::PointNormal
 #define TYPE_KEY _XYZ_
 #include "utils.h"
 #include "generic.cpp"

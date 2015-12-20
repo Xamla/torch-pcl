@@ -1,5 +1,5 @@
 #define _PointT pcl::PointXYZRGBA
-#define _PointNormalT pcl:PointXYZRGBANormal
+#define _PointNormalT pcl::PointXYZRGBNormal
 #define TYPE_KEY _XYZRGBA_
 #include "utils.h"
 #include "generic.cpp"

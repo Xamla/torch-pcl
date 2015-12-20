@@ -46,69 +46,69 @@ function Octree:__init(pointType, resolution)
   
   pointType = pcl.pointType(pointType)
   rawset(self, 'f', func_by_type[pointType])
-  self.c = self.f.new(resolution)
+  self.o = self.f.new(resolution)
 end
 
 function Octree:cdata()
-  return self.c
+  return self.o
 end
 
 function Octree:getResolution()
-  return self.f.getResolution(self.c)
+  return self.f.getResolution(self.o)
 end
 
 function Octree:getEpsilon()
-  return self.f.getEpsilon(self.c)
+  return self.f.getEpsilon(self.o)
 end
 
 function Octree:setEpsilon(eps)
-  self.f.setEpsilon(self.c, eps)
+  self.f.setEpsilon(self.o, eps)
 end
 
 function Octree:setInputCloud(cloud)
-  self.f.setInputCloud(self.c, cloud:cdata())
+  self.f.setInputCloud(self.o, cloud:cdata())
 end
 
 function Octree:addPointsFromInputCloud()
-  self.f.addPointsFromInputCloud(self.c)
+  self.f.addPointsFromInputCloud(self.o)
 end
 
 function Octree:addPointToCloud(point, cloud)
-  self.f.addPointToCloud(self.c, point, cloud:cdata())
+  self.f.addPointToCloud(self.o, point, cloud:cdata())
 end
 
 function Octree:isVoxelOccupiedAtPoint(p)
-  self.f.isVoxelOccupiedAtPoint(self.c, p)
+  self.f.isVoxelOccupiedAtPoint(self.o, p)
 end
 
 function Octree:deleteTree()
-  self.f.deleteTree(self.c)
+  self.f.deleteTree(self.o)
 end
 
 function Octree:setMaxVoxelIndex(max_index)
-  self.f.setMaxVoxelIndex(self.c, max_index)
+  self.f.setMaxVoxelIndex(self.o, max_index)
 end
 
 function Octree:setTreeDepth(depth)
-  return self.f.setTreeDepth(self.c, depth)
+  return self.f.setTreeDepth(self.o, depth)
 end
 
 function Octree:getTreeDepth()
-  return self.f.getTreeDepth(self.c)
+  return self.f.getTreeDepth(self.o)
 end
 
 function Octree:getLeafCount()
-  return self.f.getLeafCount(self.c)
+  return self.f.getLeafCount(self.o)
 end
 
 function Octree:getBranchCount()
-  return self.f.getBranchCount(self.c)
+  return self.f.getBranchCount(self.o)
 end
 
 function Octree:nearestKSearch(point, k, indices, squaredDistances)
-  return self.f.nearestKSearch(self.c, point, k, indices:cdata(), squaredDistances:cdata())
+  return self.f.nearestKSearch(self.o, point, k, utils.opt(indices), utils.opt(squaredDistances))
 end
 
 function Octree:radiusSearch(point, radius, indices, squaredDistances, max_nn)
-  return self.f.radiusSearch(self.c, point, radius, indices:cdata(), squaredDistances:cdata(), max_nn or 0)
+  return self.f.radiusSearch(self.o, point, radius, utils.opt(indices), utils.opt(squaredDistances), max_nn or 0)
 end

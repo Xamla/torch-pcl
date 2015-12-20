@@ -1,7 +1,6 @@
-#include <pcl/point_cloud.h>
 #include <pcl/kdtree/kdtree_flann.h>
 
-#define KdTreeFLANN_ptr boost::shared_ptr<pcl::KdTreeFLANN<_PointT> >
+#define KdTreeFLANN_ptr pcl::KdTreeFLANN<_PointT>::Ptr
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
 
 PCLIMP(void*, KdTreeFLANN, new)(bool sorted)

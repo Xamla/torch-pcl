@@ -20,6 +20,7 @@ typedef struct PointXYZRGBL { "..PCL_POINT4D..PCL_RGB.." uint32_t label; } Point
 typedef struct Normal { "..PCL_POINT4D.." union { struct { float curvature; }; float data_c[4]; }; } Normal; \z
 typedef struct Axis { "..PCL_NORMAL4D.." } Axis; \z
 typedef struct PointNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } PointNormal; \z
+typedef struct PointNormal PointXYZNormal;\z
 typedef struct PointXYZRGBNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBNormal; \z
 typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal; \z
 typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;" ..
@@ -28,7 +29,7 @@ typedef struct OpenNI2CameraParameters { double focal_length_x; double focal_len
 typedef struct PointCloud_XYZ {} PointCloud_XYZ;
 typedef struct PointCloud_XYZI {} PointCloud_XYZI;
 typedef struct PointCloud_XYZRGBA {} PointCloud_XYZRGBA;
-typedef struct PointCloud_Normal {} PointCloud_Normal;
+typedef struct PointCloud_XYZNormal {} PointCloud_XYZNormal;
 typedef struct PointCloud_XYZINormal {} PointCloud_XYZINormal;
 typedef struct PointCloud_XYZRGBNormal {} PointCloud_XYZRGBNormal;
 
@@ -43,7 +44,6 @@ void pcl_Primitive_XYZ_createCone(PointCloud_XYZ *output, double height, double 
 void pcl_Primitive_XYZ_createPlatonicSolid(PointCloud_XYZ *output, int solidType, int samples, float resolution);
 void pcl_Primitive_XYZ_createPlane(PointCloud_XYZ *output, double x1, double y1, double z1, double x2, double y2, double z2, int samples, float resolution);
 void pcl_Primitive_XYZ_createDisk(PointCloud_XYZ *output, double innerRadius, double outerRadius, int radialResolution,int samples, float resolution);
-
 ]]
 ffi.cdef(cdef)
 
@@ -191,9 +191,34 @@ const char* pcl_OpenNI2Stream_TYPE_KEY_getName(void *self);
 float pcl_OpenNI2Stream_TYPE_KEY_getFramesPerSecond(void *self);
 ]]
 
-local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'Normal', 'XYZINormal', 'XYZRGBNormal' }
+local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
 for i,v in ipairs(supported_keys) do
   local specialized = string.gsub(generic_declarations, 'TYPE_KEY', v)
+  ffi.cdef(specialized)
+end
+
+local normal_dependent_declarations = 
+[[
+typedef struct {} NormalEstimation_TYPE_KEY;
+NormalEstimation_TYPE_KEY* pcl_NormalEstimation_TYPE_KEY_new();
+void pcl_NormalEstimation_TYPE_KEY_delete(NormalEstimation_TYPE_KEY *self);
+void pcl_NormalEstimation_TYPE_KEY_setInputCloud(NormalEstimation_TYPE_KEY *self, PointCloud_TYPE_KEY* cloud);
+void pcl_NormalEstimation_TYPE_KEY_getViewPoint(NormalEstimation_TYPE_KEY *self, THFloatTensor* out_pt);
+void pcl_NormalEstimation_TYPE_KEY_setViewPoint(NormalEstimation_TYPE_KEY *self, THFloatTensor* pt);
+void pcl_NormalEstimation_TYPE_KEY_useSensorOriginAsViewPoint(NormalEstimation_TYPE_KEY *self);
+void pcl_NormalEstimation_TYPE_KEY_setSearchMethod_Octree(NormalEstimation_TYPE_KEY *self, OctreePointCloudSearch_TYPE_KEY *octree);
+void pcl_NormalEstimation_TYPE_KEY_setSearchMethod_KdTree(NormalEstimation_TYPE_KEY *self, KdTreeFLANN_TYPE_KEY *kdtree);
+void pcl_NormalEstimation_TYPE_KEY_setKSearch(NormalEstimation_TYPE_KEY *self, int k);
+int pcl_NormalEstimation_TYPE_KEY_getKSearch(NormalEstimation_TYPE_KEY *self);
+void pcl_NormalEstimation_TYPE_KEY_setRadiusSearch(NormalEstimation_TYPE_KEY *self, double radius);
+double pcl_NormalEstimation_TYPE_KEY_getRadiusSearch(NormalEstimation_TYPE_KEY *self);
+void pcl_NormalEstimation_TYPE_KEY_compute(NormalEstimation_TYPE_KEY *self, PointCloud_TYPENORMAL_KEY* output);
+]]
+
+local normal_type_map = { XYZ = 'XYZNormal', XYZI = 'XYZINormal', XYZRGBA = 'XYZRGBNormal' }
+for k,v in pairs(normal_type_map) do
+  local specialized = string.gsub(normal_dependent_declarations, 'TYPE_KEY', k)
+  specialized = string.gsub(specialized, 'TYPENORMAL_KEY', v)
   ffi.cdef(specialized)
 end
 
@@ -211,8 +236,9 @@ local pointTypeNames = {
   'PointXYZI',            -- float x, y, z, intensity;
   'PointXYZRGBA',         -- float x, y, z; uint32_t rgba;
   'PointXY',              -- float x, y;
-  'Normal',               -- float normal[3], curvature;
   'PointNormal',          -- float x, y, z; float normal[3], curvature;
+  'Normal',               -- float normal[3], curvature;
+  'PointXYZNormal',       -- alias for PointNormal
   'PointXYZRGBNormal',    -- float x, y, z, rgb, normal[3], curvature;
   'PointXYZINormal'       -- float x, y, z, intensity, normal[3], curvature;
 }
@@ -384,7 +410,7 @@ pcl.metatype[pcl.PointNormal] = PointNormal
 
 -- PointXYZINormal metatype
 local PointXYZINormal = {
-   prototype = {
+  prototype = {
     tensor = totensor,
     set = set,
   },
@@ -404,7 +430,7 @@ pcl.metatype[pcl.PointXYZINormal] = PointXYZINormal
 
 -- PointXYZRGBNormal metatype
 local PointXYZRGBNormal = {
-    prototype = {
+  prototype = {
     tensor = totensor,
     set = set,
   },

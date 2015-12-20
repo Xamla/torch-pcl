@@ -16,6 +16,7 @@ require 'pcl.primitive'
 require 'pcl.filter'
 require 'pcl.KdTree'
 require 'pcl.Octree'
+require 'pcl.NormalEstimation'
 
 function pcl.rand(width, height, pointType)
   if pcl.isPointType(height) or type(height) == 'string' then

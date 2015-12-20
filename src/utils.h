@@ -22,38 +22,25 @@ class TorchPclException : public pcl::PCLException
 
 inline Eigen::Vector4f Tensor2Vec4f(THFloatTensor *tensor)
 {
-  THFloatTensor *tensor_ = tensor;
-  if (THFloatTensor_nDimension(tensor) > 1)
-  {
-    tensor_ = THFloatTensor_new();
-    THFloatTensor_squeeze(tensor_, tensor);
-  }
-  Eigen::Vector4f v(
-    THFloatTensor_get1d(tensor_, 0),
-    THFloatTensor_get1d(tensor_, 1),
-    THFloatTensor_get1d(tensor_, 2),
-    THFloatTensor_get1d(tensor_, 3)
-  );
-  if (tensor != tensor_)
-    THFloatTensor_free(tensor_);
+  if (THFloatTensor_nElement(tensor) < 4)
+    PCL_THROW_EXCEPTION(TorchPclException, "A tensor with at least 4 elements was expected.");
+    
+  THFloatTensor *tensor_ = THFloatTensor_newContiguous(tensor);
+  float* data = THFloatTensor_data(tensor_);
+  Eigen::Vector4f v(data[0], data[1], data[2], data[3]);
+  THFloatTensor_free(tensor_);
   return v;
 }
 
 inline Eigen::Vector3f Tensor2Vec3f(THFloatTensor *tensor)
 {
-  THFloatTensor *tensor_ = tensor;
-  if (THFloatTensor_nDimension(tensor) > 1)
-  {
-    tensor_ = THFloatTensor_new();
-    THFloatTensor_squeeze(tensor_, tensor);
-  }
-  Eigen::Vector3f v(
-    THFloatTensor_get1d(tensor_, 0),
-    THFloatTensor_get1d(tensor_, 1),
-    THFloatTensor_get1d(tensor_, 2)
-  );
-  if (tensor != tensor_)
-    THFloatTensor_free(tensor_);
+  if (THFloatTensor_nElement(tensor) < 4)
+    PCL_THROW_EXCEPTION(TorchPclException, "A Tensor with at least 3 elements was expected.");
+    
+  THFloatTensor *tensor_ = THFloatTensor_newContiguous(tensor);
+  float* data = THFloatTensor_data(tensor_);
+  Eigen::Vector3f v(data[0], data[1], data[2]);
+  THFloatTensor_free(tensor_);
   return v;
 }
 

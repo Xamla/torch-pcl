@@ -41,54 +41,54 @@ function KdTree:__init(pointType, sorted)
   rawset(self, 'f', func_by_type[pointType])
   self.pointType = pointType
   if type(sorted) == 'boolean' then
-    self.c = self.f.new(sorted)
+    self.o = self.f.new(sorted)
   elseif type(sorted) == 'cdata' then
-    self.c = sorted
+    self.o = sorted
   end
 end
 
 function KdTree:cdata()
-  return self.c
+  return self.o
 end
 
 function KdTree:clone()
-  local clone = self.f.clone(self.c)
+  local clone = self.f.clone(self.o)
   return KdTree.new(self.pointType, clone)
 end
 
 function KdTree:setInputCloud(cloud)
-  self.f.setInputCloud(self.c, cloud:cdata())
+  self.f.setInputCloud(self.o, cloud:cdata())
 end
 
 function KdTree:getEpsilon()
-  return self.f.getEpsilon(self.c)
+  return self.f.getEpsilon(self.o)
 end
   
 function KdTree:setEpsilon(eps)
-  self.f.setEpsilon(self.c, eps)
+  self.f.setEpsilon(self.o, eps)
 end
 
 function KdTree:setMinPts(value)
-  self.f.setMinPts(self.c, value)
+  self.f.setMinPts(self.o, value)
 end
 
 function KdTree:getMinPts()
-  return self.f.getMinPts(self.c)
+  return self.f.getMinPts(self.o)
 end
   
 function KdTree:setSortedResults(sorted)
-  self.f.setSortedResults(self.c, sorted)
+  self.f.setSortedResults(self.o, sorted)
 end
   
 function KdTree:set(other)
-  self.f.assign(self.c, other:cdata())
+  self.f.assign(self.o, other:cdata())
   return self
 end
     
 function KdTree:nearestKSearch(point, k, indices, squaredDistances)
-  return self.f.nearestKSearch(self.c, point, k, indices:cdata(), squaredDistances:cdata())
+  return self.f.nearestKSearch(self.o, point, k, utils.opt(indices), utils.opt(squaredDistances))
 end
 
 function KdTree:radiusSearch(point, radius, indices, squaredDistances, max_nn)
-  return self.f.radiusSearch(self.c, point, radius, indices:cdata(), squaredDistances:cdata(), max_nn or 0)
+  return self.f.radiusSearch(self.o, point, radius, utils.opt(indices), utils.opt(squaredDistances), max_nn or 0)
 end

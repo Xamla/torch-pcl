@@ -7,7 +7,9 @@ function TestBasics:testAddPointCloud()
   local cloudA = pcl.PointCloud(pcl.PointXYZ,1)
   local cloudB = pcl.PointCloud(pcl.PointXYZ,1)
   cloudA[1]:set(pcl.PointXYZ(4,5,6))
+  luaunit.assertEquals(cloudA[1].x, 4)
   cloudB[1]:set(pcl.PointXYZ(1,2,3))
+  luaunit.assertEquals(cloudB[1].x, 1)
   cloudA:add(cloudB)
   luaunit.assertEquals(cloudA:getHeight(), 1)
   luaunit.assertEquals(cloudA:getWidth(), 2)
@@ -270,7 +272,29 @@ function TestBasics:testCovariance()
   luaunit.assertAlmostEquals(centroid[{{1,3}}]:norm(), 0.86, 0.1)
   
   local cov = cloud:computeCovarianceMatrix(centroid)
-  print(cov)
+  for i=1,3 do
+    luaunit.assertTrue(cov[{i,i}] > 50)
+  end
+end
+
+function TestBasics:testNormalEstimation()
+  -- create plane
+  local g = pcl.primitive.plane(1,0,0, 0,0,1, 500, 0.01)
+  g:transform(pcl.affine.translate(-0.5,-1,-0.5))
+  
+  local kd = pcl.KdTree()
+  kd:setInputCloud(g)
+  
+  local ne = pcl.NormalEstimation()
+  ne:setRadiusSearch(0.1)
+  ne:setSearchMethod(kd)
+  ne:setInputCloud(g)
+  local out = ne:compute()
+  for i=1,#out do
+    luaunit.assertAlmostEquals(out[i].normal_x, 0, 0.1)
+    luaunit.assertAlmostEquals(out[i].normal_y, 1, 0.1)
+    luaunit.assertAlmostEquals(out[i].normal_z, 0, 0.1)
+  end
 end
 
 os.exit( luaunit.LuaUnit.run() )

@@ -1,7 +1,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/octree/octree.h>
 
-#define Octree_ptr boost::shared_ptr<pcl::octree::OctreePointCloudSearch<_PointT> >
+#define Octree_ptr pcl::octree::OctreePointCloudSearch<_PointT>::Ptr
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
 
 PCLIMP(void*, OctreePointCloudSearch, new)(double resolution)

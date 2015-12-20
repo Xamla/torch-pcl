@@ -34,6 +34,7 @@
       <File Name="src/generic/incremental_registration.cpp"/>
       <File Name="src/generic/icp_nl.cpp"/>
       <File Name="src/generic/normal_estimation.cpp"/>
+      <File Name="src/generic/searchwrapper.h"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -46,9 +47,9 @@
     <File Name="src/mesh_sampling.cpp"/>
     <File Name="src/CropSphere.h"/>
     <File Name="src/xyzrgbnormal.cpp"/>
-    <File Name="src/normal.cpp"/>
     <File Name="src/xyzinormal.cpp"/>
     <File Name="src/openni2.h"/>
+    <File Name="src/xyznormal.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
@@ -73,6 +74,7 @@
     <File Name="KdTree.lua"/>
     <File Name="Octree.lua"/>
     <File Name="IncrementalRegistration.lua"/>
+    <File Name="NormalEstimation.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>
