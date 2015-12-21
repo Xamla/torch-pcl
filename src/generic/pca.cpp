@@ -19,47 +19,45 @@ PCLIMP(void, PCA, delete)(PCA_ptr *self)
   delete self;
 }
 
-/*
-PCLIMP(void, PCA, set)(PCA_ptr *self, PCA_ptr *other)
-{
-  **self = **other;
-}
-*/
-
-PCLIMP(void, PCA, set_inputCloud)(PCA_ptr *self, PointCloud_ptr *cloud)
+PCLIMP(void, PCA, setInputCloud)(PCA_ptr *self, PointCloud_ptr *cloud)
 {
   (*self)->setInputCloud(*cloud);
 }
 
-PCLIMP(void, PCA, get_mean)(PCA_ptr *self, THFloatTensor* output)
+PCLIMP(void, PCA, setIndices)(PCA_ptr *self, Indices_ptr *indices)
+{
+  (*self)->setIndices(*indices);
+}
+
+PCLIMP(void, PCA, getMean)(PCA_ptr *self, THFloatTensor* output)
 {
   Eigen::Vector4f& mean = (*self)->getMean();
   viewMatrix(mean, output);
 }
 
-PCLIMP(void, PCA, get_eigenVectors)(PCA_ptr *self, THFloatTensor* output)
+PCLIMP(void, PCA, getEigenVectors)(PCA_ptr *self, THFloatTensor* output)
 {
   Eigen::Matrix3f& eigenVectors = (*self)->getEigenVectors();
   viewMatrix(eigenVectors, output);}
 
-PCLIMP(void, PCA, get_eigenValues)(PCA_ptr *self, THFloatTensor* output)
+PCLIMP(void, PCA, getEigenValues)(PCA_ptr *self, THFloatTensor* output)
 {
   Eigen::Vector3f& eigenValues = (*self)->getEigenValues();
   viewMatrix(eigenValues, output);
 }
 
-PCLIMP(void, PCA, get_coefficients)(PCA_ptr *self, THFloatTensor* output)
+PCLIMP(void, PCA, getCoefficients)(PCA_ptr *self, THFloatTensor* output)
 {
   Eigen::MatrixXf& coefficients =(*self)->getCoefficients();
   viewMatrix(coefficients, output);
 }
 
-PCLIMP(void, PCA, project_cloud)(PCA_ptr *self, PointCloud_ptr *input, PointCloud_ptr *output)
+PCLIMP(void, PCA, projectCloud)(PCA_ptr *self, PointCloud_ptr *input, PointCloud_ptr *output)
 {
   (*self)->project(**input, **output);
 }
 
-PCLIMP(void, PCA, reconstruct_cloud)(PCA_ptr *self, PointCloud_ptr *input, PointCloud_ptr *output)
+PCLIMP(void, PCA, reconstructCloud)(PCA_ptr *self, PointCloud_ptr *input, PointCloud_ptr *output)
 {
   (*self)->reconstruct(**input, **output);
 }

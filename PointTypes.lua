@@ -17,8 +17,8 @@ typedef struct PointXYZI { "..PCL_POINT4D.." union { struct { float intensity; }
 typedef struct PointXYZL { "..PCL_POINT4D.." uint32_t label; } PointXYZL; \z
 typedef struct PointXYZRGBA { "..PCL_POINT4D..PCL_RGB.." } PointXYZRGBA; \z
 typedef struct PointXYZRGBL { "..PCL_POINT4D..PCL_RGB.." uint32_t label; } PointXYZRGBL; \z
-typedef struct Normal { "..PCL_POINT4D.." union { struct { float curvature; }; float data_c[4]; }; } Normal; \z
-typedef struct Axis { "..PCL_NORMAL4D.." } Axis; \z
+typedef struct Normal { "..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } Normal; \z
+typedef struct Axis { "..PCL_POINT4D.." } Axis; \z
 typedef struct PointNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } PointNormal; \z
 typedef struct PointNormal PointXYZNormal;\z
 typedef struct PointXYZRGBNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBNormal; \z
@@ -32,6 +32,7 @@ typedef struct PointCloud_XYZRGBA {} PointCloud_XYZRGBA;
 typedef struct PointCloud_XYZNormal {} PointCloud_XYZNormal;
 typedef struct PointCloud_XYZINormal {} PointCloud_XYZINormal;
 typedef struct PointCloud_XYZRGBNormal {} PointCloud_XYZRGBNormal;
+typedef struct PointCloud_Normal {} PointCloud_Normal;
 
 void* pcl_CloudViewer_new(const char *window_name);
 void pcl_CloudViewer_delete(void *self);
@@ -45,29 +46,30 @@ void pcl_Primitive_XYZ_createPlatonicSolid(PointCloud_XYZ *output, int solidType
 void pcl_Primitive_XYZ_createPlane(PointCloud_XYZ *output, double x1, double y1, double z1, double x2, double y2, double z2, int samples, float resolution);
 void pcl_Primitive_XYZ_createDisk(PointCloud_XYZ *output, double innerRadius, double outerRadius, int radialResolution,int samples, float resolution);
 
-typedef struct PointIndices {} PointIndices;
-PointIndices* pcl_PointIndices_new();
-PointIndices* pcl_PointIndices_clone(PointIndices *self);
-void pcl_PointIndices_delete(PointIndices *self);
-unsigned int pcl_PointIndices_size(PointIndices *self);
-unsigned int pcl_PointIndices_capacity(PointIndices *self);
-void pcl_PointIndices_reserve(PointIndices *self, size_t capacity);
-void pcl_PointIndices_viewAsTensor(PointIndices* self, THIntTensor* tensor);
-void pcl_PointIndices_copyToTensor(PointIndices* self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count);
-void pcl_PointIndices_copyFromTensor(PointIndices* self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count);
-void pcl_PointIndices_insertFromTensor(PointIndices* self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count);
-int pcl_PointIndices_getAt(PointIndices *self, size_t pos);
-void pcl_PointIndices_setAt(PointIndices *self, size_t pos, int value);
-void pcl_PointIndices_push_back(PointIndices *self, int value);
-int pcl_PointIndices_pop_back(PointIndices *self);
-void pcl_PointIndices_clear(PointIndices *self);
-void pcl_PointIndices_insert(PointIndices *self, size_t pos, size_t n, int value);
-void pcl_PointIndices_erase(PointIndices *self, size_t begin, size_t end);
+typedef struct Indices {} Indices;
+Indices* pcl_Indices_new();
+Indices* pcl_Indices_clone(Indices *self);
+void pcl_Indices_delete(Indices *self);
+unsigned int pcl_Indices_size(Indices *self);
+unsigned int pcl_Indices_capacity(Indices *self);
+void pcl_Indices_reserve(Indices *self, size_t capacity);
+void pcl_Indices_append(Indices *self, Indices *source);
+void pcl_Indices_insertMany(Indices *self, Indices *source, size_t src_offset, size_t dst_offset, size_t count);
+void pcl_Indices_viewAsTensor(Indices* self, THIntTensor* tensor);
+void pcl_Indices_copyToTensor(Indices* self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count);
+void pcl_Indices_copyFromTensor(Indices* self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count);
+void pcl_Indices_insertFromTensor(Indices* self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count);
+int pcl_Indices_getAt(Indices *self, size_t pos);
+void pcl_Indices_setAt(Indices *self, size_t pos, int value);
+void pcl_Indices_push_back(Indices *self, int value);
+int pcl_Indices_pop_back(Indices *self);
+void pcl_Indices_clear(Indices *self);
+void pcl_Indices_insert(Indices *self, size_t pos, size_t n, int value);
+void pcl_Indices_erase(Indices *self, size_t begin, size_t end);
 ]]
 ffi.cdef(cdef)
 
-local generic_declarations = 
-[[
+local pcl_PointCloud_declaration = [[
 PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_new(uint32_t width, uint32_t height);
 PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_clone(PointCloud_TYPE_KEY *self);
 void pcl_PointCloud_TYPE_KEY_delete(PointCloud_TYPE_KEY *self);
@@ -102,10 +104,13 @@ int pcl_PointCloud_TYPE_KEY_savePLYFile(PointCloud_TYPE_KEY *cloud, const char *
 int pcl_PointCloud_TYPE_KEY_loadOBJFile(PointCloud_TYPE_KEY *cloud, const char *fn);
 void pcl_PointCloud_TYPE_KEY_savePNGFile(PointCloud_TYPE_KEY *cloud, const char *fn, const char* field_name);
 int pcl_PointCloud_TYPE_KEY_readXYZfloat(PointCloud_TYPE_KEY *cloud, struct THFloatTensor *output);
+]]
 
+local generic_declarations = [[
 void pcl_CloudViewer_TYPE_KEY_showCloud(void *self, PointCloud_TYPE_KEY *cloud, const char *cloudname);
 
-void pcl_Filter_TYPE_KEY_removeNaNFromPointCloud(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THIntTensor *index);
+void pcl_Filter_TYPE_KEY_removeNaNFromPointCloud(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, Indices *indices);
+void pcl_Filter_TYPE_KEY_removeNaNNormalsFromPointCloud(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, Indices *indices);
 void pcl_Filter_TYPE_KEY_passThrough(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative);
 void pcl_Filter_TYPE_KEY_cropBox(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, THFloatTensor *transform, bool negative);
 void pcl_Filter_TYPE_KEY_cropSphere(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THFloatTensor *center, double radius, THFloatTensor *transform, bool negative);
@@ -120,13 +125,14 @@ typedef struct {} PCA_TYPE_KEY;
 PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_new(bool basis_only);
 PCA_TYPE_KEY* pcl_PCA_TYPE_KEY_clone(PCA_TYPE_KEY *self);
 void pcl_PCA_TYPE_KEY_delete(PCA_TYPE_KEY *self);
-void pcl_PCA_TYPE_KEY_set_inputCloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
-void pcl_PCA_TYPE_KEY_get_mean(PCA_TYPE_KEY *self, struct THFloatTensor* output);
-void pcl_PCA_TYPE_KEY_get_eigenVectors(PCA_TYPE_KEY *self, struct THFloatTensor *output);
-void pcl_PCA_TYPE_KEY_get_eigenValues(PCA_TYPE_KEY *self, struct THFloatTensor *output);
-void pcl_PCA_TYPE_KEY_get_coefficients(PCA_TYPE_KEY *self, struct THFloatTensor* output);
-void pcl_PCA_TYPE_KEY_project_cloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output);
-void pcl_PCA_TYPE_KEY_reconstruct_cloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output);
+void pcl_PCA_TYPE_KEY_setInputCloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_PCA_TYPE_KEY_setIndices(PCA_TYPE_KEY *self, Indices *indices);
+void pcl_PCA_TYPE_KEY_getMean(PCA_TYPE_KEY *self, struct THFloatTensor* output);
+void pcl_PCA_TYPE_KEY_getEigenVectors(PCA_TYPE_KEY *self, struct THFloatTensor *output);
+void pcl_PCA_TYPE_KEY_getEigenValues(PCA_TYPE_KEY *self, struct THFloatTensor *output);
+void pcl_PCA_TYPE_KEY_getCoefficients(PCA_TYPE_KEY *self, struct THFloatTensor* output);
+void pcl_PCA_TYPE_KEY_projectCloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output);
+void pcl_PCA_TYPE_KEY_reconstructCloud(PCA_TYPE_KEY *self, PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output);
 
 typedef struct {} ICP_TYPE_KEY;
 ICP_TYPE_KEY* pcl_ICP_TYPE_KEY_new();
@@ -168,15 +174,15 @@ typedef struct {} KdTreeFLANN_TYPE_KEY;
 KdTreeFLANN_TYPE_KEY* pcl_KdTreeFLANN_TYPE_KEY_new(bool sorted);
 KdTreeFLANN_TYPE_KEY* pcl_KdTreeFLANN_TYPE_KEY_clone(KdTreeFLANN_TYPE_KEY *self);
 void pcl_KdTreeFLANN_TYPE_KEY_delete(KdTreeFLANN_TYPE_KEY *self);
-void pcl_KdTreeFLANN_TYPE_KEY_setInputCloud(KdTreeFLANN_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_KdTreeFLANN_TYPE_KEY_setInputCloud(KdTreeFLANN_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud, Indices *indices);
 float pcl_KdTreeFLANN_TYPE_KEY_getEpsilon(KdTreeFLANN_TYPE_KEY *self);
 void pcl_KdTreeFLANN_TYPE_KEY_setEpsilon(KdTreeFLANN_TYPE_KEY *self, float value);
 void pcl_KdTreeFLANN_TYPE_KEY_setMinPts(KdTreeFLANN_TYPE_KEY *self, int value);
 int pcl_KdTreeFLANN_TYPE_KEY_getMinPts(KdTreeFLANN_TYPE_KEY *self);
 void pcl_KdTreeFLANN_TYPE_KEY_setSortedResults(KdTreeFLANN_TYPE_KEY *self, bool value);
 void pcl_KdTreeFLANN_TYPE_KEY_assign(KdTreeFLANN_TYPE_KEY *self, KdTreeFLANN_TYPE_KEY *other);
-int pcl_KdTreeFLANN_TYPE_KEY_nearestKSearch(KdTreeFLANN_TYPE_KEY *self, const PointTYPE_KEY &point, int k, THIntTensor *indices, THFloatTensor *squaredDistances);
-int pcl_KdTreeFLANN_TYPE_KEY_radiusSearch(KdTreeFLANN_TYPE_KEY *self, const PointTYPE_KEY &point, double radius, THIntTensor *indices, THFloatTensor *squaredDistances, unsigned int max_nn);
+int pcl_KdTreeFLANN_TYPE_KEY_nearestKSearch(KdTreeFLANN_TYPE_KEY *self, const PointTYPE_KEY &point, int k, Indices *indices, THFloatTensor *squaredDistances);
+int pcl_KdTreeFLANN_TYPE_KEY_radiusSearch(KdTreeFLANN_TYPE_KEY *self, const PointTYPE_KEY &point, double radius, Indices *indices, THFloatTensor *squaredDistances, unsigned int max_nn);
 
 typedef struct {} OctreePointCloudSearch_TYPE_KEY;
 OctreePointCloudSearch_TYPE_KEY* pcl_OctreePointCloudSearch_TYPE_KEY_new(double resolution);
@@ -184,7 +190,7 @@ void pcl_OctreePointCloudSearch_TYPE_KEY_delete(OctreePointCloudSearch_TYPE_KEY 
 double pcl_OctreePointCloudSearch_TYPE_KEY_getResolution(OctreePointCloudSearch_TYPE_KEY *self);
 double pcl_OctreePointCloudSearch_TYPE_KEY_getEpsilon(OctreePointCloudSearch_TYPE_KEY *self);
 void pcl_OctreePointCloudSearch_TYPE_KEY_setEpsilon(OctreePointCloudSearch_TYPE_KEY *self, double value);
-void pcl_OctreePointCloudSearch_TYPE_KEY_setInputCloud(OctreePointCloudSearch_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_OctreePointCloudSearch_TYPE_KEY_setInputCloud(OctreePointCloudSearch_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud, Indices *indices);
 void pcl_OctreePointCloudSearch_TYPE_KEY_addPointsFromInputCloud(OctreePointCloudSearch_TYPE_KEY *self);
 void pcl_OctreePointCloudSearch_TYPE_KEY_addPointToCloud(OctreePointCloudSearch_TYPE_KEY *self, const PointTYPE_KEY &point, PointCloud_TYPE_KEY *cloud);
 bool pcl_OctreePointCloudSearch_TYPE_KEY_isVoxelOccupiedAtPoint(OctreePointCloudSearch_TYPE_KEY *self, const PointTYPE_KEY &point);
@@ -194,8 +200,8 @@ void pcl_OctreePointCloudSearch_TYPE_KEY_setTreeDepth(OctreePointCloudSearch_TYP
 unsigned int pcl_OctreePointCloudSearch_TYPE_KEY_getTreeDepth(OctreePointCloudSearch_TYPE_KEY *self);
 unsigned int pcl_OctreePointCloudSearch_TYPE_KEY_getLeafCount(OctreePointCloudSearch_TYPE_KEY *self);
 unsigned int pcl_OctreePointCloudSearch_TYPE_KEY_getBranchCount(OctreePointCloudSearch_TYPE_KEY *self);
-int pcl_OctreePointCloudSearch_TYPE_KEY_nearestKSearch(OctreePointCloudSearch_TYPE_KEY *self, const PointTYPE_KEY &point, int k, THIntTensor *indices, THFloatTensor *squaredDistances);
-int pcl_OctreePointCloudSearch_TYPE_KEY_radiusSearch(OctreePointCloudSearch_TYPE_KEY *self, const PointTYPE_KEY &point, double radius, THIntTensor *indices, THFloatTensor *squaredDistances, unsigned int max_nn);
+int pcl_OctreePointCloudSearch_TYPE_KEY_nearestKSearch(OctreePointCloudSearch_TYPE_KEY *self, const PointTYPE_KEY &point, int k, Indices *indices, THFloatTensor *squaredDistances);
+int pcl_OctreePointCloudSearch_TYPE_KEY_radiusSearch(OctreePointCloudSearch_TYPE_KEY *self, const PointTYPE_KEY &point, double radius, Indices *indices, THFloatTensor *squaredDistances, unsigned int max_nn);
 
 void* pcl_OpenNI2Stream_TYPE_KEY_new(const char* device_id, int max_backlog);
 void pcl_OpenNI2Stream_TYPE_KEY_delete(void* self);
@@ -212,9 +218,17 @@ float pcl_OpenNI2Stream_TYPE_KEY_getFramesPerSecond(void *self);
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
 for i,v in ipairs(supported_keys) do
-  local specialized = string.gsub(generic_declarations, 'TYPE_KEY', v)
+  local specialized = string.gsub(pcl_PointCloud_declaration, 'TYPE_KEY', v)
+  ffi.cdef(specialized)
+  specialized = string.gsub(generic_declarations, 'TYPE_KEY', v)
   ffi.cdef(specialized)
 end
+
+local function add_normal_declarations()
+  local specialized = string.gsub(pcl_PointCloud_declaration, 'TYPE_KEY', 'Normal')
+  ffi.cdef(specialized)
+end
+add_normal_declarations()
 
 local normal_dependent_declarations = 
 [[
@@ -222,6 +236,7 @@ typedef struct {} NormalEstimation_TYPE_KEY;
 NormalEstimation_TYPE_KEY* pcl_NormalEstimation_TYPE_KEY_new();
 void pcl_NormalEstimation_TYPE_KEY_delete(NormalEstimation_TYPE_KEY *self);
 void pcl_NormalEstimation_TYPE_KEY_setInputCloud(NormalEstimation_TYPE_KEY *self, PointCloud_TYPE_KEY* cloud);
+void pcl_NormalEstimation_TYPE_KEY_setIndices(NormalEstimation_TYPE_KEY *self, Indices *indices);
 void pcl_NormalEstimation_TYPE_KEY_getViewPoint(NormalEstimation_TYPE_KEY *self, THFloatTensor* out_pt);
 void pcl_NormalEstimation_TYPE_KEY_setViewPoint(NormalEstimation_TYPE_KEY *self, THFloatTensor* pt);
 void pcl_NormalEstimation_TYPE_KEY_useSensorOriginAsViewPoint(NormalEstimation_TYPE_KEY *self);
@@ -405,6 +420,26 @@ function PointXYZRGBA:__newindex(i, v) if i > 0 and i <= #self then self.data[i-
 function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba: %08X }', self.x, self.y, self.z, self.rgba) end 
 ffi.metatype(pcl.PointXYZRGBA, PointXYZRGBA)
 pcl.metatype[pcl.PointXYZRGBA] = PointXYZRGBA
+
+-- Normal metatype
+local Normal = {
+  prototype = {
+    tensor = totensor,
+    set = set,
+  },
+  __eq = eq,
+  __len = len,
+  fields = { 'normal_x', 'normal_y', 'normal_z', '_1', 'curvature', '_2', '_3', '_3' }
+}
+Normal.__pairs = createpairs(Normal.fields)
+function Normal:__index(i) if type(i) == "number" then return self.data[i-1] else return Normal.prototype[i] end end
+function Normal:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
+function Normal:__tostring()
+  return string.format('{ normal_x:%f, normal_y:%f, normal_z:%f, curvature:%f }', 
+    self.normal_x, self.normal_y, self.normal_z, self.curvature) 
+end 
+ffi.metatype(pcl.Normal, Normal)
+pcl.metatype[pcl.Normal] = Normal
 
 -- PointNormal metatype
 local PointNormal = {

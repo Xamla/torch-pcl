@@ -18,9 +18,9 @@ PCLIMP(void, KdTreeFLANN, delete)(KdTreeFLANN_ptr *self)
   delete self;
 }
 
-PCLIMP(void, KdTreeFLANN, setInputCloud)(KdTreeFLANN_ptr *self, PointCloud_ptr *cloud)
+PCLIMP(void, KdTreeFLANN, setInputCloud)(KdTreeFLANN_ptr *self, PointCloud_ptr *cloud, Indices_ptr *indices)
 {
-  (*self)->setInputCloud(*cloud);
+  (*self)->setInputCloud(*cloud, indices ? *indices : pcl::KdTreeFLANN<_PointT>::IndicesConstPtr());
 }
 
 PCLIMP(float, KdTreeFLANN, getEpsilon)(KdTreeFLANN_ptr *self)
@@ -55,15 +55,13 @@ PCLIMP(void, KdTreeFLANN, assign)(KdTreeFLANN_ptr *self, KdTreeFLANN_ptr *other)
   (*self)->operator=(**other);
 }
 
-PCLIMP(int, KdTreeFLANN, nearestKSearch)(KdTreeFLANN_ptr *self, const _PointT &point, int k, THIntTensor *indices, THFloatTensor *squaredDistances)
+PCLIMP(int, KdTreeFLANN, nearestKSearch)(KdTreeFLANN_ptr *self, const _PointT &point, int k, Indices_ptr *indices, THFloatTensor *squaredDistances)
 {
-  std::vector<int> indices_;
+  std::vector<int> dummy;
+  std::vector<int>& indices_ = (indices && *indices) ? **indices : dummy;
   std::vector<float> squaredDistances_;
   
   int found = (*self)->nearestKSearch(point, k, indices_, squaredDistances_);
-
-  if (indices)
-    vector2Tensor(indices_, indices);
     
   if (squaredDistances)
     vector2Tensor(squaredDistances_, squaredDistances);
@@ -71,16 +69,14 @@ PCLIMP(int, KdTreeFLANN, nearestKSearch)(KdTreeFLANN_ptr *self, const _PointT &p
   return found;
 }
 
-PCLIMP(int, KdTreeFLANN, radiusSearch)(KdTreeFLANN_ptr *self, const _PointT &point, double radius, THIntTensor *indices, THFloatTensor *squaredDistances, unsigned int max_nn)
+PCLIMP(int, KdTreeFLANN, radiusSearch)(KdTreeFLANN_ptr *self, const _PointT &point, double radius, Indices_ptr *indices, THFloatTensor *squaredDistances, unsigned int max_nn)
 {
-  std::vector<int> indices_;
+  std::vector<int> dummy;
+  std::vector<int>& indices_ = (indices && *indices) ? **indices : dummy;
   std::vector<float> squaredDistances_;
   
   int found = (*self)->radiusSearch(point, radius, indices_, squaredDistances_, max_nn);
 
-  if (indices)
-    vector2Tensor(indices_, indices);
-    
   if (squaredDistances)
     vector2Tensor(squaredDistances_, squaredDistances);  
   

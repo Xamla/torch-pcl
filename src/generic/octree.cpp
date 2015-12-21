@@ -29,9 +29,9 @@ PCLIMP(void, OctreePointCloudSearch, setEpsilon)(Octree_ptr *self, double value)
   (*self)->setEpsilon(value);
 }
 
-PCLIMP(void, OctreePointCloudSearch, setInputCloud)(Octree_ptr *self, PointCloud_ptr *cloud)
+PCLIMP(void, OctreePointCloudSearch, setInputCloud)(Octree_ptr *self, PointCloud_ptr *cloud, Indices_ptr *indices)
 {
-  (*self)->setInputCloud(*cloud);
+  (*self)->setInputCloud(*cloud, indices ? *indices : pcl::octree::OctreePointCloudSearch<_PointT>::IndicesConstPtr());
 }
 
 PCLIMP(void, OctreePointCloudSearch, addPointsFromInputCloud)(Octree_ptr *self)
@@ -79,15 +79,13 @@ PCLIMP(unsigned int, OctreePointCloudSearch, getBranchCount)(Octree_ptr *self)
   return static_cast<unsigned int>((*self)->getBranchCount());
 }
 
-PCLIMP(int, OctreePointCloudSearch, nearestKSearch)(Octree_ptr *self, const _PointT &point, int k, THIntTensor *indices, THFloatTensor *squaredDistances)
+PCLIMP(int, OctreePointCloudSearch, nearestKSearch)(Octree_ptr *self, const _PointT &point, int k, Indices_ptr *indices, THFloatTensor *squaredDistances)
 {
-  std::vector<int> indices_;
+  std::vector<int> dummy;
+  std::vector<int>& indices_ = (indices && *indices) ? **indices : dummy;
   std::vector<float> squaredDistances_;
   
   int found = (*self)->nearestKSearch(point, k, indices_, squaredDistances_);
-
-  if (indices)
-    vector2Tensor(indices_, indices);
     
   if (squaredDistances)
     vector2Tensor(squaredDistances_, squaredDistances);
@@ -95,16 +93,14 @@ PCLIMP(int, OctreePointCloudSearch, nearestKSearch)(Octree_ptr *self, const _Poi
   return found;
 }
 
-PCLIMP(int, OctreePointCloudSearch, radiusSearch)(Octree_ptr *self, const _PointT &point, double radius, THIntTensor *indices, THFloatTensor *squaredDistances, unsigned int max_nn)
+PCLIMP(int, OctreePointCloudSearch, radiusSearch)(Octree_ptr *self, const _PointT &point, double radius, Indices_ptr *indices, THFloatTensor *squaredDistances, unsigned int max_nn)
 {
-  std::vector<int> indices_;
+  std::vector<int> dummy;
+  std::vector<int>& indices_ = (indices && *indices) ? **indices : dummy;
   std::vector<float> squaredDistances_;
   
   int found = (*self)->radiusSearch(point, radius, indices_, squaredDistances_, max_nn);
 
-  if (indices)
-    vector2Tensor(indices_, indices);
-    
   if (squaredDistances)
     vector2Tensor(squaredDistances_, squaredDistances);  
   

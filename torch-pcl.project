@@ -50,7 +50,8 @@
     <File Name="src/xyzinormal.cpp"/>
     <File Name="src/openni2.h"/>
     <File Name="src/xyznormal.cpp"/>
-    <File Name="src/pointindices.cpp"/>
+    <File Name="src/indices.cpp"/>
+    <File Name="src/normal.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>

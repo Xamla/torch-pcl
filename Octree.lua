@@ -65,8 +65,8 @@ function Octree:setEpsilon(eps)
   self.f.setEpsilon(self.o, eps)
 end
 
-function Octree:setInputCloud(cloud)
-  self.f.setInputCloud(self.o, cloud:cdata())
+function Octree:setInputCloud(cloud, indices)
+  self.f.setInputCloud(self.o, cloud:cdata(), utils.cdata(indices))
 end
 
 function Octree:addPointsFromInputCloud()
@@ -106,9 +106,9 @@ function Octree:getBranchCount()
 end
 
 function Octree:nearestKSearch(point, k, indices, squaredDistances)
-  return self.f.nearestKSearch(self.o, point, k, utils.opt(indices), utils.opt(squaredDistances))
+  return self.f.nearestKSearch(self.o, point, k, utils.cdata(indices), utils.cdata(squaredDistances))
 end
 
 function Octree:radiusSearch(point, radius, indices, squaredDistances, max_nn)
-  return self.f.radiusSearch(self.o, point, radius, utils.opt(indices), utils.opt(squaredDistances), max_nn or 0)
+  return self.f.radiusSearch(self.o, point, radius, utils.cdata(indices), utils.cdata(squaredDistances), max_nn or 0)
 end

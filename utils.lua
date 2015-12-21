@@ -52,8 +52,9 @@ function utils.check_arg(argName, check, errorMsg)
   end
 end
 
-function utils.opt(t)
-  return t and t:cdata() or ffi.NULL
+-- safe accessor for cdata()
+function utils.cdata(x)
+  return x and x:cdata() or pcl.NULL
 end
 
 local normal_type_map = {}

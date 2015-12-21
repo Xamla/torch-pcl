@@ -1,5 +1,5 @@
-#include <pcl/features/normal_3d.h>
 #include "searchwrapper.h"
+#include <pcl/features/normal_3d.h>
 
 #define NormalEstimation_ptr pcl::NormalEstimation<_PointT, _PointNormalT>::Ptr
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
@@ -22,13 +22,12 @@ PCLIMP(void, NormalEstimation, setInputCloud)(NormalEstimation_ptr *self, PointC
   (*self)->setInputCloud(*cloud);
 }
 
-/*
-PCLIMP(void, NormalEstimation, setIndices)(NormalEstimation_ptr *self, indices_buffer)
+
+PCLIMP(void, NormalEstimation, setIndices)(NormalEstimation_ptr *self, Indices_ptr *indices)
 {
-  ..
-  (*self)->setIndices();
+  (*self)->setIndices(*indices);
 }
-*/
+
 
 PCLIMP(void, NormalEstimation, getViewPoint)(NormalEstimation_ptr *self, THFloatTensor* out_pt)
 {

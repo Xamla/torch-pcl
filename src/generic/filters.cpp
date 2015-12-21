@@ -11,24 +11,22 @@
 
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
 
-PCLIMP(void, Filter, removeNaNFromPointCloud)(PointCloud_ptr *input, PointCloud_ptr *output, THIntTensor *index)
+PCLIMP(void, Filter, removeNaNFromPointCloud)(PointCloud_ptr *input, PointCloud_ptr *output, Indices_ptr *indices)
 {
-  std::vector<int> _index;
+  std::vector<int>& _indices = **indices;
   if (output)
-    pcl::removeNaNFromPointCloud(**input, **output, _index);
+    pcl::removeNaNFromPointCloud(**input, **output, _indices);
   else
-    pcl::removeNaNFromPointCloud(**input, _index);    // dry run, does not modify the input point cloud
-  if (index)
-    vector2Tensor(_index, index);
+    pcl::removeNaNFromPointCloud(**input, _indices);    // dry run, does not modify the input point cloud
+
 }
 
 #ifdef _PointT_HAS_NORMALS
-PCLIMP(void, Filter, removeNaNNormalsFromPointCloud)(PointCloud_ptr *input, PointCloud_ptr *output, THIntTensor *index)
+PCLIMP(void, Filter, removeNaNNormalsFromPointCloud)(PointCloud_ptr *input, PointCloud_ptr *output, Indices_ptr *indices)
 {
-  std::vector<int> _index;
-  pcl::removeNaNNormalsFromPointCloud(**input, **output, _index);
-  if (index)
-    vector2Tensor(_index, index);
+  std::vector<int>& _indices = **indices;
+  pcl::removeNaNNormalsFromPointCloud(**input, **output, _indices);
+
 }
 #endif
 

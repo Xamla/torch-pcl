@@ -31,15 +31,12 @@ end
 
 init()
 
+local cdata = utils.cdata
+
 local function check_input_type(input, inplace)
   utils.check_arg('input', pcl.isPointCloud(input), 'point cloud expected')
   local output = inplace and input or pcl.PointCloud(input.pointType)
   return func_by_type[input.pointType], output
-end
-
--- safe accessor for cdata()
-local function cdata(x)
-  return x and x:cdata() or pcl.NULL
 end
 
 local function tensor(x)
@@ -53,14 +50,16 @@ end
 
 function filter.removeNaNFromPointCloud(input, indices, inplace)
   local f, output = check_input_type(input, inplace)
-  f.removeNaNFromPointCloud(input:cdata(), output:cdata(), cdata(indices))
+  indices = indices or pcl.Indices()
+  f.removeNaNFromPointCloud(input:cdata(), output:cdata(), indices:cdata())
   return output
 end
 
 function filter.removeNaNNormalsFromPointCloud(input, indices, inplace)
   local f, output = check_input_type(input, inplace)
   utils.check_arg('input', f.removeNaNNormalsFromPointCloud, 'unsupported point type')
-  f.removeNaNNormalsFromPointCloud(input:cdata(), output:cdata(), cdata(indices))
+  indices = indices or pcl.Indices()
+  f.removeNaNNormalsFromPointCloud(input:cdata(), output:cdata(), indices:cdata())
   return output
 end
 

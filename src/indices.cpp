@@ -1,60 +1,78 @@
-#include <pcl/PointIndices.h>
 #include "utils.h"
 
 #define TYPE_KEY _
-#define Indices_ptr pcl::PointIndices::Ptr
 
-PCLIMP(Indices_ptr *, PointIndices, new)()
+PCLIMP(Indices_ptr *, Indices, new)()
 {
-  return new Indices_ptr(new pcl::PointIndices());
+  return new Indices_ptr(new std::vector<int>);
 }
 
-PCLIMP(Indices_ptr *, PointIndices, clone)(Indices_ptr *self)
+PCLIMP(Indices_ptr *, Indices, clone)(Indices_ptr *self)
 {
-  Indices_ptr *clone = new Indices_ptr(new pcl::PointIndices());
-  **clone = **self;
-  return clone;
+  const std::vector<int>& indices = **self;
+  return new Indices_ptr(new std::vector<int>(indices));
 }
 
-PCLIMP(void, PointIndices, delete)(Indices_ptr *self)
+PCLIMP(void, Indices, delete)(Indices_ptr *self)
 {
   delete self;
 }
 
-PCLIMP(unsigned int, PointIndices, size)(Indices_ptr *self)
+PCLIMP(unsigned int, Indices, size)(Indices_ptr *self)
 {
-  const std::vector<int>& indices = (*self)->indices;
+  const std::vector<int>& indices = **self;
   return static_cast<unsigned int>(indices.size());
 }
 
-PCLIMP(unsigned int, PointIndices, capacity)(Indices_ptr *self)
+PCLIMP(unsigned int, Indices, capacity)(Indices_ptr *self)
 {
-  const std::vector<int>& indices = (*self)->indices;
+  const std::vector<int>& indices = **self;
   return static_cast<unsigned int>(indices.capacity());
 }
 
-PCLIMP(void, PointIndices, reserve)(Indices_ptr *self, size_t capacity)
+PCLIMP(void, Indices, reserve)(Indices_ptr *self, size_t capacity)
 {
-  std::vector<int>& indices = (*self)->indices;
+  std::vector<int>& indices = **self;
   indices.reserve(capacity);
 }
 
-PCLIMP(void, PointIndices, viewAsTensor)(Indices_ptr *self, THIntTensor* tensor)
+PCLIMP(void, Indices, append)(Indices_ptr *self, Indices_ptr *source)
 {
-  std::vector<int>& indices = (*self)->indices;
+  std::vector<int>& dst = **self;
+  const std::vector<int>& src = **source;
+  dst.reserve(src.size() + dst.size());
+  dst.insert(dst.end(), src.begin(), src.end());
+}
+
+PCLIMP(void, Indices, insertMany)(Indices_ptr *self, Indices_ptr *source, size_t src_offset, size_t dst_offset, size_t count)
+{
+  std::vector<int>& dst = **self;
+  const std::vector<int>& src = **source;
+  
+  // check if source range is valid
+  if (src_offset + count > src.size())
+    PCL_THROW_EXCEPTION(TorchPclException, "Invalid source range specified.")
+
+  dst.reserve(src.size() + count);
+  dst.insert(dst.begin() + dst_offset, src.begin() + src_offset, src.begin() + src_offset + count);
+}
+
+PCLIMP(void, Indices, viewAsTensor)(Indices_ptr *self, THIntTensor* tensor)
+{
+  std::vector<int>& indices = **self;
   
   // create view into index buffer memory
-  int *ptr = reinterpret_cast<int*>(&indices.front());
-  THIntStorage *storage = THIntStorage_newWithData(ptr, indices.size() * sizeof(int));
+  int *ptr = &indices.front();
+  THIntStorage *storage = THIntStorage_newWithData(ptr, indices.size());
   THIntStorage_clearFlag(storage, TH_STORAGE_FREEMEM | TH_STORAGE_RESIZABLE);
 
   // assign storage to tensor
-  THIntTensor_setStorage1d(tensor, storage, 0, indices.size(), sizeof(int)); 
+  THIntTensor_setStorage1d(tensor, storage, 0, indices.size(), 1); 
 }
 
-PCLIMP(void, PointIndices, copyToTensor)(Indices_ptr *self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count)
+PCLIMP(void, Indices, copyToTensor)(Indices_ptr *self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count)
 {
-  const std::vector<int>& indices = (*self)->indices;
+  const std::vector<int>& indices = **self;
   
   // we can only copy to 1D tensors
   if (THIntTensor_nDimension(tensor) > 1)
@@ -78,9 +96,9 @@ PCLIMP(void, PointIndices, copyToTensor)(Indices_ptr *self, THIntTensor* tensor,
   THIntTensor_freeCopyTo(tensor_, tensor);
 }
 
-PCLIMP(void, PointIndices, copyFromTensor)(Indices_ptr *self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count)
+PCLIMP(void, Indices, copyFromTensor)(Indices_ptr *self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count)
 {
-  std::vector<int>& dst = (*self)->indices;
+  std::vector<int>& dst = **self;
   
   if (THIntTensor_nDimension(tensor) != 1)
     PCL_THROW_EXCEPTION(TorchPclException, "Only 1D source tensors are supported.");
@@ -101,9 +119,9 @@ PCLIMP(void, PointIndices, copyFromTensor)(Indices_ptr *self, THIntTensor* tenso
   THIntTensor_free(tensor);
 }
 
-PCLIMP(void, PointIndices, insertFromTensor)(Indices_ptr *self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count)
+PCLIMP(void, Indices, insertFromTensor)(Indices_ptr *self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count)
 {
-  std::vector<int>& dst = (*self)->indices;
+  std::vector<int>& dst = **self;
   
   if (THIntTensor_nDimension(tensor) != 1)
     PCL_THROW_EXCEPTION(TorchPclException, "Only 1D source tensors are supported.");
@@ -125,41 +143,41 @@ PCLIMP(void, PointIndices, insertFromTensor)(Indices_ptr *self, THIntTensor* ten
   THIntTensor_free(tensor);
 }
 
-PCLIMP(int, PointIndices, getAt)(Indices_ptr *self, size_t pos)
+PCLIMP(int, Indices, getAt)(Indices_ptr *self, size_t pos)
 {
-  std::vector<int>& indices = (*self)->indices;
+  std::vector<int>& indices = **self;
   return indices[pos];
 }
 
-PCLIMP(void, PointIndices, setAt)(Indices_ptr *self, size_t pos, int value)
+PCLIMP(void, Indices, setAt)(Indices_ptr *self, size_t pos, int value)
 {
-  std::vector<int>& indices = (*self)->indices;
+  std::vector<int>& indices = **self;
   indices[pos] = value;
 }
 
-PCLIMP(void, PointIndices, push_back)(Indices_ptr *self, int value)
+PCLIMP(void, Indices, push_back)(Indices_ptr *self, int value)
 {
-  std::vector<int>& indices = (*self)->indices;
+  std::vector<int>& indices = **self;
   indices.push_back(value);
 }
 
-PCLIMP(int, PointIndices, pop_back)(Indices_ptr *self)
+PCLIMP(int, Indices, pop_back)(Indices_ptr *self)
 {
-  std::vector<int>& indices = (*self)->indices;
+  std::vector<int>& indices = **self;
   int v = indices.back();
   indices.pop_back();
   return v;
 }
 
-PCLIMP(void, PointIndices, clear)(Indices_ptr *self)
+PCLIMP(void, Indices, clear)(Indices_ptr *self)
 {
-  std::vector<int>& indices = (*self)->indices;
+  std::vector<int>& indices = **self;
   indices.clear();
 }
 
-PCLIMP(void, PointIndices, insert)(Indices_ptr *self, size_t pos, size_t n, int value)
+PCLIMP(void, Indices, insert)(Indices_ptr *self, size_t pos, size_t n, int value)
 {
-  std::vector<int>& indices = (*self)->indices;
+  std::vector<int>& indices = **self;
   std::vector<int>::iterator i;
   
   if (pos >= indices.size())
@@ -168,12 +186,12 @@ PCLIMP(void, PointIndices, insert)(Indices_ptr *self, size_t pos, size_t n, int 
   indices.insert(i, n, value);
 }
 
-PCLIMP(void, PointIndices, erase)(Indices_ptr *self, size_t begin, size_t end)
+PCLIMP(void, Indices, erase)(Indices_ptr *self, size_t begin, size_t end)
 {
   if (begin >= end)
     return;
     
-  std::vector<int>& indices = (*self)->indices;
+  std::vector<int>& indices = **self;
   std::vector<int>::iterator b, e;
   if (begin >= indices.size())
     b = indices.end();
@@ -186,8 +204,8 @@ PCLIMP(void, PointIndices, erase)(Indices_ptr *self, size_t begin, size_t end)
   indices.erase(b, e);
 }
 
-PCLIMP(bool, PointIndices, empty)(Indices_ptr *self)
+PCLIMP(bool, Indices, empty)(Indices_ptr *self)
 {
-  const std::vector<int>& indices = (*self)->indices;
+  const std::vector<int>& indices = **self;
   return indices.empty();
 }

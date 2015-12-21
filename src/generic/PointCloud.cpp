@@ -146,6 +146,8 @@ PCLIMP(void, PointCloud, add)(pcl::PointCloud<_PointT>::Ptr *self, pcl::PointClo
   **self += **other;
 }
 
+#ifndef _PointT_WITHOUT_XYZ
+
 PCLIMP(void, PointCloud, transform)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor *mat, pcl::PointCloud<_PointT>::Ptr *output)
 {
   // check dimensionality of input matrix
@@ -160,18 +162,6 @@ PCLIMP(void, PointCloud, transform)(pcl::PointCloud<_PointT>::Ptr *self, THFloat
   THFloatTensor_free(mat);
 }
 
-PCLIMP(void, PointCloud, getMinMax3D)(pcl::PointCloud<_PointT>::Ptr *self, _PointT &min, _PointT &max)
-{
-  pcl::getMinMax3D(**self, min, max);
-}
-
-PCLIMP(void, PointCloud, compute3DCentroid)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor *output)
-{
-  Eigen::Vector4f centroid;
-  pcl::compute3DCentroid(**self, centroid);
-  copyMatrix(centroid, output);
-}
-
 PCLIMP(void, PointCloud, computeCovarianceMatrix)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor *centroid, THFloatTensor *output)
 {
   Eigen::Vector4f centroid_;
@@ -182,6 +172,18 @@ PCLIMP(void, PointCloud, computeCovarianceMatrix)(pcl::PointCloud<_PointT>::Ptr 
   Eigen::Matrix3f covariance;
   pcl::computeCovarianceMatrix(**self, centroid_, covariance);
   copyMatrix(covariance, output);
+}
+
+PCLIMP(void, PointCloud, getMinMax3D)(pcl::PointCloud<_PointT>::Ptr *self, _PointT &min, _PointT &max)
+{
+  pcl::getMinMax3D(**self, min, max);
+}
+
+PCLIMP(void, PointCloud, compute3DCentroid)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor *output)
+{
+  Eigen::Vector4f centroid;
+  pcl::compute3DCentroid(**self, centroid);
+  copyMatrix(centroid, output);
 }
 
 PCLIMP(void, PointCloud, fromPCLPointCloud2)(pcl::PointCloud<_PointT>::Ptr *self, pcl::PCLPointCloud2 *msg)
@@ -213,6 +215,8 @@ PCLIMP(int, PointCloud, readXYZfloat)(pcl::PointCloud<_PointT>::Ptr *self, THFlo
   
   return 0;
 }
+
+#endif
 
 /*PCLIMP(void*, PointCloud, fromTensor)(THTensor* tensor) 
 {

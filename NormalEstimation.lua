@@ -13,9 +13,9 @@ local function init()
     'new',
     'delete',
     'setInputCloud',
+    'setIndices',
     'getViewPoint',
     'setViewPoint',
-    'setInputCloud',
     'useSensorOriginAsViewPoint',
     'setSearchMethod_Octree',
     'setSearchMethod_KdTree',
@@ -46,6 +46,10 @@ end
 
 function NormalEstimation:setInputCloud(cloud)
   self.f.setInputCloud(self.o, cloud:cdata())
+end
+
+function NormalEstimation:setIndices(indices)
+  self.f.setIndices(self.o, indices:cdata())
 end
 
 function NormalEstimation:getViewPoint()

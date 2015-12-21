@@ -49,6 +49,8 @@ local function init()
   for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_PointCloud_TYPE_KEY_", PointCloud_method_names, v)
   end
+  
+  func_by_type[pcl.Normal] = utils.create_typed_methods("pcl_PointCloud_TYPE_KEY_", PointCloud_method_names, "Normal")
 end
 
 init()
@@ -246,7 +248,7 @@ function PointCloud:computeCovarianceMatrix(centroid)
   if not centroid then
     centroid = self:compute3DCentroid()
   end
-  self.f.computeCovarianceMatrix(self.o, utils.opt(centroid), covariance:cdata())
+  self.f.computeCovarianceMatrix(self.o, utils.cdata(centroid), covariance:cdata())
   return covariance, centroid
 end
 

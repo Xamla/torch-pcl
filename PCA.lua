@@ -13,13 +13,14 @@ local function init()
     'new',
     'clone',
     'delete',
-    'set_inputCloud',
-    'get_mean',
-    'get_eigenVectors',
-    'get_eigenValues',
-    'get_coefficients',
-    'project_cloud',
-    'reconstruct_cloud'
+    'setInputCloud',
+    'setIndices',
+    'getMean',
+    'getEigenVectors',
+    'getEigenValues',
+    'getCoefficients',
+    'projectCloud',
+    'reconstructCloud'
   }
 
   for k,v in pairs(utils.type_key_map) do
@@ -66,41 +67,45 @@ function PCA:clone()
 end
 
 function PCA:setInputCloud(cloud)
-  self.f.set_inputCloud(self.o, cloud:cdata())
+  self.f.setInputCloud(self.o, cloud:cdata())
+end
+
+function PCA:setIndices(indices)
+  self.f.setIndices(self.o, indices:cdata())
 end
 
 function PCA:getMean()
   local t = torch.FloatTensor()
-  self.f.get_mean(self.o, t:cdata())
+  self.f.getMean(self.o, t:cdata())
   return t;
 end
 
 function PCA:getEigenVectors()
   local t = torch.FloatTensor()
-  self.f.get_eigenVectors(self.o, t:cdata())
+  self.f.getEigenVectors(self.o, t:cdata())
   return t;
 end
 
 function PCA:getEigenValues()
   local t = torch.FloatTensor()
-  self.f.get_eigenValues(self.o, t:cdata())
+  self.f.getEigenValues(self.o, t:cdata())
   return t;
 end
 
 function PCA:getCoefficients()
   local t = torch.FloatTensor()
-  self.f.get_coefficients(self.o, t:cdata())
+  self.f.getCoefficients(self.o, t:cdata())
   return t;
 end
 
 function PCA:project(input, output)
   output = output or input
-  self.f.project_cloud(self.o, input:cdata(), output:cdata())
+  self.f.projectCloud(self.o, input:cdata(), output:cdata())
   return output
 end
 
 function PCA:reconstruct(input, output)
   output = output or input
-  self.f.reconstruct_cloud(self.o, input:cdata(), output:cdata())
+  self.f.reconstructCloud(self.o, input:cdata(), output:cdata())
   return output
 end

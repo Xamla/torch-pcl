@@ -18,7 +18,7 @@ SET(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 SET(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L\".\" ")
 
 SET(src 
-  "${SOURCE_DIR}/pointindices.cpp"
+  "${SOURCE_DIR}/indices.cpp"
   "${SOURCE_DIR}/cloudviewer.cpp"
   "${SOURCE_DIR}/xyz.cpp"
   "${SOURCE_DIR}/xyzi.cpp"
@@ -26,6 +26,7 @@ SET(src
   "${SOURCE_DIR}/xyznormal.cpp"
   "${SOURCE_DIR}/xyzinormal.cpp"
   "${SOURCE_DIR}/xyzrgbnormal.cpp"
+  "${SOURCE_DIR}/normal.cpp"
 )
 
 FILE(GLOB luasrc *.lua)
