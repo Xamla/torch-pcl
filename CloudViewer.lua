@@ -32,7 +32,7 @@ end
 function CloudViewer:showCloud(cloud, name)
   local f = func_by_type[cloud.pointType]
   if f then
-    f.showCloud(self.v, cloud.c, name)
+    f.showCloud(self.v, cloud:cdata(), name)
   end
 end
 

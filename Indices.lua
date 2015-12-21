@@ -19,8 +19,8 @@ local function init()
     'copyToTensor',
     'copyFromTensor',
     'insertFromTensor',
-    'getat',
-    'setat',
+    'getAt',
+    'setAt',
     'push_back',
     'pop_back',
     'clear',
@@ -94,7 +94,7 @@ function Indices:__index(idx)
     v = Indices[idx]
     if not v and type(idx) == 'number' then
       local f, o = rawget(self, 'f'), rawget(self, 'o')
-      v = f.getat(o, idx-1)
+      v = f.getAt(o, idx-1)
     end
   end
   return v
@@ -103,7 +103,7 @@ end
 function Indices:__newindex(idx, v)
   local f, o = rawget(self, 'f'), rawget(self, 'o')
   if type(idx) == 'number' then
-    f.setat(o, idx-1, v)
+    f.setAt(o, idx-1, v)
   else
     rawset(self, idx, v)
   end

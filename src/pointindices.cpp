@@ -125,13 +125,13 @@ PCLIMP(void, PointIndices, insertFromTensor)(Indices_ptr *self, THIntTensor* ten
   THIntTensor_free(tensor);
 }
 
-PCLIMP(int, PointIndices, getat)(Indices_ptr *self, size_t pos)
+PCLIMP(int, PointIndices, getAt)(Indices_ptr *self, size_t pos)
 {
   std::vector<int>& indices = (*self)->indices;
   return indices[pos];
 }
 
-PCLIMP(void, PointIndices, setat)(Indices_ptr *self, size_t pos, int value)
+PCLIMP(void, PointIndices, setAt)(Indices_ptr *self, size_t pos, int value)
 {
   std::vector<int>& indices = (*self)->indices;
   indices[pos] = value;
@@ -143,10 +143,12 @@ PCLIMP(void, PointIndices, push_back)(Indices_ptr *self, int value)
   indices.push_back(value);
 }
 
-PCLIMP(void, PointIndices, pop_back)(Indices_ptr *self)
+PCLIMP(int, PointIndices, pop_back)(Indices_ptr *self)
 {
   std::vector<int>& indices = (*self)->indices;
+  int v = indices.back();
   indices.pop_back();
+  return v;
 }
 
 PCLIMP(void, PointIndices, clear)(Indices_ptr *self)
