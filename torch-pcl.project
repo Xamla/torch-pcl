@@ -50,6 +50,7 @@
     <File Name="src/xyzinormal.cpp"/>
     <File Name="src/openni2.h"/>
     <File Name="src/xyznormal.cpp"/>
+    <File Name="src/pointindices.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
@@ -75,6 +76,7 @@
     <File Name="Octree.lua"/>
     <File Name="IncrementalRegistration.lua"/>
     <File Name="NormalEstimation.lua"/>
+    <File Name="Indices.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>

@@ -44,6 +44,25 @@ void pcl_Primitive_XYZ_createCone(PointCloud_XYZ *output, double height, double 
 void pcl_Primitive_XYZ_createPlatonicSolid(PointCloud_XYZ *output, int solidType, int samples, float resolution);
 void pcl_Primitive_XYZ_createPlane(PointCloud_XYZ *output, double x1, double y1, double z1, double x2, double y2, double z2, int samples, float resolution);
 void pcl_Primitive_XYZ_createDisk(PointCloud_XYZ *output, double innerRadius, double outerRadius, int radialResolution,int samples, float resolution);
+
+typedef struct PointIndices {} PointIndices;
+PointIndices* pcl_PointIndices_new();
+PointIndices* pcl_PointIndices_clone(PointIndices *self);
+void pcl_PointIndices_delete(PointIndices *self);
+unsigned int pcl_PointIndices_size(PointIndices *self);
+unsigned int pcl_PointIndices_capacity(PointIndices *self);
+void pcl_PointIndices_reserve(PointIndices *self, size_t capacity);
+void pcl_PointIndices_viewAsTensor(PointIndices* self, THIntTensor* tensor);
+void pcl_PointIndices_copyToTensor(PointIndices* self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count);
+void pcl_PointIndices_copyFromTensor(PointIndices* self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count);
+void pcl_PointIndices_insertFromTensor(PointIndices* self, THIntTensor* tensor, size_t src_offset, size_t dst_offset, size_t count);
+int pcl_PointIndices_getat(PointIndices *self, size_t pos);
+void pcl_PointIndices_setat(PointIndices *self, size_t pos, int value);
+void pcl_PointIndices_push_back(PointIndices *self, int value);
+void pcl_PointIndices_pop_back(PointIndices *self);
+void pcl_PointIndices_clear(PointIndices *self);
+void pcl_PointIndices_insert(PointIndices *self, size_t pos, size_t n, int value);
+void pcl_PointIndices_erase(PointIndices *self, size_t begin, size_t end);
 ]]
 ffi.cdef(cdef)
 
@@ -64,7 +83,7 @@ uint32_t pcl_PointCloud_TYPE_KEY_size(PointCloud_TYPE_KEY *self);
 bool pcl_PointCloud_TYPE_KEY_empty(PointCloud_TYPE_KEY *self);
 bool pcl_PointCloud_TYPE_KEY_isOrganized(PointCloud_TYPE_KEY* self);
 void pcl_PointCloud_TYPE_KEY_push_back(PointCloud_TYPE_KEY* self, const PointTYPE_KEY& pt);
-void pcl_PointCloud_TYPE_KEY_insert(PointCloud_TYPE_KEY* self, size_t position, const PointTYPE_KEY& pt, size_t n);
+void pcl_PointCloud_TYPE_KEY_insert(PointCloud_TYPE_KEY* self, size_t position, size_t n, const PointTYPE_KEY& pt);
 void pcl_PointCloud_TYPE_KEY_erase(PointCloud_TYPE_KEY* self, size_t begin, size_t end);
 _PointsBuffer pcl_PointCloud_TYPE_KEY_points(PointCloud_TYPE_KEY *self);
 void pcl_PointCloud_TYPE_KEY_add(PointCloud_TYPE_KEY *self, PointCloud_TYPE_KEY *other);
@@ -305,7 +324,7 @@ end
 
 local function set(dst, v)
   if type(v) == 'cdata' and ffi.istype(v, dst) then
-    ffi.copy(dst, v, ffi.sizeof(dst)) 
+    ffi.copy(dst, v, ffi.sizeof(dst))
   elseif type(v) == 'table' then
     for i=1,#v do
       dst[i] = v[i]

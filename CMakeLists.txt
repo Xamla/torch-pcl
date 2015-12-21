@@ -18,6 +18,7 @@ SET(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 SET(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L\".\" ")
 
 SET(src 
+  "${SOURCE_DIR}/pointindices.cpp"
   "${SOURCE_DIR}/cloudviewer.cpp"
   "${SOURCE_DIR}/xyz.cpp"
   "${SOURCE_DIR}/xyzi.cpp"

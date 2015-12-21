@@ -76,12 +76,12 @@ PCLIMP(bool, PointCloud, isOrganized)(pcl::PointCloud<_PointT>::Ptr *self)
   return (*self)->isOrganized();
 }
 
-PCLIMP(void, PointCloud, push_back)(pcl::PointCloud<_PointT>::Ptr* self, const _PointT& pt)
+PCLIMP(void, PointCloud, push_back)(pcl::PointCloud<_PointT>::Ptr *self, const _PointT& pt)
 {
   (*self)->push_back(pt);
 }
 
-PCLIMP(void, PointCloud, insert)(pcl::PointCloud<_PointT>::Ptr* self, size_t position, const _PointT& pt, size_t n)
+PCLIMP(void, PointCloud, insert)(pcl::PointCloud<_PointT>::Ptr *self, size_t position, size_t n, const _PointT& pt)
 {
   if (n == 0)
     return;
@@ -95,7 +95,7 @@ PCLIMP(void, PointCloud, insert)(pcl::PointCloud<_PointT>::Ptr* self, size_t pos
   cloud.insert(it, n, pt);
 }
 
-PCLIMP(void, PointCloud, erase)(pcl::PointCloud<_PointT>::Ptr* self, size_t begin, size_t end)
+PCLIMP(void, PointCloud, erase)(pcl::PointCloud<_PointT>::Ptr *self, size_t begin, size_t end)
 {
   if (begin >= end)
     return;
@@ -115,7 +115,7 @@ PCLIMP(void, PointCloud, erase)(pcl::PointCloud<_PointT>::Ptr* self, size_t begi
 
 PCLIMP(_PointsBuffer, PointCloud, points)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-  float* ptr = reinterpret_cast<float*>(&(*self)->points[0]);
+  float *ptr = reinterpret_cast<float*>(&(*self)->points[0]);
   _PointsBuffer buf;
   buf.dim = sizeof(_PointT) / sizeof(float);
   buf.storage = THFloatStorage_newWithData(ptr, (*self)->points.size() * buf.dim);

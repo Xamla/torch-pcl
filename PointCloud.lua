@@ -185,7 +185,7 @@ function PointCloud:push_back(pt)
 end
 
 function PointCloud:insert(pos, pt, n)
-  self.f.insert(self.o, pos-1, pt, n or 1)
+  self.f.insert(self.o, pos-1, n or 1, pt)
 end
 
 function PointCloud:erase(begin_pos, end_pos)
