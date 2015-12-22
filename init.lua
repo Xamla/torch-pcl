@@ -74,4 +74,8 @@ function pcl.computeCovarianceMatrix(cloud, centroid)
   return cloud:computeCovarianceMatrix(centroid)
 end
 
+function pcl.copyPointCloud(cloud_in, indices, cloud_out)
+  return pcl.PointCloud.copy(cloud_in, indices, cloud_out)
+end
+
 return pcl

@@ -45,7 +45,14 @@ local function init()
     'readXYZfloat',
     'readRGBAfloat',
     'readRGBAbyte',
-    'addNormals'
+    'addNormals',
+    'copyXYZ',
+    'copyXYZI',
+    'copyXYZRGB',
+    'copyXYZRGBA',
+    'copyXYZNormal',
+    'copyXYZINormal',
+    'copyXYZRGBNormal'
   }
 
   for k,v in pairs(utils.type_key_map) do
@@ -312,4 +319,18 @@ end
 
 function PointCloud:__tostring()
   return string.format('PointCloud (w:%d, h:%d)', self:getWidth(), self:getHeight())
+end
+
+function PointCloud.copy(cloud_in, indices, cloud_out)
+  if torch.isTypeOf(indices, pcl.PointCloud) then
+    cloud_out = indices
+    indices = nil
+  end
+  local copy = cloud_in.f["copy" .. utils.type_key_map[cloud_out.pointType] or '']
+  if not copy then
+    print("copy" .. utils.type_key_map[cloud_out.pointType] or '')
+    error("Copy to destination point cloud type not supported.")
+  end
+  copy(cloud_in:cdata(), utils.cdata(indices), cloud_out:cdata())
+  return cloud_out
 end

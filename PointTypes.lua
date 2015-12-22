@@ -16,6 +16,7 @@ typedef struct PointXYZ { "..PCL_POINT4D.."} PointXYZ; \z
 typedef struct PointXYZI { "..PCL_POINT4D.." union { struct { float intensity; }; float data_c[4]; }; } PointXYZI; \z
 typedef struct PointXYZL { "..PCL_POINT4D.." uint32_t label; } PointXYZL; \z
 typedef struct PointXYZRGB { "..PCL_POINT4D..PCL_RGB.." } PointXYZRGB; \z
+typedef struct PointXYZRGBA { "..PCL_POINT4D..PCL_RGB.." } PointXYZRGBA; \z
 typedef struct PointXYZRGBL { "..PCL_POINT4D..PCL_RGB.." uint32_t label; } PointXYZRGBL; \z
 typedef struct Normal { "..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } Normal; \z
 typedef struct Axis { "..PCL_POINT4D.." } Axis; \z
@@ -29,6 +30,7 @@ typedef struct OpenNI2CameraParameters { double focal_length_x; double focal_len
 typedef struct PointCloud_XYZ {} PointCloud_XYZ;
 typedef struct PointCloud_XYZI {} PointCloud_XYZI;
 typedef struct PointCloud_XYZRGB {} PointCloud_XYZRGB;
+typedef struct PointCloud_XYZRGBA {} PointCloud_XYZRGBA;
 typedef struct PointCloud_XYZNormal {} PointCloud_XYZNormal;
 typedef struct PointCloud_XYZINormal {} PointCloud_XYZINormal;
 typedef struct PointCloud_XYZRGBNormal {} PointCloud_XYZRGBNormal;
@@ -105,6 +107,13 @@ int pcl_PointCloud_TYPE_KEY_savePLYFile(PointCloud_TYPE_KEY *cloud, const char *
 int pcl_PointCloud_TYPE_KEY_loadOBJFile(PointCloud_TYPE_KEY *cloud, const char *fn);
 void pcl_PointCloud_TYPE_KEY_savePNGFile(PointCloud_TYPE_KEY *cloud, const char *fn, const char* field_name);
 int pcl_PointCloud_TYPE_KEY_readXYZfloat(PointCloud_TYPE_KEY *cloud, struct THFloatTensor *output);
+void pcl_PointCloud_TYPE_KEY_copyXYZ(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZ *cloud_out);
+void pcl_PointCloud_TYPE_KEY_copyXYZI(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZI *cloud_out);
+void pcl_PointCloud_TYPE_KEY_copyXYZRGB(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZRGB *cloud_out);
+void pcl_PointCloud_TYPE_KEY_copyXYZRGBA(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZRGBA *cloud_out);
+void pcl_PointCloud_TYPE_KEY_copyXYZNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZNormal *cloud_out);
+void pcl_PointCloud_TYPE_KEY_copyXYZINormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZINormal *cloud_out);
+void pcl_PointCloud_TYPE_KEY_copyXYZRGBNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZRGBNormal *cloud_out);
 ]]
 
 local generic_declarations = [[
@@ -247,7 +256,7 @@ const char* pcl_OpenNI2Stream_TYPE_KEY_getName(void *self);
 float pcl_OpenNI2Stream_TYPE_KEY_getFramesPerSecond(void *self);
 ]]
 
-local supported_keys = { 'XYZ', 'XYZI', 'XYZRGB', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
+local supported_keys = { 'XYZ', 'XYZI', 'XYZRGB', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
 for i,v in ipairs(supported_keys) do
   local specialized = string.gsub(pcl_PointCloud_declaration, 'TYPE_KEY', v)
   ffi.cdef(specialized)
@@ -267,6 +276,8 @@ local specialized_declarations =
 [[
 void pcl_PointCloud_XYZRGB_readRGBAfloat(void *cloud, struct THFloatTensor *output);
 void pcl_PointCloud_XYZRGB_readRGBAbyte(void *cloud, struct THByteTensor *output);
+void pcl_PointCloud_XYZRGBA_readRGBAfloat_readRGBAfloat(void *cloud, struct THFloatTensor *output);
+void pcl_PointCloud_XYZRGBA_readRGBAbyte(void *cloud, struct THByteTensor *output);
 
 void pcl_PointCloud_XYZ_addNormals(PointCloud_XYZ *self, PointCloud_Normal *normals, PointCloud_XYZNormal *output);
 void pcl_PointCloud_XYZI_addNormals(PointCloud_XYZI *self, PointCloud_Normal *normals, PointCloud_XYZINormal *output);
@@ -279,7 +290,8 @@ pcl.lib = ffi.load(package.searchpath('libpcl', package.cpath))
 local pointTypeNames = { 
   'PointXYZ',             -- float x, y, z;
   'PointXYZI',            -- float x, y, z, intensity;
-  'PointXYZRGB',         -- float x, y, z; uint32_t rgb;
+  'PointXYZRGB',          -- float x, y, z; uint32_t rgb;
+  'PointXYZRGBA',         -- float x, y, z; uint32_t rgb;
   'PointXY',              -- float x, y;
   'PointNormal',          -- float x, y, z; float normal[3], curvature;
   'Normal',               -- float normal[3], curvature;
@@ -293,7 +305,11 @@ pcl.pointTypeByName = {}
 
 function pcl.pointType(pointType)
   if type(pointType) == 'string' then
-    pointType = pcl.pointTypeByName[string.lower(pointType)]
+    local t = pcl.pointTypeByName[string.lower(pointType)]
+    if not t then
+      error('Invalid point type: \'' .. pointType .. '\' specified.')
+    end
+    pointType = t
   end
   return pointType or pcl.PointXYZ  
 end
@@ -434,6 +450,25 @@ function PointXYZRGB:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1
 function PointXYZRGB:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba: %08X }', self.x, self.y, self.z, self.rgba) end 
 ffi.metatype(pcl.PointXYZRGB, PointXYZRGB)
 pcl.metatype[pcl.PointXYZRGB] = PointXYZRGB
+
+-- PointXYZRGABmetatype
+local PointXYZRGBA = {
+  prototype = {
+    tensor = totensor,
+    set = set,
+    hasNormal = false
+  },
+  __eq = eq,
+  __len = len,
+  fields = { 'x', 'y', 'z', 'w', 'rgba', '_1', '_2', '_3' }
+}
+
+PointXYZRGBA.__pairs = createpairs(PointXYZRGBA.fields)
+function PointXYZRGBA:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBA.prototype[i] end end
+function PointXYZRGBA:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
+function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba: %08X }', self.x, self.y, self.z, self.rgba) end 
+ffi.metatype(pcl.PointXYZRGBA, PointXYZRGBA)
+pcl.metatype[pcl.PointXYZRGBA] = PointXYZRGBA
 
 -- Normal metatype
 local Normal = {

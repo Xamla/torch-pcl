@@ -35,6 +35,7 @@
       <File Name="src/generic/icp_nl.cpp"/>
       <File Name="src/generic/normal_estimation.cpp"/>
       <File Name="src/generic/searchwrapper.h"/>
+      <File Name="src/generic/readRGBA.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -52,6 +53,7 @@
     <File Name="src/indices.cpp"/>
     <File Name="src/normal.cpp"/>
     <File Name="src/xyzrgb.cpp"/>
+    <File Name="src/xyzrgba.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>

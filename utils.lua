@@ -7,6 +7,7 @@ local type_key_map = {}
 type_key_map[pcl.PointXYZ] = 'XYZ'
 type_key_map[pcl.PointXYZI] = 'XYZI'
 type_key_map[pcl.PointXYZRGB] = 'XYZRGB'
+type_key_map[pcl.PointXYZRGBA] = 'XYZRGBA'
 type_key_map[pcl.PointNormal] = 'XYZNormal'
 type_key_map[pcl.PointXYZINormal] = 'XYZINormal'
 type_key_map[pcl.PointXYZRGBNormal] = 'XYZRGBNormal'

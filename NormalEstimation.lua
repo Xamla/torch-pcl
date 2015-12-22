@@ -34,7 +34,7 @@ end
 
 init()
 
-function PointCloud:estimateNormalsK(k, search)
+function pcl.PointCloud:estimateNormalsK(k, search)
   local search = search or pcl.KdTree(self.pointType)
   local ne = pcl.NormalEstimation()
   ne:setSearchMethod(search)
@@ -43,7 +43,7 @@ function PointCloud:estimateNormalsK(k, search)
   return ne:compute()
 end
 
-function PointCloud:estimateNormalsRadius(radius, search)
+function pcl.PointCloud:estimateNormalsRadius(radius, search)
   local search = search or pcl.KdTree(self.pointType)
   local ne = pcl.NormalEstimation()
   ne:setSearchMethod(search)

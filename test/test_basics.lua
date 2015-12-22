@@ -324,4 +324,24 @@ function TestBasics:testIndices()
   luaunit.assertEquals(idx2[53], 100)
 end
 
+function TestBasics:testCopyPointCloud()
+  local a = pcl.PointCloud('xyzi', 20)
+  for i=1,20 do
+    a[i].x = i*1
+    a[i].y = i*2
+    a[i].z = i*3
+    a[i].intensity = i*4
+  end
+  local b = pcl.PointCloud('xyzrgba', 10)
+  a:copy(b)
+  luaunit.assertEquals(b:size(), 20)
+  luaunit.assertEquals(a.pointType, pcl.PointXYZI)
+  luaunit.assertEquals(b.pointType, pcl.PointXYZRGBA)
+  for i=1,10 do
+    luaunit.assertEquals(b[i].x, i*1)
+    luaunit.assertEquals(b[i].y, i*2)
+    luaunit.assertEquals(b[i].z, i*3)
+  end
+end
+
 os.exit( luaunit.LuaUnit.run() )
