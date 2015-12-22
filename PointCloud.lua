@@ -262,8 +262,12 @@ function PointCloud:add(other)
   self.f.add(self.o, other.o)
 end
 
-function PointCloud:removeNaN(indices, inplace)
-  return pcl.filter.removeNaNFromPointCloud(self, indices, inplace or true)
+function PointCloud:removeNaN(output, removed_indices)
+  if torch.isTypeOf(output, pcl.Indices) then
+    return pcl.filter.removeNaNFromPointCloud(self, nil, output)
+  else
+    return pcl.filter.removeNaNFromPointCloud(self, output or self, removed_indices)
+  end
 end
 
 function PointCloud:fromPCLPointCloud2(src_msg)

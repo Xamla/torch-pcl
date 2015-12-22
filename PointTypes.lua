@@ -110,16 +110,29 @@ int pcl_PointCloud_TYPE_KEY_readXYZfloat(PointCloud_TYPE_KEY *cloud, struct THFl
 local generic_declarations = [[
 void pcl_CloudViewer_TYPE_KEY_showCloud(void *self, PointCloud_TYPE_KEY *cloud, const char *cloudname);
 
+void pcl_Filter_TYPE_KEY_extractIndices(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_shadowPoints_Indices(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_Normal *normals, Indices *output, float threshold, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_shadowPoints_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_Normal *normals, PointCloud_TYPE_KEY *output, float threshold, bool negative, Indices *removed_indices);
 void pcl_Filter_TYPE_KEY_removeNaNFromPointCloud(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, Indices *indices);
 void pcl_Filter_TYPE_KEY_removeNaNNormalsFromPointCloud(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, Indices *indices);
-void pcl_Filter_TYPE_KEY_passThrough(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative);
-void pcl_Filter_TYPE_KEY_cropBox(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, THFloatTensor *transform, bool negative);
-void pcl_Filter_TYPE_KEY_cropSphere(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, THFloatTensor *center, double radius, THFloatTensor *transform, bool negative);
-void pcl_Filter_TYPE_KEY_voxelGrid(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, float lx, float ly, float lz);
-void pcl_Filter_TYPE_KEY_statisticalOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int meanK, double stddevMulThresh, bool negative);
-void pcl_Filter_TYPE_KEY_randomSample(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, unsigned int count);
-void pcl_Filter_TYPE_KEY_medianFilter(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int windowSize);
-void pcl_Filter_TYPE_KEY_radiusOutlierRemoval(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, double radius, int minNeighbors, bool negative);
+void pcl_Filter_TYPE_KEY_normalSpaceSampling_Indices(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_Normal *normals, Indices *output, unsigned int samples, unsigned int binsx, unsigned int binsy, unsigned int binsz);
+void pcl_Filter_TYPE_KEY_normalSpaceSampling_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_Normal *normals, PointCloud_TYPE_KEY *output, unsigned int samples, unsigned int binsx, unsigned int binsy, unsigned int binsz);
+void pcl_Filter_TYPE_KEY_normalRefinement(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int k, int max_iterations, float convergence_threshold);
+void pcl_Filter_TYPE_KEY_frustumCulling_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, THFloatTensor *cameraPose, float hfov, float vfov, float np_dist, float fp_dist, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_frustumCulling_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, THFloatTensor *cameraPose, float hfov, float vfov, float np_dist, float fp_dist, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_passThrough_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, const char* fieldName, float min, float max, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_passThrough_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_cropBox_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, THFloatTensor *transform, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_cropBox_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, THFloatTensor *transform, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_cropSphere_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, THFloatTensor *center, double radius, THFloatTensor *transform, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_cropSphere_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, THFloatTensor *center, double radius, THFloatTensor *transform, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_voxelGrid(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, float lx, float ly, float lz);
+void pcl_Filter_TYPE_KEY_statisticalOutlierRemoval_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, int meanK, double stddevMulThresh, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_statisticalOutlierRemoval_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, int meanK, double stddevMulThresh, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_randomSample_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, unsigned int count);
+void pcl_Filter_TYPE_KEY_randomSample_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, unsigned int count);
+void pcl_Filter_TYPE_KEY_medianFilter(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, int windowSize);
+void pcl_Filter_TYPE_KEY_radiusOutlierRemoval(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, double radius, int minNeighbors, bool negative, Indices *removed_indices);
 int pcl_Filter_TYPE_KEY_voxelHistogram(PointCloud_TYPE_KEY *input, THFloatTensor *output, int w, int h, int t, float voxelSize, float originX, float originY, float originZ, bool center);
 
 typedef struct {} PCA_TYPE_KEY;

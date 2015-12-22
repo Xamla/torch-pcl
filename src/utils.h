@@ -11,7 +11,9 @@ extern "C" {
 #include <pcl/pcl_base.h>
 
 #define PCLIMP(return_type, class_name, name) extern "C" return_type TH_CONCAT_4(pcl_, class_name, TYPE_KEY, name)
+#define PCLCALL(class_name, name) TH_CONCAT_4(pcl_, class_name, TYPE_KEY, name)
 #define Indices_ptr pcl::IndicesPtr
+#define Normals_ptr pcl::PointCloud<pcl::Normal>::Ptr
 
 class TorchPclException : public pcl::PCLException
 {
