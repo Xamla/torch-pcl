@@ -57,7 +57,7 @@ function KdTree:clone()
 end
 
 function KdTree:setInputCloud(cloud, indices)
-  self.f.setInputCloud(self.o, cloud:cdata(), util.cdata(indices))
+  self.f.setInputCloud(self.o, cloud:cdata(), utils.cdata(indices))
 end
 
 function KdTree:getEpsilon()

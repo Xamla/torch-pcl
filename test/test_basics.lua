@@ -20,10 +20,10 @@ end
 function TestBasics:testPointTypeString()
   local c1 = pcl.PointCloud('xyz')
   local c2 = pcl.PointCloud('xYZi')
-  local c3 = pcl.PointCloud('PointXYZRGBA')
+  local c3 = pcl.PointCloud('PointXYZRGB')
   luaunit.assertEquals(c1.pointType, pcl.PointXYZ)
   luaunit.assertEquals(c2.pointType, pcl.PointXYZI)
-  luaunit.assertEquals(c3.pointType, pcl.PointXYZRGBA)
+  luaunit.assertEquals(c3.pointType, pcl.PointXYZRGB)
   luaunit.assertNotEquals(c3.pointType, pcl.PointXYZ)
 end
 
@@ -35,7 +35,7 @@ function TestBasics:testPointType()
   luaunit.assertEquals(y, pcl.PointXYZ(99,99,99))
   luaunit.assertNotEquals(y, pcl.PointXYZ(99,99,98))
   
-  local z = pcl.PointXYZRGBA(1,2,3,0xaabbccdd)
+  local z = pcl.PointXYZRGB(1,2,3,0xaabbccdd)
   luaunit.assertEquals(z.rgba, 0xaabbccdd)
   luaunit.assertEquals(z.a, 0xaa)
   
@@ -45,7 +45,7 @@ function TestBasics:testPointType()
   -- smaller point to the right
   luaunit.assertTrue(pcl.PointXYZI(1,2,3,4) == pcl.PointXYZ(1,2,3))
   luaunit.assertFalse(pcl.PointXYZI(1,2,3,4) == pcl.PointXYZ(1,2,4))
-  luaunit.assertTrue(pcl.PointXYZRGBA(1,2,3) == pcl.PointXYZ(1,2,3))
+  luaunit.assertTrue(pcl.PointXYZRGB(1,2,3) == pcl.PointXYZ(1,2,3))
 end
 
 function TestBasics:testPushInsertErase()

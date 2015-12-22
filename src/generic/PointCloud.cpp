@@ -1,4 +1,5 @@
 #include <pcl/common/common.h>
+#include <pcl/common/io.h>
 #include <pcl/common/projection_matrix.h>
 #include <pcl/common/transforms.h>
 #include <pcl/point_types.h>
@@ -27,7 +28,7 @@ PCLIMP(uint32_t, PointCloud, getWidth)(pcl::PointCloud<_PointT>::Ptr *self)
 }
 
 PCLIMP(uint32_t, PointCloud, getHeight)(pcl::PointCloud<_PointT>::Ptr *self)
-{
+{  
   return (*self)->height;
 }
 
@@ -161,6 +162,33 @@ PCLIMP(void, PointCloud, transform)(pcl::PointCloud<_PointT>::Ptr *self, THFloat
   pcl::transformPointCloud(**self, **output, m);
   THFloatTensor_free(mat);
 }
+
+#ifdef _PointT_HAS_NORMALS
+
+PCLIMP(void, PointCloud, transformWithNormals)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor *mat, pcl::PointCloud<_PointT>::Ptr *output)
+{
+  // check dimensionality of input matrix
+  THArgCheck(mat != NULL && mat->nDimension == 2 && mat->size[0] == 4 && mat->size[1] == 4, 2, "4x4 matrix expected");
+  
+  // make sure tensor is contiguous
+  mat = THFloatTensor_newContiguous(mat);
+  
+  // fill Eigen matrix 
+  Eigen::Map<Eigen::Matrix<float,4,4,Eigen::RowMajor> > m(THFloatTensor_data(mat));
+  pcl::transformPointCloudWithNormals(**self, **output, m);
+  THFloatTensor_free(mat);
+}
+
+#endif // _PointT_HAS_NORMALS
+
+#ifdef _PointNormalT
+
+PCLIMP(void, PointCloud, addNormals)(pcl::PointCloud<_PointT>::Ptr *self, pcl::PointCloud<pcl::Normal>::Ptr *normals, pcl::PointCloud<_PointNormalT>::Ptr *output)
+{
+  pcl::concatenateFields(**self, **normals, **output);
+}
+
+#endif // _PointNormalT
 
 PCLIMP(void, PointCloud, computeCovarianceMatrix)(pcl::PointCloud<_PointT>::Ptr *self, THFloatTensor *centroid, THFloatTensor *output)
 {

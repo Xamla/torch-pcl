@@ -94,7 +94,7 @@ end
 
 function NormalEstimation:compute(output)
   if not output then
-    output = pcl.PointCloud(utils.getNormalTypeFor(self.pointType))
+    output = pcl.PointCloud(pcl.Normal)
   end
   self.f.compute(self.o, output:cdata())
   return output

@@ -39,7 +39,6 @@
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
     <File Name="src/xyzi.cpp"/>
-    <File Name="src/xyzrgba.cpp"/>
     <File Name="README.md"/>
     <File Name="src/utils.h"/>
     <File Name="src/generic.cpp"/>
@@ -52,6 +51,7 @@
     <File Name="src/xyznormal.cpp"/>
     <File Name="src/indices.cpp"/>
     <File Name="src/normal.cpp"/>
+    <File Name="src/xyzrgb.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>

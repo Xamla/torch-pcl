@@ -9,48 +9,50 @@ local func_by_type = {}
 
 local function init()
   local PointCloud_method_names = {
-    "new",
-    "clone",
-    "delete",
-    "getWidth",
-    "getHeight",
-    "getIsDense",
-    "setIsDense",
-    "at1D",
-    "at2D",
-    "clear",
-    "reserve",
-    "size",
-    "empty",
-    "isOrganized",
-    "push_back",
-    "insert",
-    "erase",
-    "points",
-    "sensorOrientation",
-    "sensorOrigin", 
-    "transform",
-    "getMinMax3D",
-    "compute3DCentroid",
-    "computeCovarianceMatrix",
-    "add",
-    "fromPCLPointCloud2",
-    "loadPCDFile",
-    "savePCDFile",
-    "loadPLYFile",
-    "savePLYFile",
-    "loadOBJFile",
-    "savePNGFile",
-    "readXYZfloat",
-    "readRGBAfloat",
-    "readRGBAbyte"
+    'new',
+    'clone',
+    'delete',
+    'getWidth',
+    'getHeight',
+    'getIsDense',
+    'setIsDense',
+    'at1D',
+    'at2D',
+    'clear',
+    'reserve',
+    'size',
+    'empty',
+    'isOrganized',
+    'push_back',
+    'insert',
+    'erase',
+    'points',
+    'sensorOrientation',
+    'sensorOrigin', 
+    'transform',
+    'transformWithNormals',
+    'getMinMax3D',
+    'compute3DCentroid',
+    'computeCovarianceMatrix',
+    'add',
+    'fromPCLPointCloud2',
+    'loadPCDFile',
+    'savePCDFile',
+    'loadPLYFile',
+    'savePLYFile',
+    'loadOBJFile',
+    'savePNGFile',
+    'readXYZfloat',
+    'readRGBAfloat',
+    'readRGBAbyte',
+    'addNormals'
   }
 
   for k,v in pairs(utils.type_key_map) do
-    func_by_type[k] = utils.create_typed_methods("pcl_PointCloud_TYPE_KEY_", PointCloud_method_names, v)
+    func_by_type[k] = utils.create_typed_methods('pcl_PointCloud_TYPE_KEY_', PointCloud_method_names, v)
   end
   
-  func_by_type[pcl.Normal] = utils.create_typed_methods("pcl_PointCloud_TYPE_KEY_", PointCloud_method_names, "Normal")
+  func_by_type[pcl.Normal] = utils.create_typed_methods('pcl_PointCloud_TYPE_KEY_', PointCloud_method_names, 'Normal')
 end
 
 init()
@@ -227,7 +229,11 @@ function PointCloud:transform(mat, output)
     mat = mat:totensor()
   end
   output = output or self
-  self.f.transform(self.o, mat:cdata(), output:cdata())
+  if self.pointType.hasNormal then
+    self.f.transformWithNormals(self.o, mat:cdata(), output:cdata())
+  else
+    self.f.transform(self.o, mat:cdata(), output:cdata())
+  end
   return output
 end
 
@@ -292,6 +298,14 @@ function PointCloud:savePNGFile(fn, field_name)
   return self.f.savePNGFile(self.o, fn)
 end
 
+function PointCloud:addNormals(normals, output)
+  if not output then
+    output = pcl.PointCloud(utils.getNormalTypeFor(self.pointType))
+  end
+  self.f.addNormals(self.o, normals:cdata(), output:cdata())
+  return output
+end
+
 function PointCloud:__tostring()
-  return string.format("PointCloud (w:%d, h:%d)", self:getWidth(), self:getHeight())
+  return string.format('PointCloud (w:%d, h:%d)', self:getWidth(), self:getHeight())
 end

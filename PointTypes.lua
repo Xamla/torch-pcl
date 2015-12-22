@@ -15,7 +15,7 @@ typedef struct InterestPoint { "..PCL_POINT4D.." union { struct { float strength
 typedef struct PointXYZ { "..PCL_POINT4D.."} PointXYZ; \z
 typedef struct PointXYZI { "..PCL_POINT4D.." union { struct { float intensity; }; float data_c[4]; }; } PointXYZI; \z
 typedef struct PointXYZL { "..PCL_POINT4D.." uint32_t label; } PointXYZL; \z
-typedef struct PointXYZRGBA { "..PCL_POINT4D..PCL_RGB.." } PointXYZRGBA; \z
+typedef struct PointXYZRGB { "..PCL_POINT4D..PCL_RGB.." } PointXYZRGB; \z
 typedef struct PointXYZRGBL { "..PCL_POINT4D..PCL_RGB.." uint32_t label; } PointXYZRGBL; \z
 typedef struct Normal { "..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } Normal; \z
 typedef struct Axis { "..PCL_POINT4D.." } Axis; \z
@@ -28,7 +28,7 @@ typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, 
 typedef struct OpenNI2CameraParameters { double focal_length_x; double focal_length_y; double principal_point_x; double principal_point_y; } OpenNI2CameraParameters;
 typedef struct PointCloud_XYZ {} PointCloud_XYZ;
 typedef struct PointCloud_XYZI {} PointCloud_XYZI;
-typedef struct PointCloud_XYZRGBA {} PointCloud_XYZRGBA;
+typedef struct PointCloud_XYZRGB {} PointCloud_XYZRGB;
 typedef struct PointCloud_XYZNormal {} PointCloud_XYZNormal;
 typedef struct PointCloud_XYZINormal {} PointCloud_XYZINormal;
 typedef struct PointCloud_XYZRGBNormal {} PointCloud_XYZRGBNormal;
@@ -92,6 +92,7 @@ void pcl_PointCloud_TYPE_KEY_add(PointCloud_TYPE_KEY *self, PointCloud_TYPE_KEY 
 THFloatStorage *pcl_PointCloud_TYPE_KEY_sensorOrigin(PointCloud_TYPE_KEY *self);
 THFloatStorage *pcl_PointCloud_TYPE_KEY_sensorOrientation(PointCloud_TYPE_KEY *self);
 void pcl_PointCloud_TYPE_KEY_transform(PointCloud_TYPE_KEY *self, THFloatTensor *mat, PointCloud_TYPE_KEY *output);
+void pcl_PointCloud_TYPE_KEY_transformWithNormals(PointCloud_TYPE_KEY *self, THFloatTensor *mat, PointCloud_TYPE_KEY *output);
 void pcl_PointCloud_TYPE_KEY_getMinMax3D(PointCloud_TYPE_KEY *self, PointTYPE_KEY& min, PointTYPE_KEY& max);
 void pcl_PointCloud_TYPE_KEY_compute3DCentroid(PointCloud_TYPE_KEY *self, THFloatTensor *output);
 void pcl_PointCloud_TYPE_KEY_computeCovarianceMatrix(PointCloud_TYPE_KEY *self, THFloatTensor *centroid, THFloatTensor *output);
@@ -203,35 +204,6 @@ unsigned int pcl_OctreePointCloudSearch_TYPE_KEY_getBranchCount(OctreePointCloud
 int pcl_OctreePointCloudSearch_TYPE_KEY_nearestKSearch(OctreePointCloudSearch_TYPE_KEY *self, const PointTYPE_KEY &point, int k, Indices *indices, THFloatTensor *squaredDistances);
 int pcl_OctreePointCloudSearch_TYPE_KEY_radiusSearch(OctreePointCloudSearch_TYPE_KEY *self, const PointTYPE_KEY &point, double radius, Indices *indices, THFloatTensor *squaredDistances, unsigned int max_nn);
 
-void* pcl_OpenNI2Stream_TYPE_KEY_new(const char* device_id, int max_backlog);
-void pcl_OpenNI2Stream_TYPE_KEY_delete(void* self);
-void pcl_OpenNI2Stream_TYPE_KEY_start(void* self);
-void pcl_OpenNI2Stream_TYPE_KEY_stop(void* self);
-void* pcl_OpenNI2Stream_TYPE_KEY_read(void* self, int timeout_milliseconds);
-void pcl_OpenNI2Stream_TYPE_KEY_getRGBCameraIntrinsics(void *self, OpenNI2CameraParameters& p);
-void pcl_OpenNI2Stream_TYPE_KEY_setRGBCameraIntrinsics(void *self, const OpenNI2CameraParameters& p);
-void pcl_OpenNI2Stream_TYPE_KEY_getDepthCameraIntrinsics(void *self, OpenNI2CameraParameters& p);
-void pcl_OpenNI2Stream_TYPE_KEY_setDepthCameraIntrinsics(void *self, const OpenNI2CameraParameters& p);
-const char* pcl_OpenNI2Stream_TYPE_KEY_getName(void *self);
-float pcl_OpenNI2Stream_TYPE_KEY_getFramesPerSecond(void *self);
-]]
-
-local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
-for i,v in ipairs(supported_keys) do
-  local specialized = string.gsub(pcl_PointCloud_declaration, 'TYPE_KEY', v)
-  ffi.cdef(specialized)
-  specialized = string.gsub(generic_declarations, 'TYPE_KEY', v)
-  ffi.cdef(specialized)
-end
-
-local function add_normal_declarations()
-  local specialized = string.gsub(pcl_PointCloud_declaration, 'TYPE_KEY', 'Normal')
-  ffi.cdef(specialized)
-end
-add_normal_declarations()
-
-local normal_dependent_declarations = 
-[[
 typedef struct {} NormalEstimation_TYPE_KEY;
 NormalEstimation_TYPE_KEY* pcl_NormalEstimation_TYPE_KEY_new();
 void pcl_NormalEstimation_TYPE_KEY_delete(NormalEstimation_TYPE_KEY *self);
@@ -246,20 +218,45 @@ void pcl_NormalEstimation_TYPE_KEY_setKSearch(NormalEstimation_TYPE_KEY *self, i
 int pcl_NormalEstimation_TYPE_KEY_getKSearch(NormalEstimation_TYPE_KEY *self);
 void pcl_NormalEstimation_TYPE_KEY_setRadiusSearch(NormalEstimation_TYPE_KEY *self, double radius);
 double pcl_NormalEstimation_TYPE_KEY_getRadiusSearch(NormalEstimation_TYPE_KEY *self);
-void pcl_NormalEstimation_TYPE_KEY_compute(NormalEstimation_TYPE_KEY *self, PointCloud_TYPENORMAL_KEY* output);
+void pcl_NormalEstimation_TYPE_KEY_compute(NormalEstimation_TYPE_KEY *self, PointCloud_Normal* output);
+
+void* pcl_OpenNI2Stream_TYPE_KEY_new(const char* device_id, int max_backlog);
+void pcl_OpenNI2Stream_TYPE_KEY_delete(void* self);
+void pcl_OpenNI2Stream_TYPE_KEY_start(void* self);
+void pcl_OpenNI2Stream_TYPE_KEY_stop(void* self);
+void* pcl_OpenNI2Stream_TYPE_KEY_read(void* self, int timeout_milliseconds);
+void pcl_OpenNI2Stream_TYPE_KEY_getRGBCameraIntrinsics(void *self, OpenNI2CameraParameters& p);
+void pcl_OpenNI2Stream_TYPE_KEY_setRGBCameraIntrinsics(void *self, const OpenNI2CameraParameters& p);
+void pcl_OpenNI2Stream_TYPE_KEY_getDepthCameraIntrinsics(void *self, OpenNI2CameraParameters& p);
+void pcl_OpenNI2Stream_TYPE_KEY_setDepthCameraIntrinsics(void *self, const OpenNI2CameraParameters& p);
+const char* pcl_OpenNI2Stream_TYPE_KEY_getName(void *self);
+float pcl_OpenNI2Stream_TYPE_KEY_getFramesPerSecond(void *self);
 ]]
 
-local normal_type_map = { XYZ = 'XYZNormal', XYZI = 'XYZINormal', XYZRGBA = 'XYZRGBNormal' }
-for k,v in pairs(normal_type_map) do
-  local specialized = string.gsub(normal_dependent_declarations, 'TYPE_KEY', k)
-  specialized = string.gsub(specialized, 'TYPENORMAL_KEY', v)
+local supported_keys = { 'XYZ', 'XYZI', 'XYZRGB', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
+for i,v in ipairs(supported_keys) do
+  local specialized = string.gsub(pcl_PointCloud_declaration, 'TYPE_KEY', v)
+  ffi.cdef(specialized)
+  specialized = string.gsub(generic_declarations, 'TYPE_KEY', v)
   ffi.cdef(specialized)
 end
 
+local function add_normal_declarations()
+  local specialized = string.gsub(pcl_PointCloud_declaration, 'PointTYPE_KEY', 'Normal')
+  specialized = string.gsub(specialized, 'TYPE_KEY', 'Normal')
+  ffi.cdef(specialized)
+end
+add_normal_declarations()
+
+
 local specialized_declarations = 
 [[
-void pcl_PointCloud_XYZRGBA_readRGBAfloat(void *cloud, struct THFloatTensor *output);
-void pcl_PointCloud_XYZRGBA_readRGBAbyte(void *cloud, struct THByteTensor *output);
+void pcl_PointCloud_XYZRGB_readRGBAfloat(void *cloud, struct THFloatTensor *output);
+void pcl_PointCloud_XYZRGB_readRGBAbyte(void *cloud, struct THByteTensor *output);
+
+void pcl_PointCloud_XYZ_addNormals(PointCloud_XYZ *self, PointCloud_Normal *normals, PointCloud_XYZNormal *output);
+void pcl_PointCloud_XYZI_addNormals(PointCloud_XYZI *self, PointCloud_Normal *normals, PointCloud_XYZINormal *output);
+void pcl_PointCloud_XYZRGB_addNormals(PointCloud_XYZRGB*self, PointCloud_Normal *normals, PointCloud_XYZRGBNormal *output);
 ]]
 ffi.cdef(specialized_declarations)
 
@@ -268,7 +265,7 @@ pcl.lib = ffi.load(package.searchpath('libpcl', package.cpath))
 local pointTypeNames = { 
   'PointXYZ',             -- float x, y, z;
   'PointXYZI',            -- float x, y, z, intensity;
-  'PointXYZRGBA',         -- float x, y, z; uint32_t rgba;
+  'PointXYZRGB',         -- float x, y, z; uint32_t rgb;
   'PointXY',              -- float x, y;
   'PointNormal',          -- float x, y, z; float normal[3], curvature;
   'Normal',               -- float normal[3], curvature;
@@ -372,6 +369,7 @@ local PointXYZ = {
   prototype = {
     totensor = totensor,
     set = set,
+    hasNormal = false
   },
   __len = len,
   __eq = eq,
@@ -390,6 +388,7 @@ local PointXYZI = {
   prototype = {
     totensor = totensor,
     set = set,
+    hasNormal = false
   },
   __len = len,
   __eq = eq,
@@ -403,29 +402,31 @@ function PointXYZI:__tostring() return string.format('{ x:%f, y:%f, z:%f, intens
 ffi.metatype(pcl.PointXYZI, PointXYZI)
 pcl.metatype[pcl.PointXYZI] = PointXYZI
 
--- PointXYZRGBA metatype
-local PointXYZRGBA = {
+-- PointXYZRGBmetatype
+local PointXYZRGB = {
   prototype = {
     tensor = totensor,
     set = set,
+    hasNormal = false
   },
   __eq = eq,
   __len = len,
   fields = { 'x', 'y', 'z', 'w', 'rgba', '_1', '_2', '_3' }
 }
 
-PointXYZRGBA.__pairs = createpairs(PointXYZRGBA.fields)
-function PointXYZRGBA:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBA.prototype[i] end end
-function PointXYZRGBA:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
-function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba: %08X }', self.x, self.y, self.z, self.rgba) end 
-ffi.metatype(pcl.PointXYZRGBA, PointXYZRGBA)
-pcl.metatype[pcl.PointXYZRGBA] = PointXYZRGBA
+PointXYZRGB.__pairs = createpairs(PointXYZRGB.fields)
+function PointXYZRGB:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGB.prototype[i] end end
+function PointXYZRGB:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
+function PointXYZRGB:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba: %08X }', self.x, self.y, self.z, self.rgba) end 
+ffi.metatype(pcl.PointXYZRGB, PointXYZRGB)
+pcl.metatype[pcl.PointXYZRGB] = PointXYZRGB
 
 -- Normal metatype
 local Normal = {
   prototype = {
     tensor = totensor,
     set = set,
+    hasNormal = true
   },
   __eq = eq,
   __len = len,
@@ -446,6 +447,7 @@ local PointNormal = {
   prototype = {
     tensor = totensor,
     set = set,
+    hasNormal = true
   },
   __eq = eq,
   __len = len,
@@ -467,6 +469,7 @@ local PointXYZINormal = {
   prototype = {
     tensor = totensor,
     set = set,
+    hasNormal = true
   },
   __eq = eq,
   __len = len,
@@ -487,6 +490,7 @@ local PointXYZRGBNormal = {
   prototype = {
     tensor = totensor,
     set = set,
+    hasNormal = true
   },
   __eq = eq,
   __len = len,

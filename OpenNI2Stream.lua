@@ -9,12 +9,12 @@ local func_by_type = {}
 
 local function init()
   local OpenNI2Stream_method_names = { 'new', 'delete', 'start', 'stop', 'read' }
-  local base_name = 'pcl_OpenNI2Stream_XYZRGBA_'
+  local base_name = 'pcl_OpenNI2Stream_XYZRGB_'
   
   local supported_types = {}
   supported_types[pcl.PointXYZ] = "XYZ"
   supported_types[pcl.PointXYZI] = "XYZI"
-  supported_types[pcl.PointXYZRGBA] = "XYZRGBA" 
+  supported_types[pcl.PointXYZRGB] = "XYZRGB" 
   
   for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods("pcl_OpenNI2Stream_TYPE_KEY_", OpenNI2Stream_method_names, v)

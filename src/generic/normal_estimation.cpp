@@ -1,15 +1,15 @@
 #include "searchwrapper.h"
-#include <pcl/features/normal_3d.h>
+#include <pcl/features/normal_3d_omp.h>
 
-#define NormalEstimation_ptr pcl::NormalEstimation<_PointT, _PointNormalT>::Ptr
+#define NormalEstimation_ptr pcl::NormalEstimationOMP<_PointT, pcl::Normal>::Ptr
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
-#define OutputPointCloud_ptr pcl::PointCloud<_PointNormalT>::Ptr
+#define OutputPointCloud_ptr pcl::PointCloud<pcl::Normal>::Ptr
 #define KdTree_ptr pcl::KdTreeFLANN<_PointT>::Ptr
 #define Octree_ptr pcl::octree::OctreePointCloudSearch<_PointT>::Ptr
 
 PCLIMP(void*, NormalEstimation, new)()
 {
-  return new NormalEstimation_ptr(new pcl::NormalEstimation<_PointT, _PointNormalT>());
+  return new NormalEstimation_ptr(new pcl::NormalEstimationOMP<_PointT, pcl::Normal>());
 }
 
 PCLIMP(void, NormalEstimation, delete)(NormalEstimation_ptr *self)
@@ -83,26 +83,28 @@ PCLIMP(double, NormalEstimation, getRadiusSearch)(NormalEstimation_ptr *self)
   return (*self)->getRadiusSearch();
 }
 
-PCLIMP(void, NormalEstimation, compute)(NormalEstimation_ptr *self, OutputPointCloud_ptr* output)
+PCLIMP(void, NormalEstimation, compute)(NormalEstimation_ptr *self, OutputPointCloud_ptr *output)
 {
   (*self)->compute(**output);
 }
 
-/*
- Index buffer required
-PCLIMP(bool, NormalEstimation, computePointNormal)(NormalEstimation_ptr *self, PointCloud_ptr* cloud, THFloatTensor* plane_parameters, float &curvature)
+PCLIMP(void, NormalEstimation, setNumberOfThreads)(NormalEstimation_ptr *self, unsigned int num_threads)
 {
+  (*self)->setNumberOfThreads(num_threads);
+}
+
+// non-member function
+/*PCLIMP(bool, NormalEstimation, computePointNormal)(PointCloud_ptr *cloud, Indices_ptr *indices, THFloatTensor *plane_parameters, float &curvature)
+{
+  
+  computePointNormal (const pcl::PointCloud<PointT> &cloud, const std::vector<int> &indices, Eigen::Vector4f &plane_parameters, float &curvature)
+  computePointNormal (const pcl::PointCloud<PointT> &cloud, Eigen::Vector4f &plane_parameters, float &curvature)
+                      
   Eigen:Vector4f v =Tensor2Vec4f()
   bool result = (*self)->computePointNormal(*cloud, );
   const pcl::PointCloud<PointInT> &cloud, const std::vector<int> &indices,
                           Eigen::Vector4f &plane_parameters, float &curvature
-}
-*/
-
-PCLIMP(void, NormalEstimation, setNumberOfThreads)(NormalEstimation_ptr *self, unsigned int num_threads)
-{
-  //(*self)->setNumberOfThreads(num_threads);
-}
+}*/
 
 #undef NormalEstimation_ptr
 #undef PointCloud_ptr
