@@ -6,7 +6,11 @@
 
 PCLIMP(void*, ICP, new)()
 {
+#ifdef _PointT_HAS_NORMALS
+  return new ICP_ptr(new pcl::IterativeClosestPointWithNormals<_PointT, _PointT>());
+#else
   return new ICP_ptr(new pcl::IterativeClosestPoint<_PointT, _PointT>());
+#endif
 }
 
 PCLIMP(void, ICP, delete)(ICP_ptr *self)

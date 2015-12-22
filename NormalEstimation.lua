@@ -23,7 +23,8 @@ local function init()
     'getKSearch',
     'setRadiusSearch',
     'getRadiusSearch',
-    'compute'
+    'compute',
+    'setNumberOfThreads'
   }
   
   for k,v in pairs(utils.type_key_map) do
@@ -32,6 +33,24 @@ local function init()
 end
 
 init()
+
+function PointCloud:estimateNormalsK(k, search)
+  local search = search or pcl.KdTree(self.pointType)
+  local ne = pcl.NormalEstimation()
+  ne:setSearchMethod(search)
+  ne:setKSearch(30)
+  ne:setInputCloud(self)
+  return ne:compute()
+end
+
+function PointCloud:estimateNormalsRadius(radius, search)
+  local search = search or pcl.KdTree(self.pointType)
+  local ne = pcl.NormalEstimation()
+  ne:setSearchMethod(search)
+  ne:setRadiusSearch(radius)
+  ne:setInputCloud(self)
+  return ne:compute()
+end
 
 function NormalEstimation:__init(pointType)
   pointType = pcl.pointType(pointType or pcl.PointXYZ)
@@ -98,4 +117,8 @@ function NormalEstimation:compute(output)
   end
   self.f.compute(self.o, output:cdata())
   return output
+end
+
+function NormalEstimation:setNumberOfThreads(num_threads)
+  self.f.setNumberOfThreads(self.o, num_threads)
 end

@@ -232,6 +232,7 @@ int pcl_NormalEstimation_TYPE_KEY_getKSearch(NormalEstimation_TYPE_KEY *self);
 void pcl_NormalEstimation_TYPE_KEY_setRadiusSearch(NormalEstimation_TYPE_KEY *self, double radius);
 double pcl_NormalEstimation_TYPE_KEY_getRadiusSearch(NormalEstimation_TYPE_KEY *self);
 void pcl_NormalEstimation_TYPE_KEY_compute(NormalEstimation_TYPE_KEY *self, PointCloud_Normal* output);
+void pcl_NormalEstimation_TYPE_KEY_setNumberOfThreads(NormalEstimation_TYPE_KEY *self, unsigned int num_threads);
 
 void* pcl_OpenNI2Stream_TYPE_KEY_new(const char* device_id, int max_backlog);
 void pcl_OpenNI2Stream_TYPE_KEY_delete(void* self);
