@@ -6,11 +6,10 @@ local utils = {}
 local type_key_map = {}
 type_key_map[pcl.PointXYZ] = 'XYZ'
 type_key_map[pcl.PointXYZI] = 'XYZI'
-type_key_map[pcl.PointXYZRGB] = 'XYZRGB'
 type_key_map[pcl.PointXYZRGBA] = 'XYZRGBA'
 type_key_map[pcl.PointNormal] = 'XYZNormal'
 type_key_map[pcl.PointXYZINormal] = 'XYZINormal'
-type_key_map[pcl.PointXYZRGBNormal] = 'XYZRGBNormal'
+type_key_map[pcl.PointXYZRGBANormal] = 'XYZRGBANormal'
 utils.type_key_map = type_key_map
 
 function utils.create_typed_methods(prefix, names, type_key)
@@ -61,7 +60,7 @@ end
 local normal_type_map = {}
 normal_type_map[pcl.PointXYZ] = pcl.PointNormal
 normal_type_map[pcl.PointXYZI] = pcl.PointXYZINormal
-normal_type_map[pcl.PointXYZRGB] = pcl.PointXYZRGBNormal
+normal_type_map[pcl.PointXYZRGBA] = pcl.PointXYZRGBANormal
 utils.normal_type_map = normal_type_map
 
 function utils.getNormalTypeFor(pointType)

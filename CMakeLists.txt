@@ -17,17 +17,15 @@ SET(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 # Library path
 SET(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L\".\" ")
 
-SET(src 
-  "${SOURCE_DIR}/xyzrgba.cpp"
+SET(src
   "${SOURCE_DIR}/indices.cpp"
   "${SOURCE_DIR}/cloudviewer.cpp"
   "${SOURCE_DIR}/xyz.cpp"
   "${SOURCE_DIR}/xyzi.cpp"
-  "${SOURCE_DIR}/xyzrgb.cpp"
-  
+  "${SOURCE_DIR}/xyzrgba.cpp"
   "${SOURCE_DIR}/xyznormal.cpp"
   "${SOURCE_DIR}/xyzinormal.cpp"
-  "${SOURCE_DIR}/xyzrgbnormal.cpp"
+  "${SOURCE_DIR}/xyzrgbanormal.cpp"
   "${SOURCE_DIR}/normal.cpp"
 )
 

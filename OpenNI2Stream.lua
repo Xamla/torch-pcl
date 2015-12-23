@@ -14,7 +14,7 @@ local function init()
   local supported_types = {}
   supported_types[pcl.PointXYZ] = "XYZ"
   supported_types[pcl.PointXYZI] = "XYZI"
-  supported_types[pcl.PointXYZRGB] = "XYZRGB" 
+  supported_types[pcl.PointXYZRGBA] = "XYZRGBA" 
   
   for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods("pcl_OpenNI2Stream_TYPE_KEY_", OpenNI2Stream_method_names, v)

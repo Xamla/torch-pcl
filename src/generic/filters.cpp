@@ -370,7 +370,7 @@ PCLIMP(int, Filter, voxelHistogram)(PointCloud_ptr *input, THFloatTensor *output
   for (pcl::PointCloud<_PointT>::const_iterator i = cloud.begin(); i != cloud.end(); ++i)
   {
     const _PointT& p = *i;
-    if (!cloud.is_dense && !isFinite(p))
+    if (!cloud.is_dense && !pcl::isFinite(p))
       continue;
     
     // compute index

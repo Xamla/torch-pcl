@@ -48,11 +48,10 @@ local function init()
     'addNormals',
     'copyXYZ',
     'copyXYZI',
-    'copyXYZRGB',
     'copyXYZRGBA',
     'copyXYZNormal',
     'copyXYZINormal',
-    'copyXYZRGBNormal'
+    'copyXYZRGBANormal'
   }
 
   for k,v in pairs(utils.type_key_map) do

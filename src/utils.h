@@ -5,10 +5,12 @@ extern "C" {
 #include <TH/TH.h>
 }
 
+#include <Eigen/Core>
 #include <Eigen/StdVector>
 #include <Eigen/Geometry>
 #include <pcl/exceptions.h>
 #include <pcl/pcl_base.h>
+#include "xyzrgbanormal.h"
 
 #define PCLIMP(return_type, class_name, name) extern "C" return_type TH_CONCAT_4(pcl_, class_name, TYPE_KEY, name)
 #define PCLCALL(class_name, name) TH_CONCAT_4(pcl_, class_name, TYPE_KEY, name)

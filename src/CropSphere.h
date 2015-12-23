@@ -109,7 +109,7 @@ CropSphere<PointT>::applyFilter(std::vector<int> &indices)
   for (size_t index = 0; index < indices_->size (); ++index)
   {
     // Check if the point is invalid
-    if (!input_->is_dense && !isFinite (input_->points[index]))
+    if (!input_->is_dense && !pcl::isFinite (input_->points[index]))
       continue;
 
     // Get local point

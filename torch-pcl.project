@@ -46,7 +46,6 @@
     <File Name="src/cloudviewer.cpp"/>
     <File Name="src/mesh_sampling.cpp"/>
     <File Name="src/CropSphere.h"/>
-    <File Name="src/xyzrgbnormal.cpp"/>
     <File Name="src/xyzinormal.cpp"/>
     <File Name="src/openni2.h"/>
     <File Name="src/xyznormal.cpp"/>
@@ -54,6 +53,8 @@
     <File Name="src/normal.cpp"/>
     <File Name="src/xyzrgb.cpp"/>
     <File Name="src/xyzrgba.cpp"/>
+    <File Name="src/xyzrgbanormal.h"/>
+    <File Name="src/xyzrgbanormal.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
