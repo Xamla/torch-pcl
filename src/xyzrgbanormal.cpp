@@ -45,6 +45,10 @@ std::ostream& operator << (std::ostream& os, const PointXYZRGBANormal& p)
 #include <pcl/registration/impl/icp.hpp>
 #include <pcl/registration/impl/icp_nl.hpp>
 #include <pcl/registration/impl/incremental_registration.hpp>
+#include <pcl/registration/impl/correspondence_rejection_sample_consensus.hpp>
+
+#include <pcl/sample_consensus/impl/ransac.hpp>
+#include <pcl/sample_consensus/impl/sac_model_registration.hpp>
 
 template class PCL_EXPORTS pcl::PCLBase<PointXYZRGBANormal>;
 template class PCL_EXPORTS pcl::PointCloud<PointXYZRGBANormal>;
@@ -91,3 +95,8 @@ template class PCL_EXPORTS pcl::KdTreeFLANN<PointXYZRGBANormal>;
 template class PCL_EXPORTS pcl::IterativeClosestPoint<PointXYZRGBANormal, PointXYZRGBANormal>;
 template class PCL_EXPORTS pcl::IterativeClosestPointNonLinear<PointXYZRGBANormal, PointXYZRGBANormal>;
 template class PCL_EXPORTS pcl::registration::IncrementalRegistration<PointXYZRGBANormal, float>;
+template class PCL_EXPORTS pcl::registration::CorrespondenceRejectorSampleConsensus<PointXYZRGBANormal>;
+
+// RANSAC
+template class PCL_EXPORTS pcl::RandomSampleConsensus<PointXYZRGBANormal>;
+template class PCL_EXPORTS pcl::SampleConsensusModelRegistration<PointXYZRGBANormal>;

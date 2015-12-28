@@ -68,14 +68,6 @@ PCLIMP(void, Filter, removeNaNFromPointCloud)(PointCloud_ptr *input, PointCloud_
     pcl::removeNaNFromPointCloud(**input, _indices);    // dry run, does not modify the input point cloud
 }
 
-#ifdef _PointT_HAS_NORMALS
-
-PCLIMP(void, Filter, removeNaNNormalsFromPointCloud)(PointCloud_ptr *input, PointCloud_ptr *output, Indices_ptr *indices)
-{
-  std::vector<int>& _indices = **indices;
-  pcl::removeNaNNormalsFromPointCloud(**input, **output, _indices);
-}
-
 template<typename T>
 void Filter_normalSpaceSamplingT(PointCloud_ptr *input, Indices_ptr *indices, Normals_ptr *normals, T *output,
   unsigned int samples, unsigned int binsx, unsigned int binsy, unsigned int binsz)
@@ -100,6 +92,14 @@ PCLIMP(void, Filter, normalSpaceSampling_Cloud)(PointCloud_ptr *input, Indices_p
   unsigned int samples, unsigned int binsx, unsigned int binsy, unsigned int binsz)
 {
   Filter_normalSpaceSamplingT(input, indices, normals, output, samples, binsx, binsy, binsz);
+}
+
+#ifdef _PointT_HAS_NORMALS
+
+PCLIMP(void, Filter, removeNaNNormalsFromPointCloud)(PointCloud_ptr *input, PointCloud_ptr *output, Indices_ptr *indices)
+{
+  std::vector<int>& _indices = **indices;
+  pcl::removeNaNNormalsFromPointCloud(**input, **output, _indices);
 }
 
 PCLIMP(void, Filter, normalRefinement)(PointCloud_ptr *input, PointCloud_ptr *output, int k = 5, int max_iterations = 15, float convergence_threshold = 0.00001f)

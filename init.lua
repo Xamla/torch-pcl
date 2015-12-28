@@ -45,13 +45,13 @@ function pcl.isPoint(obj)
   return false
 end
 
-function pcl.loadPCDFile(filename, pointType)
+function pcl.loadPCD(filename, pointType)
   local c = pcl.PointCloud(pointType or pcl.PointXYZ)
   c:loadPCDFile(filename)
   return c
 end
 
-function pcl.loadPLYFile(filename, pointType)
+function pcl.loadPLY(filename, pointType)
   local c = pcl.PointCloud(pointType or pcl.PointXYZ)
   c:loadPLYFile(filename)
   return c

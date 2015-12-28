@@ -86,10 +86,10 @@ end
 function filter.shadowPoints(input, normals, threshold, indices, output, negative, removed_indices)
   local f = check_input_type(input)
   if torch.isTypeOf(output, pcl.Indices) then
-    f.shadowPoints_Indices(input:cdata(), utils.cdata(indices), normals:cdata(), output:cdata(), threshold, negative or false, cdata(removed_indices))
+    f.shadowPoints_Indices(input:cdata(), utils.cdata(indices), normals:cdata(), output:cdata(), threshold or 0.1, negative or false, cdata(removed_indices))
   else
     output = output or pcl.PointCloud(input.pointType)
-    f.shadowPoints_Cloud(input:cdata(), utils.cdata(indices), normals:cdata(), output:cdata(), threshold, negative or false, cdata(removed_indices))
+    f.shadowPoints_Cloud(input:cdata(), utils.cdata(indices), normals:cdata(), output:cdata(), threshold or 0.1, negative or false, cdata(removed_indices))
   end
   return output
 end
@@ -97,10 +97,10 @@ end
 function filter.normalSpaceSampling(input, normals, samples, binsx, binsy, binsz, indices, output)
   local f = check_input_type(input)
   if torch.isTypeOf(output, pcl.Indices) then
-    f.normalSpaceSampling_Indices(input:cdata(), cdata(indices), normals:cdata(), output:cdata(), samples, binsx, binsy, binsz)
+    f.normalSpaceSampling_Indices(input:cdata(), cdata(indices), normals:cdata(), output:cdata(), samples or 10000, binsx or 50, binsy or 50, binsz or 50)
   else
     output = output or pcl.PointCloud(input.pointType)
-    f.normalSpaceSampling_Cloud(input:cdata(), cdata(indices), normals:cdata(), output:cdata(), samples, binsx, binsy, binsz)
+    f.normalSpaceSampling_Cloud(input:cdata(), cdata(indices), normals:cdata(), output:cdata(), samples or 10000, binsx or 50, binsy or 50, binsz or 50)
   end
   return output
 end

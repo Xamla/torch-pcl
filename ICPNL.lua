@@ -20,7 +20,12 @@ local function init()
     'setEuclideanFitnessEpsilon',
     'getFinalTransformation',
     'getFitnessScore', 
-    'align'
+    'align',
+    'addDistanceRejector',
+    'addSurfaceNormalRejector',
+    'addRANSACRejector',
+    'addOneToOneRejector',
+    'addTrimmedRejector'
   }
 
   for k,v in pairs(utils.type_key_map) do
@@ -87,4 +92,24 @@ function ICPNL:align(output, initial_guess)
   end
   self.f.align(self.o, output:cdata(), initial_guess)
   return output
+end
+
+function ICPNL:addDistanceRejector(max_distance)
+  self.f.addDistanceRejector(self.o, max_distance or 0.05)
+end
+
+function ICPNL:addSurfaceNormalRejector(threshold)
+  self.f.addSurfaceNormalRejector(self.o, threshold or 1)
+end
+
+function ICPNL:addRANSACRejector(inlier_threshold, max_iterations)
+  self.f.addRANSACRejector(self.o, inlier_threshold or 0.05, max_iterations or 1000)
+end
+
+function ICPNL:addOneToOneRejector()
+  self.f.addOneToOneRejector(self.o)
+end
+
+function ICPNL:addTrimmedRejector()
+  self.f.addTrimmedRejector(self.o, overlap_ratio or 0.5, min_correspondences or 0)
 end

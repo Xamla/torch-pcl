@@ -166,6 +166,11 @@ void pcl_ICP_TYPE_KEY_setEuclideanFitnessEpsilon(ICP_TYPE_KEY *self, double epsi
 void pcl_ICP_TYPE_KEY_getFinalTransformation(ICP_TYPE_KEY *self, THFloatTensor* output);
 double pcl_ICP_TYPE_KEY_getFitnessScore(ICP_TYPE_KEY *self, double max_range);
 void pcl_ICP_TYPE_KEY_align(ICP_TYPE_KEY *self, PointCloud_TYPE_KEY* output, void* guess);
+void pcl_ICP_TYPE_KEY_addDistanceRejector(ICP_TYPE_KEY *self, float max_distance);
+void pcl_ICP_TYPE_KEY_addSurfaceNormalRejector(ICP_TYPE_KEY *self, float threshold);
+void pcl_ICP_TYPE_KEY_addRANSACRejector(ICP_TYPE_KEY *self, double inlier_threshold, int max_iterations);
+void pcl_ICP_TYPE_KEY_addOneToOneRejector(ICP_TYPE_KEY *self);
+void pcl_ICP_TYPE_KEY_addTrimmedRejector(ICP_TYPE_KEY *self, float overlap_ratio, unsigned int min_correspondences);
 
 typedef struct {} ICPNL_TYPE_KEY;
 ICPNL_TYPE_KEY* pcl_ICPNL_TYPE_KEY_new();
@@ -179,6 +184,11 @@ void pcl_ICPNL_TYPE_KEY_setEuclideanFitnessEpsilon(ICPNL_TYPE_KEY *self, double 
 void pcl_ICPNL_TYPE_KEY_getFinalTransformation(ICPNL_TYPE_KEY *self, THFloatTensor* output);
 double pcl_ICPNL_TYPE_KEY_getFitnessScore(ICPNL_TYPE_KEY *self, double max_range);
 void pcl_ICPNL_TYPE_KEY_align(ICPNL_TYPE_KEY *self, PointCloud_TYPE_KEY* output, void* guess);
+void pcl_ICPNL_TYPE_KEY_addDistanceRejector(ICPNL_TYPE_KEY *self, float max_distance);
+void pcl_ICPNL_TYPE_KEY_addSurfaceNormalRejector(ICPNL_TYPE_KEY *self, float threshold);
+void pcl_ICPNL_TYPE_KEY_addRANSACRejector(ICPNL_TYPE_KEY *self, double inlier_threshold, int max_iterations);
+void pcl_ICPNL_TYPE_KEY_addOneToOneRejector(ICPNL_TYPE_KEY *self);
+void pcl_ICPNL_TYPE_KEY_addTrimmedRejector(ICPNL_TYPE_KEY *self, float overlap_ratio, unsigned int min_correspondences);
 
 typedef struct {} IncrementalRegistration_TYPE_KEY;
 void* pcl_IncrementalRegistration_TYPE_KEY_new();

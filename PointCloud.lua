@@ -325,6 +325,9 @@ function PointCloud.copy(cloud_in, indices, cloud_out)
     cloud_out = indices
     indices = nil
   end
+  if not cloud_out then
+    cloud_out = pcl.PointCloud(cloud_in.pointType)
+  end
   local copy = cloud_in.f["copy" .. utils.type_key_map[cloud_out.pointType] or '']
   if not copy then
     print("copy" .. utils.type_key_map[cloud_out.pointType] or '')
