@@ -2,14 +2,14 @@ package = "torch-pcl"
 version = "scm-1"
 
 source = {
-   url = "git://github.com/andreaskoepf/torch-pcl.git",
+   url = "git@github.com:Xamla/torch-pcl.git",
 }
 
 description = {
-   summary = "[pre-alpha] Point Cloud Library (PCL) bindings for Torch",
+   summary = "Point Cloud Library (PCL) bindings for Torch",
    detailed = [[
    ]],
-   homepage = "https://github.com/andreaskoepf/torch-pcl",
+   homepage = "https://github.com/Xamla/torch-pcl",
    license = "BSD"
 }
 
