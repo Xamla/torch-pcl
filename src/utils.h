@@ -40,7 +40,7 @@ inline Eigen::Vector4f Tensor2Vec4f(THFloatTensor *tensor)
 
 inline Eigen::Vector3f Tensor2Vec3f(THFloatTensor *tensor)
 {
-  if (THFloatTensor_nElement(tensor) < 4)
+  if (THFloatTensor_nElement(tensor) < 3)
     PCL_THROW_EXCEPTION(TorchPclException, "A Tensor with at least 3 elements was expected.");
     
   THFloatTensor *tensor_ = THFloatTensor_newContiguous(tensor);
@@ -79,7 +79,7 @@ template<int rows, int cols> void copyMatrix(const Eigen::Matrix<float, rows, co
   THFloatTensor_resize2d(output, m.rows(), m.cols());
   THFloatTensor* output_ = THFloatTensor_newContiguous(output);
   // there are strange static-asserts in Eigen to disallow specifying RowMajor for vectors...
-  Eigen::Map<Eigen::Matrix<float, rows, cols, (rows == 1 || cols == 1) ? Eigen::ColMajor : Eigen::RowMajor> >(THFloatTensor_data(output)) = m;
+  Eigen::Map<Eigen::Matrix<float, rows, cols, (rows == 1 || cols == 1) ? Eigen::ColMajor : Eigen::RowMajor> >(THFloatTensor_data(output_)) = m;
   THFloatTensor_freeCopyTo(output_, output);
 }
 
