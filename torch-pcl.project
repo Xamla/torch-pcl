@@ -36,6 +36,7 @@
       <File Name="src/generic/normal_estimation.cpp"/>
       <File Name="src/generic/searchwrapper.h"/>
       <File Name="src/generic/readRGBA.cpp"/>
+      <File Name="src/generic/boundary_estimation.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>

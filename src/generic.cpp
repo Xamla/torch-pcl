@@ -7,3 +7,4 @@
 #include "generic/incremental_registration.cpp"
 #include "generic/kdtree.cpp"
 #include "generic/octree.cpp"
+#include "generic/boundary_estimation.cpp"
