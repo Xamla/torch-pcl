@@ -261,6 +261,16 @@ void pcl_OpenNI2Stream_TYPE_KEY_getDepthCameraIntrinsics(void *self, OpenNI2Came
 void pcl_OpenNI2Stream_TYPE_KEY_setDepthCameraIntrinsics(void *self, const OpenNI2CameraParameters& p);
 const char* pcl_OpenNI2Stream_TYPE_KEY_getName(void *self);
 float pcl_OpenNI2Stream_TYPE_KEY_getFramesPerSecond(void *self);
+
+typedef struct {} SIFTKeypoint_TYPE_KEY;
+SIFTKeypoint_TYPE_KEY* pcl_SIFTKeypoint_TYPE_KEY_new();
+void pcl_SIFTKeypoint_TYPE_KEY_delete(SIFTKeypoint_TYPE_KEY *self);
+void pcl_SIFTKeypoint_TYPE_KEY_setInputCloud(SIFTKeypoint_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_SIFTKeypoint_TYPE_KEY_setSearchMethod_Octree(SIFTKeypoint_TYPE_KEY *self, OctreePointCloudSearch_TYPE_KEY *octree);
+void pcl_SIFTKeypoint_TYPE_KEY_setSearchMethod_KdTree(SIFTKeypoint_TYPE_KEY *self, KdTreeFLANN_TYPE_KEY *kdtree);
+void pcl_SIFTKeypoint_TYPE_KEY_setScales(SIFTKeypoint_TYPE_KEY *self, float min_scale, int nr_octaves, int nr_scales_per_octave);
+void pcl_SIFTKeypoint_TYPE_KEY_setMinimumContrast(SIFTKeypoint_TYPE_KEY *self, float min_contrast);
+void pcl_SIFTKeypoint_TYPE_KEY_compute(SIFTKeypoint_TYPE_KEY *self, PointCloud_XYZ *output);
 ]]
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBANormal' }

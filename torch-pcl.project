@@ -37,6 +37,7 @@
       <File Name="src/generic/searchwrapper.h"/>
       <File Name="src/generic/readRGBA.cpp"/>
       <File Name="src/generic/boundary_estimation.cpp"/>
+      <File Name="src/generic/sift_keypoint.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -82,6 +83,7 @@
     <File Name="IncrementalRegistration.lua"/>
     <File Name="NormalEstimation.lua"/>
     <File Name="Indices.lua"/>
+    <File Name="SIFTKeypoint.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>

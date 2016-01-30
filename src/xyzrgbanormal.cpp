@@ -1,6 +1,7 @@
 #define _PointT PointXYZRGBANormal
 #define TYPE_KEY _XYZRGBANormal_
 #define _PointT_HAS_NORMALS
+#define _NO_SIFT_KEYPOINT
 #include "utils.h"
 #include "generic.cpp"
 
