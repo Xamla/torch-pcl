@@ -3,7 +3,6 @@
 
 #define BoundaryEstimation_ptr pcl::BoundaryEstimation<_PointT, pcl::Normal, pcl::Boundary>::Ptr
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
-#define Normals_ptr pcl::PointCloud<pcl::Normal>::Ptr
 
 #define KdTree_ptr pcl::KdTreeFLANN<_PointT>::Ptr
 #define Octree_ptr pcl::octree::OctreePointCloudSearch<_PointT>::Ptr
@@ -86,6 +85,5 @@ PCLIMP(void, BoundaryEstimation, compute)(BoundaryEstimation_ptr *self, THByteTe
 
 #undef BoundaryEstimation_ptr
 #undef PointCloud_ptr
-#undef Normals_ptr
 #undef KdTree_ptr
 #undef Octree_ptr

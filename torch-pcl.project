@@ -38,6 +38,8 @@
       <File Name="src/generic/readRGBA.cpp"/>
       <File Name="src/generic/boundary_estimation.cpp"/>
       <File Name="src/generic/sift_keypoint.cpp"/>
+      <File Name="src/generic/correspondence_estimation.cpp"/>
+      <File Name="src/generic/fpfh.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -57,6 +59,7 @@
     <File Name="src/xyzrgba.cpp"/>
     <File Name="src/xyzrgbanormal.h"/>
     <File Name="src/xyzrgbanormal.cpp"/>
+    <File Name="src/fpfhsignature33.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
@@ -84,6 +87,7 @@
     <File Name="NormalEstimation.lua"/>
     <File Name="Indices.lua"/>
     <File Name="SIFTKeypoint.lua"/>
+    <File Name="FPFHEstimation.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>

@@ -20,13 +20,7 @@ local function init()
     'compute'
   }
   
-  local supported_types = {}
-  supported_types[pcl.PointXYZI] = 'XYZI'
-  supported_types[pcl.PointXYZRGBA] = 'XYZRGBA'
-  supported_types[pcl.PointNormal] = 'XYZNormal'
-  supported_types[pcl.PointXYZINormal] = 'XYZINormal'
-  
-  for k,v in pairs(supported_types) do
+  for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_SIFTKeypoint_TYPE_KEY_", SIFTKeypoint_method_names, v)
   end   
 end
@@ -34,7 +28,7 @@ end
 init()
 
 function SIFTKeypoint:__init(pointType)
-  pointType = pcl.pointType(pointType or pcl.PointXYZI)
+  pointType = pcl.pointType(pointType or pcl.PointXYZ)
   rawset(self, 'f', func_by_type[pointType])
   self.pointType = pointType
   self.o = self.f.new()

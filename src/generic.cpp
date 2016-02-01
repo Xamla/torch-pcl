@@ -8,6 +8,7 @@
 #include "generic/kdtree.cpp"
 #include "generic/octree.cpp"
 //#include "generic/boundary_estimation.cpp"
+#include "generic/fpfh.cpp"
 
 #ifndef _NO_SIFT_KEYPOINT
 #include "generic/sift_keypoint.cpp"

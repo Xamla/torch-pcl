@@ -23,8 +23,10 @@ typedef struct PointNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { fl
 typedef struct PointNormal PointXYZNormal;\z
 typedef struct PointXYZRGBANormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBANormal; \z
 typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal; \z
-typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;" ..
+" ..
 [[
+typedef struct FPFHSignature33 { float histogram[33]; } FPFHSignature33;
+typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;
 typedef struct OpenNI2CameraParameters { double focal_length_x; double focal_length_y; double principal_point_x; double principal_point_y; } OpenNI2CameraParameters;
 typedef struct PointCloud_XYZ {} PointCloud_XYZ;
 typedef struct PointCloud_XYZI {} PointCloud_XYZI;
@@ -33,6 +35,7 @@ typedef struct PointCloud_XYZNormal {} PointCloud_XYZNormal;
 typedef struct PointCloud_XYZINormal {} PointCloud_XYZINormal;
 typedef struct PointCloud_XYZRGBANormal {} PointCloud_XYZRGBANormal;
 typedef struct PointCloud_Normal {} PointCloud_Normal;
+typedef struct PointCloud_FPFHSignature33 {} PointCloud_FPFHSignature33;
 
 void* pcl_CloudViewer_new(const char *window_name);
 void pcl_CloudViewer_delete(void *self);
@@ -66,6 +69,24 @@ int pcl_Indices_pop_back(Indices *self);
 void pcl_Indices_clear(Indices *self);
 void pcl_Indices_insert(Indices *self, size_t pos, size_t n, int value);
 void pcl_Indices_erase(Indices *self, size_t begin, size_t end);
+
+struct NarfKeypointParameters
+{
+  float support_size;
+  int max_no_of_interest_points;
+  float min_distance_between_interest_points;
+  float optimal_distance_to_high_surface_change;
+  float min_interest_value;
+  float min_surface_change_score;
+  int optimal_range_image_patch_size;
+  float distance_for_additional_points;
+  bool add_points_on_straight_edges;
+  bool do_non_maximum_suppression;
+  bool no_of_polynomial_approximations_per_point;
+  int max_no_of_threads;
+  bool use_recursive_scale_reduction;
+  bool calculate_sparse_interest_image;
+};
 ]]
 ffi.cdef(cdef)
 
@@ -271,6 +292,7 @@ void pcl_SIFTKeypoint_TYPE_KEY_setSearchMethod_KdTree(SIFTKeypoint_TYPE_KEY *sel
 void pcl_SIFTKeypoint_TYPE_KEY_setScales(SIFTKeypoint_TYPE_KEY *self, float min_scale, int nr_octaves, int nr_scales_per_octave);
 void pcl_SIFTKeypoint_TYPE_KEY_setMinimumContrast(SIFTKeypoint_TYPE_KEY *self, float min_contrast);
 void pcl_SIFTKeypoint_TYPE_KEY_compute(SIFTKeypoint_TYPE_KEY *self, PointCloud_XYZ *output);
+
 ]]
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBANormal' }
@@ -288,6 +310,12 @@ local function add_normal_declarations()
 end
 add_normal_declarations()
 
+local function add_additional_point_types()
+  local specialized = string.gsub(pcl_PointCloud_declaration, 'PointTYPE_KEY', 'FPFHSignature33')
+  specialized = string.gsub(specialized, 'TYPE_KEY', 'FPFHSignature33')
+  ffi.cdef(specialized)
+end
+add_additional_point_types()
 
 local specialized_declarations = 
 [[
@@ -310,8 +338,9 @@ local pointTypeNames = {
   'PointNormal',          -- float x, y, z; float normal[3], curvature;
   'Normal',               -- float normal[3], curvature;
   'PointXYZNormal',       -- alias for PointNormal
-  'PointXYZRGBANormal',    -- float x, y, z, rgb, normal[3], curvature;
-  'PointXYZINormal'       -- float x, y, z, intensity, normal[3], curvature;
+  'PointXYZRGBANormal',   -- float x, y, z, rgb, normal[3], curvature;
+  'PointXYZINormal',      -- float x, y, z, intensity, normal[3], curvature;
+  'FPFHSignature33'
 }
 
 local nameByType = {}
@@ -549,6 +578,12 @@ function PointXYZRGBANormal:__tostring()
 end 
 ffi.metatype(pcl.PointXYZRGBANormal, PointXYZRGBANormal)
 pcl.metatype[pcl.PointXYZRGBANormal] = PointXYZRGBANormal
+
+local FPFHSignature33 = {
+}
+ffi.metatype(pcl.FPFHSignature33, FPFHSignature33)
+pcl.metatype[pcl.FPFHSignature33] = FPFHSignature33
+
 
 pcl.range = {
   double = {

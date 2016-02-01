@@ -27,6 +27,7 @@ SET(src
   "${SOURCE_DIR}/xyzinormal.cpp"
   "${SOURCE_DIR}/xyzrgbanormal.cpp"
   "${SOURCE_DIR}/normal.cpp"
+  "${SOURCE_DIR}/fpfhsignature33.cpp"
 )
 
 FILE(GLOB luasrc *.lua)
