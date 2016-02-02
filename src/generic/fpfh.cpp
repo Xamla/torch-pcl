@@ -37,6 +37,26 @@ PCLIMP(void, FPFHEstimation, compute)(FPFHEstimation_ptr *self, OutputPointCloud
   (*self)->compute(**output);
 }
 
+PCLIMP(void, FPFHEstimation, setKSearch)(FPFHEstimation_ptr *self, int k)
+{
+  (*self)->setKSearch(k);
+}
+
+PCLIMP(int, FPFHEstimation, getKSearch)(FPFHEstimation_ptr *self)
+{
+  return (*self)->getKSearch();
+}
+
+PCLIMP(void, FPFHEstimation, setRadiusSearch)(FPFHEstimation_ptr *self, double radius)
+{
+  (*self)->setRadiusSearch(radius);
+}
+
+PCLIMP(double, FPFHEstimation, getRadiusSearch)(FPFHEstimation_ptr *self)
+{
+  return (*self)->getRadiusSearch();
+}
+
 #undef FPFHEstimation_ptr
 #undef InPointCloud_ptr
 #undef OutPointCloud_Ptr

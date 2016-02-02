@@ -45,7 +45,7 @@ end
 
 function FPFHEstimation:compute(output)
   if not output then
-    output = pcl.PointCloud(pcl.PFHSignature33)
+    output = pcl.PointCloud(pcl.FPFHSignature33)
   end
   self.f.compute(self.o, output:cdata())
   return output

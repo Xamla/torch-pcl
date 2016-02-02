@@ -293,6 +293,17 @@ void pcl_SIFTKeypoint_TYPE_KEY_setScales(SIFTKeypoint_TYPE_KEY *self, float min_
 void pcl_SIFTKeypoint_TYPE_KEY_setMinimumContrast(SIFTKeypoint_TYPE_KEY *self, float min_contrast);
 void pcl_SIFTKeypoint_TYPE_KEY_compute(SIFTKeypoint_TYPE_KEY *self, PointCloud_XYZ *output);
 
+typedef struct {} FPFHEstimation_TYPE_KEY;
+FPFHEstimation_TYPE_KEY* pcl_FPFHEstimation_TYPE_KEY_new();
+void pcl_FPFHEstimation_TYPE_KEY_delete(FPFHEstimation_TYPE_KEY *self);
+void pcl_FPFHEstimation_TYPE_KEY_setInputCloud(FPFHEstimation_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_FPFHEstimation_TYPE_KEY_setInputNormals(FPFHEstimation_TYPE_KEY *self, PointCloud_Normal *normals);
+void pcl_FPFHEstimation_TYPE_KEY_setIndices(FPFHEstimation_TYPE_KEY *self, Indices *indices);
+void pcl_FPFHEstimation_TYPE_KEY_compute(FPFHEstimation_TYPE_KEY *self, PointCloud_FPFHSignature33 *output);
+void pcl_FPFHEstimation_TYPE_KEY_setKSearch(FPFHEstimation_TYPE_KEY *self, int k);
+int pcl_FPFHEstimation_TYPE_KEY_getKSearch(FPFHEstimation_TYPE_KEY *self);
+void pcl_FPFHEstimation_TYPE_KEY_setRadiusSearch(FPFHEstimation_TYPE_KEY *self, double radius);
+double pcl_FPFHEstimation_TYPE_KEY_getRadiusSearch(FPFHEstimation_TYPE_KEY *self);
 ]]
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
