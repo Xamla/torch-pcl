@@ -76,7 +76,7 @@ PCLIMP(void, PointCloud, copyXYZINormal)(pcl::PointCloud<_PointT>::Ptr *self, In
     pcl::copyPointCloud(**self, **cloud_out);
 }
 
-PCLIMP(void, PointCloud, copyXYZRGBANormal)(pcl::PointCloud<_PointT>::Ptr *self, Indices_ptr *indices, pcl::PointCloud<PointXYZRGBANormal>::Ptr *cloud_out)
+PCLIMP(void, PointCloud, copyXYZRGBNormal)(pcl::PointCloud<_PointT>::Ptr *self, Indices_ptr *indices, pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr *cloud_out)
 {
   if (indices)
     pcl::copyPointCloud(**self, **indices, **cloud_out);

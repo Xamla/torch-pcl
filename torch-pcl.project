@@ -55,11 +55,9 @@
     <File Name="src/xyznormal.cpp"/>
     <File Name="src/indices.cpp"/>
     <File Name="src/normal.cpp"/>
-    <File Name="src/xyzrgb.cpp"/>
     <File Name="src/xyzrgba.cpp"/>
-    <File Name="src/xyzrgbanormal.h"/>
-    <File Name="src/xyzrgbanormal.cpp"/>
     <File Name="src/fpfhsignature33.cpp"/>
+    <File Name="src/xyzrgbnormal.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>

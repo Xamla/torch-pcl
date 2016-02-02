@@ -51,10 +51,18 @@ local function init()
     'copyXYZRGBA',
     'copyXYZNormal',
     'copyXYZINormal',
-    'copyXYZRGBANormal'
+    'copyXYZRGBNormal'
   }
 
-  for k,v in pairs(utils.type_key_map) do
+  local supported_types = {}
+  supported_types[pcl.PointXYZ] = 'XYZ'
+  supported_types[pcl.PointXYZI] = 'XYZI'
+  supported_types[pcl.PointXYZRGBA] = 'XYZRGBA'
+  supported_types[pcl.PointNormal] = 'XYZNormal'
+  supported_types[pcl.PointXYZINormal] = 'XYZINormal'
+  supported_types[pcl.PointXYZRGBNormal] = 'XYZRGBNormal'
+  supported_types[pcl.FPFHSignature33] = 'FPFHSignature33';
+  for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods('pcl_PointCloud_TYPE_KEY_', PointCloud_method_names, v)
   end
   

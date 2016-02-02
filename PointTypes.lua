@@ -21,7 +21,7 @@ typedef struct Normal { "..PCL_NORMAL4D.." union { struct { float curvature; }; 
 typedef struct Axis { "..PCL_POINT4D.." } Axis; \z
 typedef struct PointNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float curvature; }; float data_c[4]; }; } PointNormal; \z
 typedef struct PointNormal PointXYZNormal;\z
-typedef struct PointXYZRGBANormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBANormal; \z
+typedef struct PointXYZRGBNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBNormal; \z
 typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal; \z
 " ..
 [[
@@ -33,7 +33,7 @@ typedef struct PointCloud_XYZI {} PointCloud_XYZI;
 typedef struct PointCloud_XYZRGBA {} PointCloud_XYZRGBA;
 typedef struct PointCloud_XYZNormal {} PointCloud_XYZNormal;
 typedef struct PointCloud_XYZINormal {} PointCloud_XYZINormal;
-typedef struct PointCloud_XYZRGBANormal {} PointCloud_XYZRGBANormal;
+typedef struct PointCloud_XYZRGBNormal {} PointCloud_XYZRGBNormal;
 typedef struct PointCloud_Normal {} PointCloud_Normal;
 typedef struct PointCloud_FPFHSignature33 {} PointCloud_FPFHSignature33;
 
@@ -131,7 +131,7 @@ void pcl_PointCloud_TYPE_KEY_copyXYZI(PointCloud_TYPE_KEY *cloud_in, Indices *in
 void pcl_PointCloud_TYPE_KEY_copyXYZRGBA(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZRGBA *cloud_out);
 void pcl_PointCloud_TYPE_KEY_copyXYZNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZNormal *cloud_out);
 void pcl_PointCloud_TYPE_KEY_copyXYZINormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZINormal *cloud_out);
-void pcl_PointCloud_TYPE_KEY_copyXYZRGBANormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZRGBANormal *cloud_out);
+void pcl_PointCloud_TYPE_KEY_copyXYZRGBNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZRGBNormal *cloud_out);
 ]]
 
 local generic_declarations = [[
@@ -295,7 +295,7 @@ void pcl_SIFTKeypoint_TYPE_KEY_compute(SIFTKeypoint_TYPE_KEY *self, PointCloud_X
 
 ]]
 
-local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBANormal' }
+local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
 for i,v in ipairs(supported_keys) do
   local specialized = string.gsub(pcl_PointCloud_declaration, 'TYPE_KEY', v)
   ffi.cdef(specialized)
@@ -324,7 +324,7 @@ void pcl_PointCloud_XYZRGBA_readRGBAbyte(void *cloud, struct THByteTensor *outpu
 
 void pcl_PointCloud_XYZ_addNormals(PointCloud_XYZ *self, PointCloud_Normal *normals, PointCloud_XYZNormal *output);
 void pcl_PointCloud_XYZI_addNormals(PointCloud_XYZI *self, PointCloud_Normal *normals, PointCloud_XYZINormal *output);
-void pcl_PointCloud_XYZRGBA_addNormals(PointCloud_XYZRGBA*self, PointCloud_Normal *normals, PointCloud_XYZRGBANormal *output);
+void pcl_PointCloud_XYZRGBA_addNormals(PointCloud_XYZRGBA*self, PointCloud_Normal *normals, PointCloud_XYZRGBNormal *output);
 ]]
 ffi.cdef(specialized_declarations)
 
@@ -338,7 +338,7 @@ local pointTypeNames = {
   'PointNormal',          -- float x, y, z; float normal[3], curvature;
   'Normal',               -- float normal[3], curvature;
   'PointXYZNormal',       -- alias for PointNormal
-  'PointXYZRGBANormal',   -- float x, y, z, rgb, normal[3], curvature;
+  'PointXYZRGBNormal',    -- float x, y, z, rgb, normal[3], curvature;
   'PointXYZINormal',      -- float x, y, z, intensity, normal[3], curvature;
   'FPFHSignature33'
 }
@@ -558,8 +558,8 @@ end
 ffi.metatype(pcl.PointXYZINormal, PointXYZINormal)
 pcl.metatype[pcl.PointXYZINormal] = PointXYZINormal
 
--- PointXYZRGBANormal metatype
-local PointXYZRGBANormal = {
+-- PointXYZRGBNormal metatype
+local PointXYZRGBNormal = {
   prototype = {
     tensor = totensor,
     set = set,
@@ -569,15 +569,15 @@ local PointXYZRGBANormal = {
   __len = len,
   fields = { 'x', 'y', 'z', 'w', 'normal_x', 'normal_y', 'normal_z', '_1', 'rgba', 'curvature', '_2', '_3' }
 }
-PointXYZRGBANormal.__pairs = createpairs(PointXYZRGBANormal.fields)
-function PointXYZRGBANormal:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBANormal.prototype[i] end end
-function PointXYZRGBANormal:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
-function PointXYZRGBANormal:__tostring()
+PointXYZRGBNormal.__pairs = createpairs(PointXYZRGBNormal.fields)
+function PointXYZRGBNormal:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBNormal.prototype[i] end end
+function PointXYZRGBNormal:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
+function PointXYZRGBNormal:__tostring()
   return string.format('{ x:%f, y:%f, z:%f, normal_x:%f, normal_y:%f, normal_z:%f, rgba:%08X, curvature:%f }', 
     self.x, self.y, self.z, self.normal_x, self.normal_y, self.normal_z, self.rgba, self.curvature) 
 end 
-ffi.metatype(pcl.PointXYZRGBANormal, PointXYZRGBANormal)
-pcl.metatype[pcl.PointXYZRGBANormal] = PointXYZRGBANormal
+ffi.metatype(pcl.PointXYZRGBNormal, PointXYZRGBNormal)
+pcl.metatype[pcl.PointXYZRGBNormal] = PointXYZRGBNormal
 
 local FPFHSignature33 = {
 }
