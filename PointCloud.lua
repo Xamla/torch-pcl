@@ -51,7 +51,8 @@ local function init()
     'copyXYZRGBA',
     'copyXYZNormal',
     'copyXYZINormal',
-    'copyXYZRGBNormal'
+    'copyXYZRGBNormal',
+    'copyNormal'
   }
 
   local supported_types = {}
@@ -61,7 +62,8 @@ local function init()
   supported_types[pcl.PointNormal] = 'XYZNormal'
   supported_types[pcl.PointXYZINormal] = 'XYZINormal'
   supported_types[pcl.PointXYZRGBNormal] = 'XYZRGBNormal'
-  supported_types[pcl.FPFHSignature33] = 'FPFHSignature33';
+  supported_types[pcl.Normal] = 'Normal'
+  supported_types[pcl.FPFHSignature33] = 'FPFHSignature33'
   for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods('pcl_PointCloud_TYPE_KEY_', PointCloud_method_names, v)
   end
@@ -336,9 +338,9 @@ function PointCloud.copy(cloud_in, indices, cloud_out)
   if not cloud_out then
     cloud_out = pcl.PointCloud(cloud_in.pointType)
   end
-  local copy = cloud_in.f["copy" .. utils.type_key_map[cloud_out.pointType] or '']
+  local copy = cloud_in.f["copy" .. (utils.type_key_map[cloud_out.pointType] or '')]
   if not copy then
-    print("copy" .. utils.type_key_map[cloud_out.pointType] or '')
+    print("copy" .. (utils.type_key_map[cloud_out.pointType] or ''))
     error("Copy to destination point cloud type not supported.")
   end
   copy(cloud_in:cdata(), utils.cdata(indices), cloud_out:cdata())

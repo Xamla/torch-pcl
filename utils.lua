@@ -10,6 +10,7 @@ type_key_map[pcl.PointXYZRGBA] = 'XYZRGBA'
 type_key_map[pcl.PointNormal] = 'XYZNormal'
 type_key_map[pcl.PointXYZINormal] = 'XYZINormal'
 type_key_map[pcl.PointXYZRGBNormal] = 'XYZRGBNormal'
+type_key_map[pcl.Normal] = 'Normal'
 utils.type_key_map = type_key_map
 
 function utils.create_typed_methods(prefix, names, type_key)

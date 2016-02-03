@@ -336,6 +336,11 @@ void pcl_PointCloud_XYZRGBA_readRGBAbyte(void *cloud, struct THByteTensor *outpu
 void pcl_PointCloud_XYZ_addNormals(PointCloud_XYZ *self, PointCloud_Normal *normals, PointCloud_XYZNormal *output);
 void pcl_PointCloud_XYZI_addNormals(PointCloud_XYZI *self, PointCloud_Normal *normals, PointCloud_XYZINormal *output);
 void pcl_PointCloud_XYZRGBA_addNormals(PointCloud_XYZRGBA*self, PointCloud_Normal *normals, PointCloud_XYZRGBNormal *output);
+
+void pcl_PointCloud_Normal_copyNormal(PointCloud_Normal *cloud_in, Indices *indices, PointCloud_Normal *cloud_out);
+void pcl_PointCloud_Normal_copyXYZNormal(PointCloud_Normal *cloud_in, Indices *indices, PointCloud_XYZNormal *cloud_out);
+void pcl_PointCloud_Normal_copyXYZINormal(PointCloud_Normal *cloud_in, Indices *indices, PointCloud_XYZINormal *cloud_out);
+void pcl_PointCloud_Normal_copyXYZRGBNormal(PointCloud_Normal *cloud_in, Indices *indices, PointCloud_XYZRGBNormal *cloud_out);
 ]]
 ffi.cdef(specialized_declarations)
 

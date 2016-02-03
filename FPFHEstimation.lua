@@ -13,13 +13,18 @@ local function init()
     'new',
     'delete',
     'setInputCloud',
+    'setInputNormals',
     'setIndices',
     'compute',
+    'setKSearch',
+    'getKSearch',
+    'setRadiusSearch',
+    'getRadiusSearch'
   }
-  
+
   for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_FPFHEstimation_TYPE_KEY_", FPFHEstimation_method_names, v)
-  end   
+  end
 end
 
 init()
@@ -39,6 +44,10 @@ function FPFHEstimation:setInputCloud(cloud)
   self.f.setInputCloud(self.o, cloud:cdata())
 end
 
+function FPFHEstimation:setInputNormals(normals)
+  self.f.setInputNormals(self.o, normals:cdata())
+end
+
 function FPFHEstimation:setIndices(indices)
   self.f.setIndices(self.o, indices:cdata())
 end
@@ -53,4 +62,20 @@ end
 
 function FPFHEstimation:setNumberOfThreads(num_threads)
   self.f.setNumberOfThreads(self.o, num_threads)
+end
+
+function FPFHEstimation:setKSearch(k)
+  self.f.setKSearch(self.o, k)
+end
+
+function FPFHEstimation:getKSearch()
+  self.f.getKSearch(self.o)
+end
+
+function FPFHEstimation:setRadiusSearch(radius)
+  self.f.setRadiusSearch(self.o, radius)
+end
+
+function FPFHEstimation:getRadiusSearch()
+  self.f.getRadiusSearch(self.o)
 end

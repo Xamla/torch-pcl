@@ -40,6 +40,7 @@
       <File Name="src/generic/sift_keypoint.cpp"/>
       <File Name="src/generic/correspondence_estimation.cpp"/>
       <File Name="src/generic/fpfh.cpp"/>
+      <File Name="src/generic/correspondences.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
