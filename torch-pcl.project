@@ -40,7 +40,6 @@
       <File Name="src/generic/sift_keypoint.cpp"/>
       <File Name="src/generic/correspondence_estimation.cpp"/>
       <File Name="src/generic/fpfh.cpp"/>
-      <File Name="src/generic/correspondences.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -59,6 +58,7 @@
     <File Name="src/xyzrgba.cpp"/>
     <File Name="src/fpfhsignature33.cpp"/>
     <File Name="src/xyzrgbnormal.cpp"/>
+    <File Name="src/correspondences.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
@@ -87,6 +87,7 @@
     <File Name="Indices.lua"/>
     <File Name="SIFTKeypoint.lua"/>
     <File Name="FPFHEstimation.lua"/>
+    <File Name="Correspondences.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>

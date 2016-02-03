@@ -26,6 +26,7 @@ typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct 
 " ..
 [[
 typedef struct FPFHSignature33 { float histogram[33]; } FPFHSignature33;
+typedef struct Correspondence { int index_query; int index_match; union { float distance; float weight; }; } Correspondence;
 typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;
 typedef struct OpenNI2CameraParameters { double focal_length_x; double focal_length_y; double principal_point_x; double principal_point_y; } OpenNI2CameraParameters;
 typedef struct PointCloud_XYZ {} PointCloud_XYZ;
@@ -69,6 +70,19 @@ int pcl_Indices_pop_back(Indices *self);
 void pcl_Indices_clear(Indices *self);
 void pcl_Indices_insert(Indices *self, size_t pos, size_t n, int value);
 void pcl_Indices_erase(Indices *self, size_t begin, size_t end);
+
+typedef struct Correspondences {} Correspondences;
+Correspondences *pcl_Correspondences_new();
+Correspondences *pcl_Correspondences_clone(Correspondences *self);
+void pcl_Correspondences_delete(Correspondences *self);
+int pcl_Correspondences_size(Correspondences *self);
+Correspondence &pcl_Correspondences_at(Correspondences *self, size_t pos);
+void pcl_Correspondences_push_back(Correspondences *self, const Correspondence &value);
+void pcl_Correspondences_pop_back(Correspondences *self);
+void pcl_Correspondences_clear(Correspondences *self);
+void pcl_Correspondences_insert(Correspondences *self, size_t pos, const Correspondence &value);
+void pcl_Correspondences_erase(Correspondences *self, size_t begin, size_t end);
+bool pcl_Correspondences_empty(Correspondences *self);
 
 struct NarfKeypointParameters
 {
@@ -381,6 +395,7 @@ for i,n in ipairs(pointTypeNames) do
   n = string.gsub(n, 'Point', '')
   pcl.pointTypeByName[string.lower(n)] = t
 end
+pcl.Correspondence = ffi.typeof('Correspondence') 
 
 function pcl.isPointType(t)
   return nameByType[t] ~= nil
@@ -393,6 +408,18 @@ local function createpairs(fields)
       local _
       k, n = next(fields, k)
       local v = self[k]
+      return n,v
+    end
+  end
+end
+
+local function createpairs_n(fields)
+  return function(self)
+    local k = nil
+    return function()
+      local _
+      k, n = next(fields, k)
+      local v = self[n]
       return n,v
     end
   end
@@ -452,6 +479,19 @@ local function totensor(self)
   end
   return t
 end
+
+-- Correspondence metatype
+local Correspondence = {
+  prototype = {
+    set = function(self, v) ffi.copy(self, v, ffi.sizeof(pcl.Correspondence)) end
+  },
+  fields = { 'index_query', 'index_match', 'distance' }
+}
+Correspondence.__pairs = createpairs_n(Correspondence.fields)
+function Correspondence:__index(i) return Correspondence.prototype[i] end
+function Correspondence:__tostring() return string.format('{ index_query: %d, index_match: %d, distance: %f }', self.index_query, self.index_match, self.distance) end 
+ffi.metatype(pcl.Correspondence, Correspondence)
+pcl.metatype[pcl.Correspondence] = Correspondence
 
 -- PointXYZ metatype
 local PointXYZ = {
