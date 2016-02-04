@@ -104,7 +104,13 @@ void uniform_sampling(vtkSmartPointer<vtkPolyData> polydata, size_t n_samples, p
 void sampleMesh(vtkPolyData* polydata, pcl::PointCloud<pcl::PointXYZ>::Ptr output, int samples = 100000, float resolution = 0.1f)
 {
   vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+  
+#if VTK_MAJOR_VERSION < 6
   triangleFilter->SetInput(polydata);
+#else
+  triangleFilter->SetInputData(polydata);
+#endif
+
   triangleFilter->Update();
   polydata = triangleFilter->GetOutput();
   
