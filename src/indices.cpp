@@ -178,11 +178,7 @@ PCLIMP(void, Indices, clear)(Indices_ptr *self)
 PCLIMP(void, Indices, insert)(Indices_ptr *self, size_t pos, size_t n, int value)
 {
   std::vector<int>& indices = **self;
-  std::vector<int>::iterator i;
-  
-  if (pos >= indices.size())
-    i = indices.end();
-    
+  std::vector<int>::iterator i = pos >= indices.size() ? indices.end() : indices.begin() + pos;
   indices.insert(i, n, value);
 }
 
@@ -192,15 +188,8 @@ PCLIMP(void, Indices, erase)(Indices_ptr *self, size_t begin, size_t end)
     return;
     
   std::vector<int>& indices = **self;
-  std::vector<int>::iterator b, e;
-  if (begin >= indices.size())
-    b = indices.end();
-  else
-    b = indices.begin() + begin;
-  if (end >= indices.size())
-    e = indices.end();
-  else
-    e = indices.begin() + end;
+  std::vector<int>::iterator b = begin >= indices.size() ? indices.end() : indices.begin() + begin;
+  std::vector<int>::iterator e = end >= indices.size() ? indices.end() : indices.begin() + end;
   indices.erase(b, e);
 }
 

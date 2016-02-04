@@ -19,6 +19,7 @@ SET(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L\".\" ")
 
 SET(src
   "${SOURCE_DIR}/indices.cpp"
+  "${SOURCE_DIR}/correspondences.cpp"
   "${SOURCE_DIR}/cloudviewer.cpp"
   "${SOURCE_DIR}/xyz.cpp"
   "${SOURCE_DIR}/xyzi.cpp"
