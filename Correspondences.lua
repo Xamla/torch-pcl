@@ -13,7 +13,8 @@ local function init()
     'clone',
     'delete',
     'size',
-    'at',
+    'getAt',
+    'setAt',
     'push_back',
     'pop_back',
     'clear',
@@ -55,7 +56,7 @@ function Correspondences:__index(idx)
     v = Correspondences[idx]
     if not v and type(idx) == 'number' then
       local f, o = rawget(self, 'f'), rawget(self, 'o')
-      v = f.at(o, idx-1)
+      v = f.getAt(o, idx-1)
     end
   end
   return v
@@ -64,7 +65,7 @@ end
 function Correspondences:__newindex(idx, v)
   local f, o = rawget(self, 'f'), rawget(self, 'o')
   if type(idx) == 'number' then
-    f.at(o, idx-1):set(v)
+    f.setAt(o, idx-1, v)
   else
     rawset(self, idx, v)
   end

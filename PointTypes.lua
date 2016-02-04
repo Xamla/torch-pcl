@@ -26,7 +26,7 @@ typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct 
 " ..
 [[
 typedef struct FPFHSignature33 { float histogram[33]; } FPFHSignature33;
-typedef struct Correspondence { int index_query; int index_match; union { float distance; float weight; }; } Correspondence;
+typedef struct Correspondence { int index_query; int index_match; float distance; } Correspondence;
 typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;
 typedef struct OpenNI2CameraParameters { double focal_length_x; double focal_length_y; double principal_point_x; double principal_point_y; } OpenNI2CameraParameters;
 typedef struct PointCloud_XYZ {} PointCloud_XYZ;
@@ -76,7 +76,8 @@ Correspondences *pcl_Correspondences_new();
 Correspondences *pcl_Correspondences_clone(Correspondences *self);
 void pcl_Correspondences_delete(Correspondences *self);
 int pcl_Correspondences_size(Correspondences *self);
-Correspondence &pcl_Correspondences_at(Correspondences *self, size_t pos);
+Correspondence pcl_Correspondences_getAt(Correspondences *self, size_t pos);
+void pcl_Correspondences_getAt(Correspondences *self, size_t pos, const Correspondence &value);
 void pcl_Correspondences_push_back(Correspondences *self, const Correspondence &value);
 void pcl_Correspondences_pop_back(Correspondences *self);
 void pcl_Correspondences_clear(Correspondences *self);

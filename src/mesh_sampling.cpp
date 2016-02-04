@@ -105,10 +105,10 @@ void sampleMesh(vtkPolyData* polydata, pcl::PointCloud<pcl::PointXYZ>::Ptr outpu
 {
   vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
   
-#if VTK_MAJOR_VERSION < 6
-  triangleFilter->SetInput(polydata);
-#else
+#if VTK_MAJOR_VERSION > 5
   triangleFilter->SetInputData(polydata);
+#else
+  triangleFilter->SetInput(polydata);
 #endif
 
   triangleFilter->Update();
