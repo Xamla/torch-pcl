@@ -22,12 +22,10 @@ PCLIMP(void, NormalEstimation, setInputCloud)(NormalEstimation_ptr *self, PointC
   (*self)->setInputCloud(*cloud);
 }
 
-
 PCLIMP(void, NormalEstimation, setIndices)(NormalEstimation_ptr *self, Indices_ptr *indices)
 {
   (*self)->setIndices(*indices);
 }
-
 
 PCLIMP(void, NormalEstimation, getViewPoint)(NormalEstimation_ptr *self, THFloatTensor* out_pt)
 {

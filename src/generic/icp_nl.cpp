@@ -6,7 +6,7 @@
 #include <pcl/registration/correspondence_rejection_one_to_one.h>
 #include <pcl/registration/correspondence_rejection_trimmed.h>
 
-#define ICPNL_ptr boost::shared_ptr<pcl::IterativeClosestPointNonLinear<_PointT, _PointT> >
+#define ICPNL_ptr pcl::IterativeClosestPointNonLinear<_PointT, _PointT>::Ptr
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
 
 PCLIMP(void*, ICPNL, new)()

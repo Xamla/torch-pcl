@@ -1,7 +1,9 @@
 #ifndef searchwrapper_h
 #define searchwrapper_h
 
+#include <pcl/search/kdtree.h>
 #include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/search/octree.h>
 #include <pcl/octree/octree.h>
 
 template<typename T>

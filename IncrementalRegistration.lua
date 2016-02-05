@@ -21,7 +21,7 @@ local function init()
 
   for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_IncrementalRegistration_TYPE_KEY_", IncrementalRegistration_method_names, v)
-  end    
+  end
 end
 
 init()

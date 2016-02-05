@@ -21,6 +21,8 @@ require 'pcl.Octree'
 require 'pcl.NormalEstimation'
 require 'pcl.SIFTKeypoint'
 require 'pcl.FPFHEstimation'
+require 'pcl.CorrespondenceEstimation'
+require 'pcl.SampleConsensusPrerejective'
 
 function pcl.rand(width, height, pointType)
   if pcl.isPointType(height) or type(height) == 'string' then

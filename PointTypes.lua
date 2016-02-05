@@ -149,6 +149,22 @@ void pcl_PointCloud_TYPE_KEY_copyXYZINormal(PointCloud_TYPE_KEY *cloud_in, Indic
 void pcl_PointCloud_TYPE_KEY_copyXYZRGBNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZRGBNormal *cloud_out);
 ]]
 
+local KdTreeFLANN_declarations = [[
+typedef struct {} KdTreeFLANN_TYPE_KEY;
+KdTreeFLANN_TYPE_KEY* pcl_KdTreeFLANN_TYPE_KEY_new(bool sorted);
+KdTreeFLANN_TYPE_KEY* pcl_KdTreeFLANN_TYPE_KEY_clone(KdTreeFLANN_TYPE_KEY *self);
+void pcl_KdTreeFLANN_TYPE_KEY_delete(KdTreeFLANN_TYPE_KEY *self);
+void pcl_KdTreeFLANN_TYPE_KEY_setInputCloud(KdTreeFLANN_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud, Indices *indices);
+float pcl_KdTreeFLANN_TYPE_KEY_getEpsilon(KdTreeFLANN_TYPE_KEY *self);
+void pcl_KdTreeFLANN_TYPE_KEY_setEpsilon(KdTreeFLANN_TYPE_KEY *self, float value);
+void pcl_KdTreeFLANN_TYPE_KEY_setMinPts(KdTreeFLANN_TYPE_KEY *self, int value);
+int pcl_KdTreeFLANN_TYPE_KEY_getMinPts(KdTreeFLANN_TYPE_KEY *self);
+void pcl_KdTreeFLANN_TYPE_KEY_setSortedResults(KdTreeFLANN_TYPE_KEY *self, bool value);
+void pcl_KdTreeFLANN_TYPE_KEY_assign(KdTreeFLANN_TYPE_KEY *self, KdTreeFLANN_TYPE_KEY *other);
+int pcl_KdTreeFLANN_TYPE_KEY_nearestKSearch(KdTreeFLANN_TYPE_KEY *self, const PointTYPE_KEY &point, int k, Indices *indices, THFloatTensor *squaredDistances);
+int pcl_KdTreeFLANN_TYPE_KEY_radiusSearch(KdTreeFLANN_TYPE_KEY *self, const PointTYPE_KEY &point, double radius, Indices *indices, THFloatTensor *squaredDistances, unsigned int max_nn);
+]]
+
 local generic_declarations = [[
 void pcl_CloudViewer_TYPE_KEY_showCloud(void *self, PointCloud_TYPE_KEY *cloud, const char *cloudname);
 
@@ -236,20 +252,6 @@ bool pcl_IncrementalRegistration_TYPE_KEY_registerCloud(IncrementalRegistration_
 void pcl_IncrementalRegistration_TYPE_KEY_getDeltaTransform(IncrementalRegistration_TYPE_KEY *self, THFloatTensor* output);
 void pcl_IncrementalRegistration_TYPE_KEY_getAbsoluteTransform(IncrementalRegistration_TYPE_KEY *self, THFloatTensor* output);
 
-typedef struct {} KdTreeFLANN_TYPE_KEY;
-KdTreeFLANN_TYPE_KEY* pcl_KdTreeFLANN_TYPE_KEY_new(bool sorted);
-KdTreeFLANN_TYPE_KEY* pcl_KdTreeFLANN_TYPE_KEY_clone(KdTreeFLANN_TYPE_KEY *self);
-void pcl_KdTreeFLANN_TYPE_KEY_delete(KdTreeFLANN_TYPE_KEY *self);
-void pcl_KdTreeFLANN_TYPE_KEY_setInputCloud(KdTreeFLANN_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud, Indices *indices);
-float pcl_KdTreeFLANN_TYPE_KEY_getEpsilon(KdTreeFLANN_TYPE_KEY *self);
-void pcl_KdTreeFLANN_TYPE_KEY_setEpsilon(KdTreeFLANN_TYPE_KEY *self, float value);
-void pcl_KdTreeFLANN_TYPE_KEY_setMinPts(KdTreeFLANN_TYPE_KEY *self, int value);
-int pcl_KdTreeFLANN_TYPE_KEY_getMinPts(KdTreeFLANN_TYPE_KEY *self);
-void pcl_KdTreeFLANN_TYPE_KEY_setSortedResults(KdTreeFLANN_TYPE_KEY *self, bool value);
-void pcl_KdTreeFLANN_TYPE_KEY_assign(KdTreeFLANN_TYPE_KEY *self, KdTreeFLANN_TYPE_KEY *other);
-int pcl_KdTreeFLANN_TYPE_KEY_nearestKSearch(KdTreeFLANN_TYPE_KEY *self, const PointTYPE_KEY &point, int k, Indices *indices, THFloatTensor *squaredDistances);
-int pcl_KdTreeFLANN_TYPE_KEY_radiusSearch(KdTreeFLANN_TYPE_KEY *self, const PointTYPE_KEY &point, double radius, Indices *indices, THFloatTensor *squaredDistances, unsigned int max_nn);
-
 typedef struct {} OctreePointCloudSearch_TYPE_KEY;
 OctreePointCloudSearch_TYPE_KEY* pcl_OctreePointCloudSearch_TYPE_KEY_new(double resolution);
 void pcl_OctreePointCloudSearch_TYPE_KEY_delete(OctreePointCloudSearch_TYPE_KEY *self);
@@ -321,12 +323,54 @@ void pcl_FPFHEstimation_TYPE_KEY_setRadiusSearch(FPFHEstimation_TYPE_KEY *self, 
 double pcl_FPFHEstimation_TYPE_KEY_getRadiusSearch(FPFHEstimation_TYPE_KEY *self);
 ]]
 
+local pcl_CorrespondenceEstimation_declaration = [[
+typedef struct {} CorrespondenceEstimation_TYPE_KEY;
+CorrespondenceEstimation_TYPE_KEY *pcl_CorrespondenceEstimation_TYPE_KEY_new();
+void pcl_CorrespondenceEstimation_TYPE_KEY_delete(CorrespondenceEstimation_TYPE_KEY *self);
+void pcl_CorrespondenceEstimation_TYPE_KEY_setInputSource(CorrespondenceEstimation_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_CorrespondenceEstimation_TYPE_KEY_setInputTarget(CorrespondenceEstimation_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_CorrespondenceEstimation_TYPE_KEY_setIndicesSource(CorrespondenceEstimation_TYPE_KEY *self, Indices *indices);
+void pcl_CorrespondenceEstimation_TYPE_KEY_setIndicesTarget(CorrespondenceEstimation_TYPE_KEY *self, Indices *indices);
+void pcl_CorrespondenceEstimation_TYPE_KEY_setSearchMethodSource(CorrespondenceEstimation_TYPE_KEY *self, KdTreeFLANN_TYPE_KEY *kdtree, bool force_no_recompute);
+void pcl_CorrespondenceEstimation_TYPE_KEY_setSearchMethodTarget(CorrespondenceEstimation_TYPE_KEY *self, KdTreeFLANN_TYPE_KEY *kdtree, bool force_no_recompute);
+void pcl_CorrespondenceEstimation_TYPE_KEY_determineCorrespondences(CorrespondenceEstimation_TYPE_KEY *self, Correspondences *correspondences, double max_distance);
+void pcl_CorrespondenceEstimation_TYPE_KEY_determineReciprocalCorrespondences(CorrespondenceEstimation_TYPE_KEY *self, Correspondences *correspondences, double max_distance);
+]]
+
+local pcl_SampleConsensusPrerejective_declaration = [[
+typedef struct {} SampleConsensusPrerejective_TYPE_KEY;
+SampleConsensusPrerejective_TYPE_KEY *pcl_SampleConsensusPrerejective_TYPE_KEY_new();
+void pcl_SampleConsensusPrerejective_TYPE_KEY_delete(SampleConsensusPrerejective_TYPE_KEY *self);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_setInputSource(SampleConsensusPrerejective_TYPE_KEY *self, PointCloud_TYPE_KEY *source_cloud);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_setSourceFeatures(SampleConsensusPrerejective_TYPE_KEY *self, PointCloud_FPFHSignature33* source_features);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_setInputTarget(SampleConsensusPrerejective_TYPE_KEY *self, PointCloud_TYPE_KEY *target_cloud);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_setTargetFeatures(SampleConsensusPrerejective_TYPE_KEY *self, PointCloud_FPFHSignature33* target_features);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_setMaximumIterations(SampleConsensusPrerejective_TYPE_KEY *self, int max_iterations);
+int pcl_SampleConsensusPrerejective_TYPE_KEY_getMaximumIterations(SampleConsensusPrerejective_TYPE_KEY *self);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_setNumberOfSamples(SampleConsensusPrerejective_TYPE_KEY *self, int nr_samples);
+int pcl_SampleConsensusPrerejective_TYPE_KEY_getNumberOfSamples(SampleConsensusPrerejective_TYPE_KEY *self);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_setCorrespondenceRandomness(SampleConsensusPrerejective_TYPE_KEY *self, int k);
+int pcl_SampleConsensusPrerejective_TYPE_KEY_getCorrespondenceRandomness(SampleConsensusPrerejective_TYPE_KEY *self);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_setSimilarityThreshold(SampleConsensusPrerejective_TYPE_KEY *self, float similarity_threshold);
+float pcl_SampleConsensusPrerejective_TYPE_KEY_getSimilarityThreshold(SampleConsensusPrerejective_TYPE_KEY *self);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_setInlierFraction(SampleConsensusPrerejective_TYPE_KEY *self, float inlier_fraction);
+float pcl_SampleConsensusPrerejective_TYPE_KEY_getInlierFraction(SampleConsensusPrerejective_TYPE_KEY *self);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_getInliers(SampleConsensusPrerejective_TYPE_KEY *self, Indices *indices);
+]]
+
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
+local declarations = {
+    pcl_PointCloud_declaration,
+    KdTreeFLANN_declarations,
+    generic_declarations,
+    pcl_CorrespondenceEstimation_declaration,
+    pcl_SampleConsensusPrerejective_declaration
+  }
 for i,v in ipairs(supported_keys) do
-  local specialized = string.gsub(pcl_PointCloud_declaration, 'TYPE_KEY', v)
-  ffi.cdef(specialized)
-  specialized = string.gsub(generic_declarations, 'TYPE_KEY', v)
-  ffi.cdef(specialized)
+  for j,declaration in ipairs(declarations) do
+    local specialized = string.gsub(declaration, 'TYPE_KEY', v)
+    ffi.cdef(specialized)
+  end
 end
 
 local function add_normal_declarations()
@@ -337,9 +381,17 @@ end
 add_normal_declarations()
 
 local function add_additional_point_types()
-  local specialized = string.gsub(pcl_PointCloud_declaration, 'PointTYPE_KEY', 'FPFHSignature33')
-  specialized = string.gsub(specialized, 'TYPE_KEY', 'FPFHSignature33')
-  ffi.cdef(specialized)
+  local declarations = {
+    pcl_PointCloud_declaration,
+    KdTreeFLANN_declarations,
+    pcl_CorrespondenceEstimation_declaration,
+    pcl_SampleConsensusPrerejective_declaration
+  }
+  for j,declaration in ipairs(declarations) do
+    local specialized = string.gsub(declaration, 'PointTYPE_KEY', 'FPFHSignature33')
+    specialized = string.gsub(specialized, 'TYPE_KEY', 'FPFHSignature33')
+    ffi.cdef(specialized)
+  end
 end
 add_additional_point_types()
 

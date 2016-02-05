@@ -3,3 +3,5 @@
 #define _PointT_WITHOUT_XYZ
 #include "utils.h"
 #include "generic/PointCloud.cpp"
+#include "generic/kdtree.cpp"
+#include "generic/correspondence_estimation.cpp"

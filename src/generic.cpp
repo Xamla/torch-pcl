@@ -9,6 +9,8 @@
 #include "generic/octree.cpp"
 //#include "generic/boundary_estimation.cpp"
 #include "generic/fpfh.cpp"
+#include "generic/correspondence_estimation.cpp"
+#include "generic/sample_consensus_prerejective.cpp"
 
 #ifndef _NO_SIFT_KEYPOINT
 #include "generic/sift_keypoint.cpp"
