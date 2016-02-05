@@ -25,6 +25,7 @@ local function init()
     func_by_type[k] = utils.create_typed_methods("pcl_CorrespondenceEstimation_TYPE_KEY_", CorrespondenceEstimation_method_names, v)
   end
   func_by_type[pcl.FPFHSignature33] = utils.create_typed_methods("pcl_CorrespondenceEstimation_TYPE_KEY_", CorrespondenceEstimation_method_names, 'FPFHSignature33')
+  func_by_type[pcl.VFHSignature308] = utils.create_typed_methods("pcl_CorrespondenceEstimation_TYPE_KEY_", CorrespondenceEstimation_method_names, 'VFHSignature308')
 end
 
 init()

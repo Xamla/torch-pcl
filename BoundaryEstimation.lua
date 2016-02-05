@@ -9,7 +9,7 @@ local func_by_type = {}
 
 local function init()
 
-  local method_names = {
+  local BoundaryEstimation_method_names = {
     'new',
     'delete',
     'setInputCloud',
@@ -27,7 +27,7 @@ local function init()
     'computeIndices'
   }
   for k,v in pairs(utils.type_key_map) do
-    func_by_type[k] = utils.create_typed_methods("pcl_BoundaryEstimation_TYPE_KEY_", method_names, v)
+    func_by_type[k] = utils.create_typed_methods("pcl_BoundaryEstimation_TYPE_KEY_", BoundaryEstimation_method_names, v)
   end    
 end
 

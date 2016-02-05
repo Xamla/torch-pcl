@@ -17,7 +17,7 @@ PCLIMP(void, NormalEstimation, delete)(NormalEstimation_ptr *self)
   delete self;
 }
 
-PCLIMP(void, NormalEstimation, setInputCloud)(NormalEstimation_ptr *self, PointCloud_ptr* cloud)
+PCLIMP(void, NormalEstimation, setInputCloud)(NormalEstimation_ptr *self, PointCloud_ptr *cloud)
 {
   (*self)->setInputCloud(*cloud);
 }
@@ -27,7 +27,7 @@ PCLIMP(void, NormalEstimation, setIndices)(NormalEstimation_ptr *self, Indices_p
   (*self)->setIndices(*indices);
 }
 
-PCLIMP(void, NormalEstimation, getViewPoint)(NormalEstimation_ptr *self, THFloatTensor* out_pt)
+PCLIMP(void, NormalEstimation, getViewPoint)(NormalEstimation_ptr *self, THFloatTensor *out_pt)
 {
   float x, y, z;
   (*self)->getViewPoint(x, y, z);
@@ -38,7 +38,7 @@ PCLIMP(void, NormalEstimation, getViewPoint)(NormalEstimation_ptr *self, THFloat
   THFloatTensor_set1d(out_pt, 3, 1);
 }
 
-PCLIMP(void, NormalEstimation, setViewPoint)(NormalEstimation_ptr *self, THFloatTensor* pt)
+PCLIMP(void, NormalEstimation, setViewPoint)(NormalEstimation_ptr *self, THFloatTensor *pt)
 {
   Eigen::Vector3f v(Tensor2Vec3f(pt));
   (*self)->setViewPoint(v[0], v[1], v[2]);

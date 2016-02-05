@@ -27,6 +27,7 @@ typedef struct Boundary { uint8_t boundary_point; } Boundary; \z
 " ..
 [[
 typedef struct FPFHSignature33 { float histogram[33]; } FPFHSignature33;
+typedef struct VFHSignature308 { float histogram[308]; } VFHSignature308;
 typedef struct Correspondence { int index_query; int index_match; float distance; } Correspondence;
 typedef struct _PointsBuffer { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;
 typedef struct OpenNI2CameraParameters { double focal_length_x; double focal_length_y; double principal_point_x; double principal_point_y; } OpenNI2CameraParameters;
@@ -38,6 +39,7 @@ typedef struct PointCloud_XYZINormal {} PointCloud_XYZINormal;
 typedef struct PointCloud_XYZRGBNormal {} PointCloud_XYZRGBNormal;
 typedef struct PointCloud_Normal {} PointCloud_Normal;
 typedef struct PointCloud_FPFHSignature33 {} PointCloud_FPFHSignature33;
+typedef struct PointCloud_VFHSignature308 {} PointCloud_VFHSignature308;
 typedef struct PointCloud_Boundary {} PointCloud_Boundary;
 
 void* pcl_CloudViewer_new(const char *window_name);
@@ -323,6 +325,27 @@ void pcl_FPFHEstimation_TYPE_KEY_setKSearch(FPFHEstimation_TYPE_KEY *self, int k
 int pcl_FPFHEstimation_TYPE_KEY_getKSearch(FPFHEstimation_TYPE_KEY *self);
 void pcl_FPFHEstimation_TYPE_KEY_setRadiusSearch(FPFHEstimation_TYPE_KEY *self, double radius);
 double pcl_FPFHEstimation_TYPE_KEY_getRadiusSearch(FPFHEstimation_TYPE_KEY *self);
+
+typedef struct {} VFHEstimation_TYPE_KEY;
+VFHEstimation_TYPE_KEY* pcl_VFHEstimation_TYPE_KEY_new();
+void pcl_VFHEstimation_TYPE_KEY_delete(VFHEstimation_TYPE_KEY *self);
+void pcl_VFHEstimation_TYPE_KEY_setInputCloud(VFHEstimation_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_VFHEstimation_TYPE_KEY_setInputNormals(VFHEstimation_TYPE_KEY *self, PointCloud_Normal *normals);
+void pcl_VFHEstimation_TYPE_KEY_setIndices(VFHEstimation_TYPE_KEY *self, Indices *indices);
+void pcl_VFHEstimation_TYPE_KEY_getViewPoint(VFHEstimation_TYPE_KEY *self, THFloatTensor* out_pt);
+void pcl_VFHEstimation_TYPE_KEY_setViewPoint(VFHEstimation_TYPE_KEY *self, THFloatTensor *pt);
+void pcl_VFHEstimation_TYPE_KEY_setUseGivenNormal(VFHEstimation_TYPE_KEY *self, bool use);
+void pcl_VFHEstimation_TYPE_KEY_setNormalToUse(VFHEstimation_TYPE_KEY *self, THFloatTensor *normal);
+void pcl_VFHEstimation_TYPE_KEY_setUseGivenCentroid(VFHEstimation_TYPE_KEY *self, bool use);
+void pcl_VFHEstimation_TYPE_KEY_setCentroidToUse(VFHEstimation_TYPE_KEY *self, THFloatTensor *centroid);
+void pcl_VFHEstimation_TYPE_KEY_setNormalizeBins(VFHEstimation_TYPE_KEY *self, bool normalize);
+void pcl_VFHEstimation_TYPE_KEY_setNormalizeDistance(VFHEstimation_TYPE_KEY *self, bool normalize);
+void pcl_VFHEstimation_TYPE_KEY_setFillSizeComponent(VFHEstimation_TYPE_KEY *self, bool fill_size);
+void pcl_VFHEstimation_TYPE_KEY_compute(VFHEstimation_TYPE_KEY *self, PointCloud_VFHSignature308 *output);
+void pcl_VFHEstimation_TYPE_KEY_setKSearch(VFHEstimation_TYPE_KEY *self, int k);
+int pcl_VFHEstimation_TYPE_KEY_getKSearch(VFHEstimation_TYPE_KEY *self);
+void pcl_VFHEstimation_TYPE_KEY_setRadiusSearch(VFHEstimation_TYPE_KEY *self, double radius);
+double pcl_VFHEstimation_TYPE_KEY_getRadiusSearch(VFHEstimation_TYPE_KEY *self);
 ]]
 
 local pcl_CorrespondenceEstimation_declaration = [[
@@ -400,35 +423,7 @@ for i,v in ipairs(supported_keys) do
   end
 end
 
-local function add_normal_declarations()
-  local specialized = string.gsub(pcl_PointCloud_declaration, 'PointTYPE_KEY', 'Normal')
-  specialized = string.gsub(specialized, 'TYPE_KEY', 'Normal')
-  ffi.cdef(specialized)
-end
-add_normal_declarations()
-
--- TODO: Add boundary type...
-
-local function add_additional_point_types()
-  local declarations = {
-    pcl_PointCloud_declaration,
-    KdTreeFLANN_declarations,
-    pcl_CorrespondenceEstimation_declaration,
-    pcl_SampleConsensusPrerejective_declaration
-  }
-  for j,declaration in ipairs(declarations) do
-    local specialized = string.gsub(declaration, 'PointTYPE_KEY', 'FPFHSignature33')
-    specialized = string.gsub(specialized, 'TYPE_KEY', 'FPFHSignature33')
-    ffi.cdef(specialized)
-  end
-end
-add_additional_point_types()
-
-local function add_additional_point_cloud_types()
-  local names = { 'Boundary' }
-  local declarations = {
-    pcl_PointCloud_declaration
-  }
+local function register_special_types(names, declarations)
   for i,n in ipairs(names) do
     for j,declaration in ipairs(declarations) do
       local specialized = string.gsub(declaration, 'PointTYPE_KEY', n)
@@ -436,6 +431,26 @@ local function add_additional_point_cloud_types()
       ffi.cdef(specialized)
     end
   end
+end
+
+local function add_additional_point_types()
+  local names = { 'FPFHSignature33', 'VFHSignature308' }
+  local declarations = {
+    pcl_PointCloud_declaration,
+    KdTreeFLANN_declarations,
+    pcl_CorrespondenceEstimation_declaration,
+    pcl_SampleConsensusPrerejective_declaration
+  }
+  register_special_types(names, declarations)
+end
+add_additional_point_types()
+
+local function add_additional_point_cloud_types()
+  local names = { 'Normal', 'Boundary' }
+  local declarations = {
+    pcl_PointCloud_declaration
+  }
+  register_special_types(names, declarations)
 end
 add_additional_point_cloud_types()
 
@@ -468,6 +483,7 @@ local pointTypeNames = {
   'PointXYZRGBNormal',    -- float x, y, z, rgb, normal[3], curvature;
   'PointXYZINormal',      -- float x, y, z, intensity, normal[3], curvature;
   'FPFHSignature33',
+  'VFHSignature308',
   'Boundary'
 }
 
@@ -740,7 +756,10 @@ ffi.metatype(pcl.PointXYZRGBNormal, PointXYZRGBNormal)
 pcl.metatype[pcl.PointXYZRGBNormal] = PointXYZRGBNormal
 
 local FPFHSignature33 = {
+  __len = len
 }
+function FPFHSignature33:__index(i) if type(i) == "number" then return self.histogram[i-1] end end
+function FPFHSignature33:__newindex(i, v) if i > 0 and i <= #self then self.histogram[i-1] = v else error('index out of range') end end
 function FPFHSignature33:set(v) ffi.copy(self, v, ffi.sizeof(pcl.FPFHSignature33)) end
 ffi.metatype(pcl.FPFHSignature33, FPFHSignature33)
 pcl.metatype[pcl.FPFHSignature33] = FPFHSignature33

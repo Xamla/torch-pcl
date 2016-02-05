@@ -63,7 +63,7 @@ PCLIMP(void, FPFHEstimation, setNumberOfThreads)(FPFHEstimation_ptr *self, unsig
 }
 
 #undef FPFHEstimation_ptr
-#undef InPointCloud_ptr
-#undef OutPointCloud_Ptr
+#undef PointCloud_ptr
+#undef OutputPointCloud_Ptr
 #undef KdTree_ptr
 #undef Octree_ptr

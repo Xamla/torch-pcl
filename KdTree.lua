@@ -23,10 +23,11 @@ local function init()
     'nearestKSearch', 
     'radiusSearch'
   }
-
   for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_KdTreeFLANN_TYPE_KEY_", KdTreeFLANN_method_names, v)
-  end    
+  end
+  func_by_type[pcl.FPFHSignature33] = utils.create_typed_methods("pcl_KdTreeFLANN_TYPE_KEY_", KdTreeFLANN_method_names, 'FPFHSignature33')
+  func_by_type[pcl.VFHSignature308] = utils.create_typed_methods("pcl_KdTreeFLANN_TYPE_KEY_", KdTreeFLANN_method_names, 'VFHSignature308')
 end
 
 init()

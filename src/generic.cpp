@@ -9,6 +9,7 @@
 #include "generic/octree.cpp"
 #include "generic/boundary_estimation.cpp"
 #include "generic/fpfh.cpp"
+#include "generic/vfh.cpp"
 #include "generic/correspondence_estimation.cpp"
 #include "generic/sample_consensus_prerejective.cpp"
 
