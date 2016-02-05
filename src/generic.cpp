@@ -7,7 +7,7 @@
 #include "generic/incremental_registration.cpp"
 #include "generic/kdtree.cpp"
 #include "generic/octree.cpp"
-//#include "generic/boundary_estimation.cpp"
+#include "generic/boundary_estimation.cpp"
 #include "generic/fpfh.cpp"
 #include "generic/correspondence_estimation.cpp"
 #include "generic/sample_consensus_prerejective.cpp"

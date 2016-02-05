@@ -23,6 +23,7 @@ require 'pcl.SIFTKeypoint'
 require 'pcl.FPFHEstimation'
 require 'pcl.CorrespondenceEstimation'
 require 'pcl.SampleConsensusPrerejective'
+require 'pcl.BoundaryEstimation'
 
 function pcl.rand(width, height, pointType)
   if pcl.isPointType(height) or type(height) == 'string' then

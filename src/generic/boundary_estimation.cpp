@@ -3,11 +3,12 @@
 
 #define BoundaryEstimation_ptr pcl::BoundaryEstimation<_PointT, pcl::Normal, pcl::Boundary>::Ptr
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
+#define BoundaryCloud_ptr pcl::PointCloud<pcl::Boundary>::Ptr
 
 #define KdTree_ptr pcl::KdTreeFLANN<_PointT>::Ptr
 #define Octree_ptr pcl::octree::OctreePointCloudSearch<_PointT>::Ptr
 
-PCLIMP(void*, BoundaryEstimation, new)()
+PCLIMP(BoundaryEstimation_ptr *, BoundaryEstimation, new)()
 {
   return new BoundaryEstimation_ptr(new pcl::BoundaryEstimation<_PointT, pcl::Normal, pcl::Boundary>());
 }
@@ -74,16 +75,30 @@ PCLIMP(double, BoundaryEstimation, getRadiusSearch)(BoundaryEstimation_ptr *self
   return (*self)->getRadiusSearch();
 }
 
-PCLIMP(void, BoundaryEstimation, compute)(BoundaryEstimation_ptr *self, THByteTensor *output)
+PCLIMP(void, BoundaryEstimation, compute)(BoundaryEstimation_ptr *self, BoundaryCloud_ptr *output)
 {
-  pcl::PointCloud<pcl::Boundary> output_;
-  (*self)->compute(output_);
+  (*self)->compute(**output);
+}
+
+PCLIMP(void, BoundaryEstimation, computeIndices)(BoundaryEstimation_ptr *self, Indices_ptr *indices)
+{
+  pcl::PointCloud<pcl::Boundary> boundary;
+  (*self)->compute(boundary);
   
-  // todo: copy boundary points to output tensor
-  
+  // filter indices of points on boundary
+  std::vector<int>& result = **indices;
+  result.clear();
+  for (size_t i = 0; i < boundary.points.size(); ++i)
+  {
+    if (!boundary[i].boundary_point)
+      continue;
+    
+    result.push_back(i);
+  }
 }
 
 #undef BoundaryEstimation_ptr
 #undef PointCloud_ptr
+#undef BoundaryCloud_ptr
 #undef KdTree_ptr
 #undef Octree_ptr

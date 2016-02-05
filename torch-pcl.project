@@ -60,6 +60,7 @@
     <File Name="src/fpfhsignature33.cpp"/>
     <File Name="src/xyzrgbnormal.cpp"/>
     <File Name="src/correspondences.cpp"/>
+    <File Name="src/boundary.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
@@ -91,6 +92,7 @@
     <File Name="Correspondences.lua"/>
     <File Name="CorrespondenceEstimation.lua"/>
     <File Name="SampleConsensusPrerejective.lua"/>
+    <File Name="BoundaryEstimation.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>

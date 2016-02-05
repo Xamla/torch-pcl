@@ -23,6 +23,7 @@ typedef struct PointNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { fl
 typedef struct PointNormal PointXYZNormal;\z
 typedef struct PointXYZRGBNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBNormal; \z
 typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal; \z
+typedef struct Boundary { uint8_t boundary_point; } Boundary; \z
 " ..
 [[
 typedef struct FPFHSignature33 { float histogram[33]; } FPFHSignature33;
@@ -37,6 +38,7 @@ typedef struct PointCloud_XYZINormal {} PointCloud_XYZINormal;
 typedef struct PointCloud_XYZRGBNormal {} PointCloud_XYZRGBNormal;
 typedef struct PointCloud_Normal {} PointCloud_Normal;
 typedef struct PointCloud_FPFHSignature33 {} PointCloud_FPFHSignature33;
+typedef struct PointCloud_Boundary {} PointCloud_Boundary;
 
 void* pcl_CloudViewer_new(const char *window_name);
 void pcl_CloudViewer_delete(void *self);
@@ -363,13 +365,33 @@ double pcl_SampleConsensusPrerejective_TYPE_KEY_getFitnessScore(SampleConsensusP
 void pcl_SampleConsensusPrerejective_TYPE_KEY_align(SampleConsensusPrerejective_TYPE_KEY *self, PointCloud_TYPE_KEY *output, THFloatTensor *guess);
 ]]
 
+local pcl_BoundaryEstimation_declaration = [[
+typedef struct {} BoundaryEstimation_TYPE_KEY;
+BoundaryEstimation_TYPE_KEY* pcl_BoundaryEstimation_TYPE_KEY_new();
+void pcl_BoundaryEstimation_TYPE_KEY_delete(BoundaryEstimation_TYPE_KEY *self);
+void pcl_BoundaryEstimation_TYPE_KEY_setInputCloud(BoundaryEstimation_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_BoundaryEstimation_TYPE_KEY_setInputNormals(BoundaryEstimation_TYPE_KEY *self, PointCloud_Normal *normals);
+void pcl_BoundaryEstimation_TYPE_KEY_setIndices(BoundaryEstimation_TYPE_KEY *self, Indices *indices);
+void pcl_BoundaryEstimation_TYPE_KEY_setAngleThreshold(BoundaryEstimation_TYPE_KEY *self, float angle);
+float pcl_BoundaryEstimation_TYPE_KEY_getAngleThreshold(BoundaryEstimation_TYPE_KEY *self);
+void pcl_BoundaryEstimation_TYPE_KEY_setSearchMethod_Octree(BoundaryEstimation_TYPE_KEY *self, OctreePointCloudSearch_TYPE_KEY *octree);
+void pcl_BoundaryEstimation_TYPE_KEY_setSearchMethod_KdTree(BoundaryEstimation_TYPE_KEY *self, KdTreeFLANN_TYPE_KEY *kdtree);
+void pcl_BoundaryEstimation_TYPE_KEY_setKSearch(BoundaryEstimation_TYPE_KEY *self, int k);
+int pcl_BoundaryEstimation_TYPE_KEY_getKSearch(BoundaryEstimation_TYPE_KEY *self);
+void pcl_BoundaryEstimation_TYPE_KEY_setRadiusSearch(BoundaryEstimation_TYPE_KEY *self, double radius);
+double pcl_BoundaryEstimation_TYPE_KEY_getRadiusSearch(BoundaryEstimation_TYPE_KEY *self);
+void pcl_BoundaryEstimation_TYPE_KEY_compute(BoundaryEstimation_TYPE_KEY *self, PointCloud_Boundary *output);
+void pcl_BoundaryEstimation_TYPE_KEY_computeIndices(BoundaryEstimation_TYPE_KEY *self, Indices *indices);
+]]
+
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
 local declarations = {
     pcl_PointCloud_declaration,
     KdTreeFLANN_declarations,
     generic_declarations,
     pcl_CorrespondenceEstimation_declaration,
-    pcl_SampleConsensusPrerejective_declaration
+    pcl_SampleConsensusPrerejective_declaration,
+    pcl_BoundaryEstimation_declaration
   }
 for i,v in ipairs(supported_keys) do
   for j,declaration in ipairs(declarations) do
@@ -385,6 +407,8 @@ local function add_normal_declarations()
 end
 add_normal_declarations()
 
+-- TODO: Add boundary type...
+
 local function add_additional_point_types()
   local declarations = {
     pcl_PointCloud_declaration,
@@ -399,6 +423,21 @@ local function add_additional_point_types()
   end
 end
 add_additional_point_types()
+
+local function add_additional_point_cloud_types()
+  local names = { 'Boundary' }
+  local declarations = {
+    pcl_PointCloud_declaration
+  }
+  for i,n in ipairs(names) do
+    for j,declaration in ipairs(declarations) do
+      local specialized = string.gsub(declaration, 'PointTYPE_KEY', n)
+      specialized = string.gsub(specialized, 'TYPE_KEY', n)
+      ffi.cdef(specialized)
+    end
+  end
+end
+add_additional_point_cloud_types()
 
 local specialized_declarations = 
 [[
@@ -428,7 +467,8 @@ local pointTypeNames = {
   'PointXYZNormal',       -- alias for PointNormal
   'PointXYZRGBNormal',    -- float x, y, z, rgb, normal[3], curvature;
   'PointXYZINormal',      -- float x, y, z, intensity, normal[3], curvature;
-  'FPFHSignature33'
+  'FPFHSignature33',
+  'Boundary'
 }
 
 local nameByType = {}
@@ -701,9 +741,18 @@ pcl.metatype[pcl.PointXYZRGBNormal] = PointXYZRGBNormal
 
 local FPFHSignature33 = {
 }
+function FPFHSignature33:set(v) ffi.copy(self, v, ffi.sizeof(pcl.FPFHSignature33)) end
 ffi.metatype(pcl.FPFHSignature33, FPFHSignature33)
 pcl.metatype[pcl.FPFHSignature33] = FPFHSignature33
 
+local Boundary = {
+  fields = { 'boundary_point' }
+}
+function Boundary:set(v) ffi.copy(self, v, ffi.sizeof(pcl.Boundary)) end
+function Boundary:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBNormal.prototype[i] end end
+function Boundary:__tostring() return string.format('{ boundary_point: %d }', self.boundary_point) end
+ffi.metatype(pcl.Boundary, Boundary)
+pcl.metatype[pcl.Boundary] = Boundary
 
 pcl.range = {
   double = {
