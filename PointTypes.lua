@@ -349,6 +349,8 @@ void pcl_SampleConsensusPrerejective_TYPE_KEY_setMaximumIterations(SampleConsens
 int pcl_SampleConsensusPrerejective_TYPE_KEY_getMaximumIterations(SampleConsensusPrerejective_TYPE_KEY *self);
 void pcl_SampleConsensusPrerejective_TYPE_KEY_setNumberOfSamples(SampleConsensusPrerejective_TYPE_KEY *self, int nr_samples);
 int pcl_SampleConsensusPrerejective_TYPE_KEY_getNumberOfSamples(SampleConsensusPrerejective_TYPE_KEY *self);
+double pcl_SampleConsensusPrerejective_TYPE_KEY_getMaxCorrespondenceDistance(SampleConsensusPrerejective_TYPE_KEY *self);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_setMaxCorrespondenceDistance(SampleConsensusPrerejective_TYPE_KEY *self, double distance);
 void pcl_SampleConsensusPrerejective_TYPE_KEY_setCorrespondenceRandomness(SampleConsensusPrerejective_TYPE_KEY *self, int k);
 int pcl_SampleConsensusPrerejective_TYPE_KEY_getCorrespondenceRandomness(SampleConsensusPrerejective_TYPE_KEY *self);
 void pcl_SampleConsensusPrerejective_TYPE_KEY_setSimilarityThreshold(SampleConsensusPrerejective_TYPE_KEY *self, float similarity_threshold);
@@ -356,6 +358,9 @@ float pcl_SampleConsensusPrerejective_TYPE_KEY_getSimilarityThreshold(SampleCons
 void pcl_SampleConsensusPrerejective_TYPE_KEY_setInlierFraction(SampleConsensusPrerejective_TYPE_KEY *self, float inlier_fraction);
 float pcl_SampleConsensusPrerejective_TYPE_KEY_getInlierFraction(SampleConsensusPrerejective_TYPE_KEY *self);
 void pcl_SampleConsensusPrerejective_TYPE_KEY_getInliers(SampleConsensusPrerejective_TYPE_KEY *self, Indices *indices);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_getFinalTransformation(SampleConsensusPrerejective_TYPE_KEY *self, THFloatTensor *output);
+double pcl_SampleConsensusPrerejective_TYPE_KEY_getFitnessScore(SampleConsensusPrerejective_TYPE_KEY *self, double max_range);
+void pcl_SampleConsensusPrerejective_TYPE_KEY_align(SampleConsensusPrerejective_TYPE_KEY *self, PointCloud_TYPE_KEY *output, THFloatTensor *guess);
 ]]
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
@@ -428,6 +433,7 @@ local pointTypeNames = {
 
 local nameByType = {}
 pcl.pointTypeByName = {}
+pcl.nameOfPointType = {}
 
 function pcl.pointType(pointType)
   if type(pointType) == 'string' then
@@ -445,10 +451,15 @@ for i,n in ipairs(pointTypeNames) do
   pcl[n] = t
   nameByType[t] = n
   pcl.pointTypeByName[string.lower(n)] = t
+  pcl.nameOfPointType[t] = n
   n = string.gsub(n, 'Point', '')
   pcl.pointTypeByName[string.lower(n)] = t
 end
 pcl.Correspondence = ffi.typeof('Correspondence') 
+
+function pcl.getPointTypeName(pointType)
+  return pcl.nameOfPointType[pcl.pointType(pointType)]
+end
 
 function pcl.isPointType(t)
   return nameByType[t] ~= nil

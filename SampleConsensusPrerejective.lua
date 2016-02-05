@@ -19,13 +19,18 @@ local function init()
     'getMaximumIterations',
     'setNumberOfSamples',
     'getNumberOfSamples',
-    'setCorrespondenceRandomness',
+    'getMaxCorrespondenceDistance',
+    'setMaxCorrespondenceDistance',
     'getCorrespondenceRandomness',
+    'setCorrespondenceRandomness',
     'setSimilarityThreshold',
     'getSimilarityThreshold',
     'setInlierFraction',
     'getInlierFraction',
-    'getInliers'
+    'getInliers',
+    'getFinalTransformation',
+    'getFitnessScore',
+    'align'
   }
   for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_SampleConsensusPrerejective_TYPE_KEY_", SampleConsensusPrerejective_method_names, v)
@@ -76,6 +81,14 @@ function SampleConsensusPrerejective:getNumberOfSamples()
   return self.f.getNumberOfSamples(self.o)
 end
 
+function SampleConsensusPrerejective:getMaxCorrespondenceDistance()
+  return self.f.getMaxCorrespondenceDistance(self.o)
+end
+
+function SampleConsensusPrerejective:setMaxCorrespondenceDistance(distance)
+  self.f.setMaxCorrespondenceDistance(self.o, distance)
+end
+
 function SampleConsensusPrerejective:setCorrespondenceRandomness(k)
   self.f.setCorrespondenceRandomness(self.o, k)
 end
@@ -103,5 +116,24 @@ end
 function SampleConsensusPrerejective:getInliers(output)
   output = output or pcl.Indices()
   self.f.getInliers(self.o, output:cdata()) 
+  return output
+end
+
+function SampleConsensusPrerejective:getFinalTransformation()
+  local t = torch.FloatTensor()
+  self.f.getFinalTransformation(self.o, t:cdata())
+  return t
+end
+
+function SampleConsensusPrerejective:getFitnessScore(max_range)
+  return self.f.getFitnessScore(self.o, max_range or pcl.range.double.max)
+end
+
+function SampleConsensusPrerejective:align(output, initial_guess)
+  output = output or pcl.PointCloud(self.pointType)
+  if initial_guess then
+    initial_guess = initial_guess:cdata()
+  end
+  self.f.align(self.o, output:cdata(), initial_guess)
   return output
 end

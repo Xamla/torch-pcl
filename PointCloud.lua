@@ -327,7 +327,13 @@ function PointCloud:addNormals(normals, output)
 end
 
 function PointCloud:__tostring()
-  return string.format('PointCloud (w:%d, h:%d)', self:getWidth(), self:getHeight())
+  return string.format('PointCloud<%s> (w: %d, h: %d, organized: %s, dense: %s)', 
+    pcl.getPointTypeName(self.pointType),
+    self:getWidth(),
+    self:getHeight(),
+    self:isOrganized(),
+    self:getIsDense()
+  )
 end
 
 function PointCloud.copy(cloud_in, indices, cloud_out)

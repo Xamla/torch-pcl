@@ -54,6 +54,16 @@ PCLIMP(int, SampleConsensusPrerejective, getNumberOfSamples)(SampleConsensusPrer
   return (*self)->getNumberOfSamples();
 }
 
+PCLIMP(void, SampleConsensusPrerejective, setMaxCorrespondenceDistance)(SampleConsensusPrerejective_ptr *self, double distance)
+{
+  (*self)->setMaxCorrespondenceDistance(distance);
+}
+
+PCLIMP(double, SampleConsensusPrerejective, getMaxCorrespondenceDistance)(SampleConsensusPrerejective_ptr *self)
+{
+  return (*self)->getMaxCorrespondenceDistance();
+}
+
 PCLIMP(void, SampleConsensusPrerejective, setCorrespondenceRandomness)(SampleConsensusPrerejective_ptr *self, int k)
 {
   (*self)->setCorrespondenceRandomness(k);
@@ -88,6 +98,25 @@ PCLIMP(void, SampleConsensusPrerejective, getInliers)(SampleConsensusPrerejectiv
 {
   std::vector<int>& out = **indices;
   out = (*self)->getInliers();
+}
+
+PCLIMP(void, SampleConsensusPrerejective, getFinalTransformation)(SampleConsensusPrerejective_ptr *self, THFloatTensor* output)
+{
+  Eigen::Matrix4f transformation = (*self)->getFinalTransformation();
+  copyMatrix(transformation, output);
+}
+
+PCLIMP(double, SampleConsensusPrerejective, getFitnessScore)(SampleConsensusPrerejective_ptr *self, double max_range)
+{
+  return (*self)->getFitnessScore(max_range);
+}
+
+PCLIMP(void, SampleConsensusPrerejective, align)(SampleConsensusPrerejective_ptr *self, PointCloud_ptr *output, THFloatTensor *guess)
+{
+  if (!guess)
+    (*self)->align(**output);
+  else
+    (*self)->align(**output, Tensor2Mat<4,4>(guess));
 }
 
 #undef SampleConsensusPrerejective_ptr

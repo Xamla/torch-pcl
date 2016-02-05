@@ -1,7 +1,7 @@
 #include "searchwrapper.h"
-#include <pcl/features/fpfh.h>
+#include <pcl/features/fpfh_omp.h>
 
-#define FPFHEstimation_ptr pcl::FPFHEstimation<_PointT, pcl::Normal, pcl::FPFHSignature33>::Ptr
+#define FPFHEstimation_ptr pcl::FPFHEstimationOMP<_PointT, pcl::Normal, pcl::FPFHSignature33>::Ptr
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
 #define OutputPointCloud_Ptr pcl::PointCloud<pcl::FPFHSignature33>::Ptr
 #define KdTree_ptr pcl::KdTreeFLANN<_PointT>::Ptr
@@ -9,7 +9,7 @@
 
 PCLIMP(FPFHEstimation_ptr*, FPFHEstimation, new)()
 {
-  return new FPFHEstimation_ptr(new pcl::FPFHEstimation<_PointT, pcl::Normal, pcl::FPFHSignature33>());
+  return new FPFHEstimation_ptr(new pcl::FPFHEstimationOMP<_PointT, pcl::Normal, pcl::FPFHSignature33>());
 }
 
 PCLIMP(void, FPFHEstimation, delete)(FPFHEstimation_ptr *self)
@@ -55,6 +55,11 @@ PCLIMP(void, FPFHEstimation, setRadiusSearch)(FPFHEstimation_ptr *self, double r
 PCLIMP(double, FPFHEstimation, getRadiusSearch)(FPFHEstimation_ptr *self)
 {
   return (*self)->getRadiusSearch();
+}
+
+PCLIMP(void, FPFHEstimation, setNumberOfThreads)(FPFHEstimation_ptr *self, unsigned int num_threads)
+{
+  (*self)->setNumberOfThreads(num_threads);
 }
 
 #undef FPFHEstimation_ptr
