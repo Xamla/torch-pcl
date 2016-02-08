@@ -36,6 +36,16 @@ PCLIMP(void, SACSegmentation, setIndices)(SACSegmentation_ *self, Indices_ptr *i
   self->setIndices(*indices);
 }
 
+PCLIMP(void, SACSegmentation, setMethodType)(SACSegmentation_ *self, int method)
+{
+  self->setMethodType(method);
+}
+
+PCLIMP(int, SACSegmentation, getMethodType)(SACSegmentation_ *self)
+{
+  return self->getMethodType();
+}
+
 // SACSegmentation methods
 PCLIMP(void, SACSegmentation, setModelType)(SACSegmentation_ *self, int model)
 {

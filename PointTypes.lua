@@ -415,6 +415,8 @@ void   pcl_SACSegmentation_TYPE_KEY_delete(SACSegmentationHandle_TYPE_KEY *handl
 SACSegmentation_TYPE_KEY *pcl_SACSegmentation_TYPE_KEY_SACSegmentation_ptr(SACSegmentationHandle_TYPE_KEY *handle);
 void   pcl_SACSegmentation_TYPE_KEY_setInputCloud(SACSegmentation_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
 void   pcl_SACSegmentation_TYPE_KEY_setIndices(SACSegmentation_TYPE_KEY *self, Indices *indices);
+void   pcl_SACSegmentation_TYPE_KEY_setMethodType(SACSegmentation_TYPE_KEY *self, int method);
+int    pcl_SACSegmentation_TYPE_KEY_getMethodType(SACSegmentation_TYPE_KEY *self);
 void   pcl_SACSegmentation_TYPE_KEY_setModelType(SACSegmentation_TYPE_KEY *self, int model);
 int    pcl_SACSegmentation_TYPE_KEY_getModelType(SACSegmentation_TYPE_KEY *self);
 void   pcl_SACSegmentation_TYPE_KEY_setDistanceThreshold(SACSegmentation_TYPE_KEY *self, double threshold);

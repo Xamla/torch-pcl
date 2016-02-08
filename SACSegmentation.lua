@@ -9,6 +9,39 @@ local SACSegmentationFromNormals, SACSegmentation = torch.class('pcl.SACSegmenta
 local SACSegmentation_func_by_type = {}
 local SACSegmentationFromNormals_func_by_type = {}
 
+pcl.SAC =
+{
+  RANSAC  = 0,
+  LMEDS   = 1,
+  MSAC    = 2,
+  RRANSAC = 3,
+  RMSAC   = 4,
+  MLESAC  = 5,
+  PROSAC  = 6,
+}
+
+pcl.SACMODEL =
+{
+  PLANE                 = 0,
+  LINE                  = 1,
+  CIRCLE2D              = 2,
+  CIRCLE3D              = 3,
+  SPHERE                = 4,
+  CYLINDER              = 5,
+  CONE                  = 6,
+  TORUS                 = 7,
+  PARALLEL_LINE         = 8,
+  PERPENDICULAR_PLANE   = 9,
+  PARALLEL_LINES        = 10,
+  NORMAL_PLANE          = 11,
+  NORMAL_SPHERE         = 12,
+  REGISTRATION          = 13,
+  REGISTRATION_2D       = 14,
+  PARALLEL_PLANE        = 15,
+  NORMAL_PARALLEL_PLANE = 16,
+  STICK                 = 17
+}
+
 local function init()
   local SACSegmentation_method_names = {
     'new',
@@ -16,6 +49,8 @@ local function init()
     'SACSegmentation_ptr',
     'setInputCloud',
     'setIndices',
+    'setMethodType',
+    'getMethodType',
     'setModelType',
     'getModelType',
     'setDistanceThreshold',
@@ -73,6 +108,14 @@ end
 
 function SACSegmentation:setIndices(indices)
   self.f.setIndices(self.p, indices:cdata())
+end
+
+function SACSegmentation:setMethodType(method)
+  self.f.setMethodType(self.p, method)
+end
+
+function SACSegmentation:getMethodType()
+  return self.f.getMethodType(self.p)
 end
 
 function SACSegmentation:setModelType(model)
@@ -151,6 +194,7 @@ function SACSegmentation:segment(inliers, coefficients)
   inliers = inliers or pcl.Indices()
   coefficients = coefficients or torch.FloatTensor()  
   self.f.segment(self.p, inliers:cdata(), coefficients:cdata())
+  return coefficients, inliers
 end
 
 --[[
