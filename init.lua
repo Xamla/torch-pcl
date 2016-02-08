@@ -26,6 +26,7 @@ require 'pcl.SampleConsensusPrerejective'
 require 'pcl.BoundaryEstimation'
 require 'pcl.VFHEstimation'
 require 'pcl.SACSegmentation'
+require 'pcl.PCLVisualizer'
 
 function pcl.rand(width, height, pointType)
   if pcl.isPointType(height) or type(height) == 'string' then

@@ -126,7 +126,7 @@ function SACSegmentation:getModelType()
   return self.f.getModelType(self.p)
 end
 
-function SACSegmentation:setDistanceThreshold()
+function SACSegmentation:setDistanceThreshold(threshold)
   self.f.setDistanceThreshold(self.p, threshold)
 end
 

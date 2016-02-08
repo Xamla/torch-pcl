@@ -448,11 +448,38 @@ void pcl_SACSegmentationFromNormals_TYPE_KEY_setMinMaxOpeningAngle(SACSegmentati
 void pcl_SACSegmentationFromNormals_TYPE_KEY_setDistanceFromOrigin(SACSegmentationFromNormals_TYPE_KEY *self, double d);
 ]]
 
-local pcl_SACSegmentationFromNormals_declaration = [[
-typedef struct {} SACSegmentationFromNormalsHandle_TYPE_KEY;
-typedef struct {} SACSegmentationFromNormals_TYPE_KEY;
+local pcl_PCLVisualizer_declaration = [[
+typedef struct {} PCLVisualizer;
+PCLVisualizer *pcl_PCLVisualizer_new(const char *name, bool create_interactor);
+void pcl_PCLVisualizer_delete(PCLVisualizer *self);
+void pcl_PCLVisualizer_setFullScreen(PCLVisualizer *self, bool mode);
+void pcl_PCLVisualizer_setWindowName(PCLVisualizer *self, const char *name);
+void pcl_PCLVisualizer_setWindowBorders(PCLVisualizer *self, bool mode);
+void pcl_PCLVisualizer_spin(PCLVisualizer *self);
+void pcl_PCLVisualizer_spinOnce(PCLVisualizer *self, int time, bool force_redraw);
+void pcl_PCLVisualizer_addCoordinateSystem(PCLVisualizer *self, double scale, const char *id, int viewport);
+int  pcl_PCLVisualizer_createViewPort(PCLVisualizer *self, double xmin, double ymin, double xmax, double ymax);
+void pcl_PCLVisualizer_createViewPortCamera(PCLVisualizer *self, int viewport);
+void pcl_PCLVisualizer_setBackgroundColor(PCLVisualizer *self, double r, double g, double b, int viewport);
+bool pcl_PCLVisualizer_removeAllPointClouds(PCLVisualizer *self, int viewport);
+bool pcl_PCLVisualizer_removeAllShapes(PCLVisualizer *self, int viewport);
+bool pcl_PCLVisualizer_removeAllCoordinateSystems(PCLVisualizer *self, int viewport);
+bool pcl_PCLVisualizer_addText1(PCLVisualizer *self, const char *text, int xpos, int ypos, const char *id, int viewport);
+bool pcl_PCLVisualizer_addText2(PCLVisualizer *self, const char *text, int xpos, int ypos, double r, double g, double b, const char *id, int viewport);
+bool pcl_PCLVisualizer_addText3(PCLVisualizer *self, const char *text, int xpos, int ypos, int fontsize, double r, double g, double b, const char *id, int viewport);
+void pcl_PCLVisualizer_initCameraParameters(PCLVisualizer *self);
+bool pcl_PCLVisualizer_setPointCloudRenderingProperties1(PCLVisualizer *self, int property, double value, const char *id, int viewport);
+bool pcl_PCLVisualizer_setPointCloudRenderingProperties2(PCLVisualizer *self, int property, double val1, double val2, double val3, const char *id, int viewport);
+bool pcl_PCLVisualizer_wasStopped(PCLVisualizer *self);
+void pcl_PCLVisualizer_resetStoppedFlag(PCLVisualizer *self);
+void pcl_PCLVisualizer_close(PCLVisualizer *self);
+]]
+
+local pcl_PCLVisualizer_template_declaration = [[
 
 ]]
+
+ffi.cdef(pcl_PCLVisualizer_declaration)
 
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
 local declarations = {
@@ -462,7 +489,8 @@ local declarations = {
     pcl_CorrespondenceEstimation_declaration,
     pcl_SampleConsensusPrerejective_declaration,
     pcl_BoundaryEstimation_declaration,
-    pcl_SACSegmentation_declaration
+    pcl_SACSegmentation_declaration,
+    pcl_PCLVisualizer_template_declaration
   }
 for i,v in ipairs(supported_keys) do
   for j,declaration in ipairs(declarations) do

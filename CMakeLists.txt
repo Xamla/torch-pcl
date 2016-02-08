@@ -31,6 +31,7 @@ SET(src
   "${SOURCE_DIR}/fpfhsignature33.cpp"
   "${SOURCE_DIR}/vfhsignature308.cpp"
   "${SOURCE_DIR}/boundary.cpp"
+  "${SOURCE_DIR}/visualizer.cpp"
 )
 
 FILE(GLOB luasrc *.lua)

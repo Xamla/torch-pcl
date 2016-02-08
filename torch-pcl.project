@@ -44,6 +44,7 @@
       <File Name="src/generic/vfh.cpp"/>
       <File Name="src/generic/sac_segmentation.cpp"/>
       <File Name="src/correspondences.cpp"/>
+      <File Name="src/generic/visualizer.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -64,6 +65,7 @@
     <File Name="src/xyzrgbnormal.cpp"/>
     <File Name="src/boundary.cpp"/>
     <File Name="src/vfhsignature308.cpp"/>
+    <File Name="src/visualizer.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
@@ -98,6 +100,7 @@
     <File Name="BoundaryEstimation.lua"/>
     <File Name="VFHEstimation.lua"/>
     <File Name="SACSegmentation.lua"/>
+    <File Name="PCLVisualizer.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>

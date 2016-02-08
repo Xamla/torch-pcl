@@ -13,6 +13,7 @@
 #include "generic/correspondence_estimation.cpp"
 #include "generic/sample_consensus_prerejective.cpp"
 #include "generic/sac_segmentation.cpp"
+#include "generic/visualizer.cpp"
 
 #ifndef _NO_SIFT_KEYPOINT
 #include "generic/sift_keypoint.cpp"
