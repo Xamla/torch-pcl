@@ -407,6 +407,51 @@ void pcl_BoundaryEstimation_TYPE_KEY_compute(BoundaryEstimation_TYPE_KEY *self, 
 void pcl_BoundaryEstimation_TYPE_KEY_computeIndices(BoundaryEstimation_TYPE_KEY *self, Indices *indices);
 ]]
 
+local pcl_SACSegmentation_declaration = [[
+typedef struct {} SACSegmentationHandle_TYPE_KEY;
+typedef struct {} SACSegmentation_TYPE_KEY;
+SACSegmentationHandle_TYPE_KEY *pcl_SACSegmentation_TYPE_KEY_new();
+void   pcl_SACSegmentation_TYPE_KEY_delete(SACSegmentationHandle_TYPE_KEY *handle);
+SACSegmentation_TYPE_KEY *pcl_SACSegmentation_TYPE_KEY_SACSegmentation_ptr(SACSegmentationHandle_TYPE_KEY *handle);
+void   pcl_SACSegmentation_TYPE_KEY_setInputCloud(SACSegmentation_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void   pcl_SACSegmentation_TYPE_KEY_setIndices(SACSegmentation_TYPE_KEY *self, Indices *indices);
+void   pcl_SACSegmentation_TYPE_KEY_setModelType(SACSegmentation_TYPE_KEY *self, int model);
+int    pcl_SACSegmentation_TYPE_KEY_getModelType(SACSegmentation_TYPE_KEY *self);
+void   pcl_SACSegmentation_TYPE_KEY_setDistanceThreshold(SACSegmentation_TYPE_KEY *self, double threshold);
+double pcl_SACSegmentation_TYPE_KEY_getDistanceThreshold(SACSegmentation_TYPE_KEY *self);
+void   pcl_SACSegmentation_TYPE_KEY_setMaxIterations(SACSegmentation_TYPE_KEY *self, int max_iterations);
+int    pcl_SACSegmentation_TYPE_KEY_getMaxIterations(SACSegmentation_TYPE_KEY *self);
+void   pcl_SACSegmentation_TYPE_KEY_setProbability(SACSegmentation_TYPE_KEY *self, double probability);
+double pcl_SACSegmentation_TYPE_KEY_getProbability(SACSegmentation_TYPE_KEY *self);
+void   pcl_SACSegmentation_TYPE_KEY_setOptimizeCoefficients(SACSegmentation_TYPE_KEY *self, bool optimize);
+bool   pcl_SACSegmentation_TYPE_KEY_getOptimizeCoefficients(SACSegmentation_TYPE_KEY *self);
+void   pcl_SACSegmentation_TYPE_KEY_setSamplesMaxDist_KdTree(SACSegmentation_TYPE_KEY *self, double radius, KdTreeFLANN_TYPE_KEY *search);
+void   pcl_SACSegmentation_TYPE_KEY_setSamplesMaxDist_Octree(SACSegmentation_TYPE_KEY *self, double radius, OctreePointCloudSearch_TYPE_KEY *search);
+void   pcl_SACSegmentation_TYPE_KEY_setRadiusLimits(SACSegmentation_TYPE_KEY *self, double min_radius, double max_radius);
+void   pcl_SACSegmentation_TYPE_KEY_setAxis(SACSegmentation_TYPE_KEY *self, THFloatTensor *axis);
+void   pcl_SACSegmentation_TYPE_KEY_getAxis(SACSegmentation_TYPE_KEY *self, THFloatTensor *result);
+void   pcl_SACSegmentation_TYPE_KEY_setEpsAngle(SACSegmentation_TYPE_KEY *self, double ea);
+double pcl_SACSegmentation_TYPE_KEY_getEpsAngle(SACSegmentation_TYPE_KEY *self);
+void   pcl_SACSegmentation_TYPE_KEY_segment(SACSegmentation_TYPE_KEY *self, Indices *inliers, THFloatTensor *model_coefficients);
+
+typedef struct {} SACSegmentationFromNormalsHandle_TYPE_KEY;
+typedef struct {} SACSegmentationFromNormals_TYPE_KEY;
+SACSegmentationFromNormalsHandle_TYPE_KEY *pcl_SACSegmentationFromNormals_TYPE_KEY_new();
+void pcl_SACSegmentationFromNormals_TYPE_KEY_delete(SACSegmentationFromNormalsHandle_TYPE_KEY *handle);
+SACSegmentationFromNormals_TYPE_KEY *pcl_SACSegmentationFromNormals_TYPE_KEY_SACSegmentationFromNormals_ptr(SACSegmentationFromNormalsHandle_TYPE_KEY *handle);
+SACSegmentation_TYPE_KEY *pcl_SACSegmentationFromNormals_TYPE_KEY_SACSegmentation_ptr(SACSegmentationFromNormalsHandle_TYPE_KEY *handle);
+void pcl_SACSegmentationFromNormals_TYPE_KEY_setInputNormals(SACSegmentationFromNormals_TYPE_KEY *self, PointCloud_Normal *normals);
+void pcl_SACSegmentationFromNormals_TYPE_KEY_setNormalDistanceWeight(SACSegmentationFromNormals_TYPE_KEY *self, double distance_weight);
+void pcl_SACSegmentationFromNormals_TYPE_KEY_setMinMaxOpeningAngle(SACSegmentationFromNormals_TYPE_KEY *self, double min_angle, double max_angle);
+void pcl_SACSegmentationFromNormals_TYPE_KEY_setDistanceFromOrigin(SACSegmentationFromNormals_TYPE_KEY *self, double d);
+]]
+
+local pcl_SACSegmentationFromNormals_declaration = [[
+typedef struct {} SACSegmentationFromNormalsHandle_TYPE_KEY;
+typedef struct {} SACSegmentationFromNormals_TYPE_KEY;
+
+]]
+
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
 local declarations = {
     pcl_PointCloud_declaration,
@@ -414,7 +459,8 @@ local declarations = {
     generic_declarations,
     pcl_CorrespondenceEstimation_declaration,
     pcl_SampleConsensusPrerejective_declaration,
-    pcl_BoundaryEstimation_declaration
+    pcl_BoundaryEstimation_declaration,
+    pcl_SACSegmentation_declaration
   }
 for i,v in ipairs(supported_keys) do
   for j,declaration in ipairs(declarations) do

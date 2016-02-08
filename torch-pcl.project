@@ -42,6 +42,7 @@
       <File Name="src/generic/fpfh.cpp"/>
       <File Name="src/generic/sample_consensus_prerejective.cpp"/>
       <File Name="src/generic/vfh.cpp"/>
+      <File Name="src/generic/sac_segmentation.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -96,6 +97,7 @@
     <File Name="SampleConsensusPrerejective.lua"/>
     <File Name="BoundaryEstimation.lua"/>
     <File Name="VFHEstimation.lua"/>
+    <File Name="SACSegmentation.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>
