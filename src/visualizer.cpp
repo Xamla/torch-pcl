@@ -121,4 +121,131 @@ PCLIMP(void, PCLVisualizer, close)(PCLVisualizer_ptr *self)
   (*self)->close();
 }
 
+PCLIMP(void, PCLVisualizer, setShowFPS)(PCLVisualizer_ptr *self, bool show_fps)
+{
+  (*self)->setShowFPS(show_fps);
+}
+
+PCLIMP(void, PCLVisualizer, updateCamera)(PCLVisualizer_ptr *self)
+{
+  (*self)->updateCamera();
+}
+
+PCLIMP(void, PCLVisualizer, resetCamera)(PCLVisualizer_ptr *self)
+{
+  (*self)->resetCamera();
+}
+
+PCLIMP(void, PCLVisualizer, resetCameraViewpoint)(PCLVisualizer_ptr *self, const char *id = "cloud")
+{
+  (*self)->resetCameraViewpoint(id);
+}
+
+PCLIMP(void, PCLVisualizer, setCameraPosition)(PCLVisualizer_ptr *self,  
+  double pos_x, double pos_y, double pos_z,
+  double view_x, double view_y, double view_z,
+  double up_x, double up_y, double up_z, int viewport = 0)
+{
+  (*self)->setCameraPosition(pos_x, pos_y, pos_z, view_x, view_y, view_z, up_x, up_y, up_z, viewport);
+}
+
+PCLIMP(void, PCLVisualizer, setCameraClipDistances)(PCLVisualizer_ptr *self, double near, double far, int viewport = 0)
+{
+  (*self)->setCameraClipDistances(near, far, viewport);
+}
+
+PCLIMP(void, PCLVisualizer, setCameraFieldOfView)(PCLVisualizer_ptr *self, double fovy, int viewport = 0)
+{
+  (*self)->setCameraFieldOfView(fovy, viewport);
+}
+
+PCLIMP(void, PCLVisualizer, setCameraParameters_Tensor)(PCLVisualizer_ptr *self, THFloatTensor *intrinsics, THFloatTensor *extrinsics, int viewport = 0)
+{
+  Eigen::Matrix3f intrinsics_ = Tensor2Mat<3,3>(intrinsics);
+  Eigen::Matrix4f extrinsics_ = Tensor2Mat<4,4>(extrinsics);
+  (*self)->setCameraParameters(intrinsics_, extrinsics_, viewport);
+}
+
+PCLIMP(void, PCLVisualizer, saveScreenshot)(PCLVisualizer_ptr *self, const char *fn)
+{
+  (*self)->saveScreenshot(fn);
+}
+
+PCLIMP(void, PCLVisualizer, saveCameraParameters)(PCLVisualizer_ptr *self, const char *fn)
+{
+  (*self)->saveCameraParameters(fn);
+}
+
+PCLIMP(bool, PCLVisualizer, loadCameraParameters)(PCLVisualizer_ptr *self, const char *fn)
+{
+  return (*self)->loadCameraParameters(fn);
+}
+
+PCLIMP(void, PCLVisualizer, getViewerPose)(PCLVisualizer_ptr *self, int viewport, THFloatTensor *result)
+{
+  const Eigen::Affine3f &pose = (*self)->getViewerPose();
+  copyMatrix(pose.matrix(), result);}
+
+PCLIMP(bool, PCLVisualizer, addPlane_Coefficients)(PCLVisualizer_ptr *self, THFloatTensor *coefficients, 
+  double x, double y, double z, const char *id = "plane", int viewport = 0)
+{
+  pcl::ModelCoefficients c;
+  Tensor2vector(coefficients, c.values);
+  return (*self)->addPlane(c, x, y, z, id, viewport);
+}
+
+PCLIMP(bool, PCLVisualizer, addLine_Coefficients)(PCLVisualizer_ptr *self, THFloatTensor *coefficients, 
+  const char *id = "line", int viewport = 0)
+{
+  pcl::ModelCoefficients c;
+  Tensor2vector(coefficients, c.values);
+  return (*self)->addLine(c, id, viewport);
+}
+
+PCLIMP(bool, PCLVisualizer, addSphere_Coefficients)(PCLVisualizer_ptr *self, THFloatTensor *coefficients,
+  const char *id = "sphere", int viewport = 0)
+{
+  pcl::ModelCoefficients c;
+  Tensor2vector(coefficients, c.values);
+  return (*self)->addSphere(c, id, viewport);
+}
+
+PCLIMP(bool, PCLVisualizer, addCube_Coefficients)(PCLVisualizer_ptr *self, THFloatTensor *coefficients,
+  const char *id = "cube", int viewport = 0)
+{
+  pcl::ModelCoefficients c;
+  Tensor2vector(coefficients, c.values);
+  return (*self)->addCube(c, id, viewport);
+}
+
+PCLIMP(bool, PCLVisualizer, addCylinder_Coefficients)(PCLVisualizer_ptr *self, THFloatTensor *coefficients,
+  const char *id = "cylinder", int viewport = 0)
+{
+  pcl::ModelCoefficients c;
+  Tensor2vector(coefficients, c.values);
+  return (*self)->addCylinder(c, id, viewport);
+}
+
+PCLIMP(bool, PCLVisualizer, addCube)(PCLVisualizer_ptr *self, 
+  float x_min, float x_max, float y_min, float y_max, float z_min, float z_max,
+  double r = 1.0, double g = 1.0, double b = 1.0, const char *id = "cube", int viewport = 0)
+{
+  return (*self)->addCube(x_min, x_max, y_min, y_max, z_min, z_max, r, g, b, id, viewport);
+}
+
+PCLIMP(void, PCLVisualizer, setRepresentationToSurfaceForAllActors)(PCLVisualizer_ptr *self)
+{
+  (*self)->setRepresentationToSurfaceForAllActors();
+}
+
+PCLIMP(void, PCLVisualizer, setRepresentationToPointsForAllActors)(PCLVisualizer_ptr *self)
+{
+  (*self)->setRepresentationToPointsForAllActors();
+}
+
+PCLIMP(void, PCLVisualizer, setRepresentationToWireframeForAllActors)(PCLVisualizer_ptr *self)
+{
+  (*self)->setRepresentationToWireframeForAllActors();
+}
+
 #undef PCLVisualizer_ptr

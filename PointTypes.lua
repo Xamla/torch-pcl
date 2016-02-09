@@ -473,10 +473,43 @@ bool pcl_PCLVisualizer_setPointCloudRenderingProperties2(PCLVisualizer *self, in
 bool pcl_PCLVisualizer_wasStopped(PCLVisualizer *self);
 void pcl_PCLVisualizer_resetStoppedFlag(PCLVisualizer *self);
 void pcl_PCLVisualizer_close(PCLVisualizer *self);
+void pcl_PCLVisualizer_setShowFPS(PCLVisualizer *self, bool show_fps);
+void pcl_PCLVisualizer_updateCamera(PCLVisualizer *self);
+void pcl_PCLVisualizer_resetCamera(PCLVisualizer *self);
+void pcl_PCLVisualizer_resetCameraViewpoint(PCLVisualizer *self, const char *id);
+void pcl_PCLVisualizer_setCameraPosition(PCLVisualizer *self, double pos_x, double pos_y, double pos_z, double view_x, double view_y, double view_z, double up_x, double up_y, double up_z, int viewport);
+void pcl_PCLVisualizer_setCameraClipDistances(PCLVisualizer *self, double near, double far, int viewport);
+void pcl_PCLVisualizer_setCameraFieldOfView(PCLVisualizer *self, double fovy, int viewport);
+void pcl_PCLVisualizer_setCameraParameters_Tensor(PCLVisualizer *self, THFloatTensor *intrinsics, THFloatTensor *extrinsics, int viewport);
+void pcl_PCLVisualizer_saveScreenshot(PCLVisualizer *self, const char *fn);
+void pcl_PCLVisualizer_saveCameraParameters(PCLVisualizer *self, const char *fn);
+bool pcl_PCLVisualizer_loadCameraParameters(PCLVisualizer *self, const char *fn);
+void pcl_PCLVisualizer_getViewerPose(PCLVisualizer *self, int viewport, THFloatTensor *result);
+bool pcl_PCLVisualizer_addPlane_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, double x, double y, double z, const char *id, int viewport);
+bool pcl_PCLVisualizer_addLine_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
+bool pcl_PCLVisualizer_addSphere_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
+bool pcl_PCLVisualizer_addCube_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
+bool pcl_PCLVisualizer_addCylinder_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
+bool pcl_PCLVisualizer_addCube(PCLVisualizer *self, float x_min, float x_max, float y_min, float y_max, float z_min, float z_max, double r, double g, double b, const char *id, int viewport);
+void pcl_PCLVisualizer_setRepresentationToSurfaceForAllActors(PCLVisualizer *self);
+void pcl_PCLVisualizer_setRepresentationToPointsForAllActors(PCLVisualizer *self);
+void pcl_PCLVisualizer_setRepresentationToWireframeForAllActors(PCLVisualizer *self);
 ]]
 
 local pcl_PCLVisualizer_template_declaration = [[
+bool pcl_PCLVisualizer_TYPE_KEY_addPointCloud(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, const char *id, int viewport);
+bool pcl_PCLVisualizer_TYPE_KEY_addPointCloudNormals(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, int level, float scale, const char *id, int viewport);
+bool pcl_PCLVisualizer_TYPE_KEY_addPointCloudNormals2(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, PointCloud_Normal *normals, int level, float scale, const char *id, int viewport);
+bool pcl_PCLVisualizer_TYPE_KEY_updatePointCloud(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, const char *id);
+bool pcl_PCLVisualizer_TYPE_KEY_addLine(PCLVisualizer *self, const PointTYPE_KEY &pt1, const PointTYPE_KEY &pt2, double r, double g, double b, const char *id, int viewport);
+bool pcl_PCLVisualizer_TYPE_KEY_addSphere(PCLVisualizer *self, const PointTYPE_KEY &center, double radius, double r, double g, double b, const char *id, int viewport);
+bool pcl_PCLVisualizer_TYPE_KEY_updateSphere(PCLVisualizer *self, const PointTYPE_KEY &center, double radius, double r, double g, double b, const char *id);
 
+typedef struct {} PointCloudColorHandler;
+PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerRandom();
+PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerCustom(double r, double g, double b);
+PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerGenericField(const char *field_name);
+void pcl_PCLVisualizer_TYPE_KEY_deleteColorHandler(PointCloudColorHandler *handler);
 ]]
 
 ffi.cdef(pcl_PCLVisualizer_declaration)
@@ -694,7 +727,8 @@ local PointXYZ = {
   prototype = {
     totensor = totensor,
     set = set,
-    hasNormal = false
+    hasNormal = false,
+    type = pcl.PointXYZ
   },
   __len = len,
   __eq = eq,
@@ -713,7 +747,8 @@ local PointXYZI = {
   prototype = {
     totensor = totensor,
     set = set,
-    hasNormal = false
+    hasNormal = false,
+    type = pcl.PointXYZI
   },
   __len = len,
   __eq = eq,
@@ -732,7 +767,8 @@ local PointXYZRGBA = {
   prototype = {
     tensor = totensor,
     set = set,
-    hasNormal = false
+    hasNormal = false,
+    type = pcl.PointXYZRGBA
   },
   __eq = eq,
   __len = len,
@@ -751,7 +787,8 @@ local Normal = {
   prototype = {
     tensor = totensor,
     set = set,
-    hasNormal = true
+    hasNormal = true,
+    type = pcl.Normal
   },
   __eq = eq,
   __len = len,
@@ -772,7 +809,8 @@ local PointNormal = {
   prototype = {
     tensor = totensor,
     set = set,
-    hasNormal = true
+    hasNormal = true,
+    type = pcl.PointNormal
   },
   __eq = eq,
   __len = len,
@@ -794,7 +832,8 @@ local PointXYZINormal = {
   prototype = {
     tensor = totensor,
     set = set,
-    hasNormal = true
+    hasNormal = true,
+    type = pcl.PointXYZINormal
   },
   __eq = eq,
   __len = len,
@@ -815,7 +854,8 @@ local PointXYZRGBNormal = {
   prototype = {
     tensor = totensor,
     set = set,
-    hasNormal = true
+    hasNormal = true,
+    type = pcl.PointXYZRGBNormal
   },
   __eq = eq,
   __len = len,

@@ -99,4 +99,14 @@ inline void vector2Tensor(const std::vector<float> &v, THFloatTensor *output)
   THFloatTensor_freeCopyTo(output_, output);
 }
 
+inline void Tensor2vector(THFloatTensor *input, std::vector<float> &v)
+{
+  long n = THFloatTensor_nElement(input);
+  v.resize(n);
+  input = THFloatTensor_newContiguous(input);
+  float *begin = THFloatTensor_data(input);
+  std::copy(begin, begin + n, v.begin());
+  THFloatTensor_free(input);
+}
+
 #endif
