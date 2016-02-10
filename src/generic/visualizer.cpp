@@ -34,6 +34,16 @@ PCLIMP(bool, PCLVisualizer, updatePointCloud)(PCLVisualizer_ptr *self, PointClou
   return (*self)->updatePointCloud<_PointT>(*cloud, id);
 }
 
+PCLIMP(bool, PCLVisualizer, addCorrespondences)(PCLVisualizer_ptr *self, PointCloud_ptr *source_points, PointCloud_ptr *target_points, Correspondences_ptr *correspondences, const char *id = "correspondences", int viewport = 0)
+{
+  return (*self)->addCorrespondences<_PointT>(*source_points, *target_points, **correspondences, id, viewport);
+}
+
+PCLIMP(bool, PCLVisualizer, updateCorrespondences)(PCLVisualizer_ptr *self, PointCloud_ptr *source_points, PointCloud_ptr *target_points, Correspondences_ptr *correspondences, const char *id = "correspondences", int viewport = 0)
+{
+  return (*self)->updateCorrespondences<_PointT>(*source_points, *target_points, **correspondences, id, viewport);
+}
+
 PCLIMP(bool, PCLVisualizer, addLine)(PCLVisualizer_ptr *self, const _PointT &pt1, const _PointT &pt2, 
   double r, double g, double b, const char *id = "line", int viewport = 0)
 {
@@ -53,24 +63,24 @@ PCLIMP(bool, PCLVisualizer, updateSphere)(PCLVisualizer_ptr *self, const _PointT
 }
 
 // PointCloud color handler factories
-PCLIMP(PointCloudColorHandler_ptr *, PCLVisualizer, createColorHandlerRandom)()
+PCLIMP(PointCloudColorHandler_ptr *, PCLVisualizer, createColorHandlerRandom)(PointCloud_ptr *cloud)
 {
   return new PointCloudColorHandler_ptr(
-    new pcl::visualization::PointCloudColorHandlerRandom<_PointT>()
+    new pcl::visualization::PointCloudColorHandlerRandom<_PointT>(*cloud)
   );
 }
 
-PCLIMP(PointCloudColorHandler_ptr *, PCLVisualizer, createColorHandlerCustom)(double r, double g, double b)
+PCLIMP(PointCloudColorHandler_ptr *, PCLVisualizer, createColorHandlerCustom)(PointCloud_ptr *cloud, double r, double g, double b)
 {
   return new PointCloudColorHandler_ptr(
-    new pcl::visualization::PointCloudColorHandlerCustom<_PointT>(r, g, b)
+    new pcl::visualization::PointCloudColorHandlerCustom<_PointT>(*cloud, r, g, b)
   );
 }
 
-PCLIMP(PointCloudColorHandler_ptr *, PCLVisualizer, createColorHandlerGenericField)(const char *field_name)
+PCLIMP(PointCloudColorHandler_ptr *, PCLVisualizer, createColorHandlerGenericField)(PointCloud_ptr *cloud, const char *field_name)
 {
   return new PointCloudColorHandler_ptr(
-    new pcl::visualization::PointCloudColorHandlerGenericField<_PointT>(field_name)
+    new pcl::visualization::PointCloudColorHandlerGenericField<_PointT>(*cloud, field_name)
   );
 }
 

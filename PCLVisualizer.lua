@@ -20,9 +20,13 @@ local function init()
     'spin',
     'spinOnce',
     'addCoordinateSystem',
+    'addCoordinateSystemPose',
+    'updateCoordinateSystemPose',
     'createViewPort',
     'createViewPortCamera',
     'setBackgroundColor',
+    'updatePointCloudPose',
+    'updateShapePose',
     'removeAllPointClouds',
     'removeAllShapes',
     'removeAllCoordinateSystems',
@@ -31,7 +35,7 @@ local function init()
     'addText3',
     'initCameraParameters',
     'setPointCloudRenderingProperties1',
-    'setPointCloudRenderingProperties2',
+    'setPointCloudRenderingProperties3',
     'wasStopped',
     'resetStoppedFlag',
     'close',
@@ -73,6 +77,8 @@ local function init()
     'addPointCloudNormals',
     'addPointCloudNormals2',
     'updatePointCloud',
+    'addCorrespondences',
+    'updateCorrespondences',
     'addLine',
     'addSphere',
     'updateSphere',
@@ -146,6 +152,14 @@ function PCLVisualizer:addCoordinateSystem(scale, id, viewport)
   self.f.addCoordinateSystem(self.o, scale or 1, id or 'reference', viewport or 0)
 end
 
+function PCLVisualizer:addCoordinateSystemPose(scale, transform, id, viewport)
+  self.f.addCoordinateSystemPose(self.o, scale or 1, transform:cdata(), id or 'reference', viewport or 0)
+end
+
+function PCLVisualizer:updateCoordinateSystemPose(id, transform)
+  return self.f.updateCoordinateSystemPose(self.o, transform:cdata())
+end
+
 function PCLVisualizer:createViewPort(xmin, ymin, xmax, ymax)
   return self.f.createViewPort(self.o, xmin, ymin, xmax, ymax)
 end
@@ -156,6 +170,14 @@ end
 
 function PCLVisualizer:setBackgroundColor(r, g, b, viewport)
   self.f.setBackgroundColor(self.o, r, g, b, viewport or 0)
+end
+
+function PCLVisualizer:updatePointCloudPose(id, transform)
+  self.f.updatePointCloudPose(self.o, id or 'cloud', transform:cdata())
+end
+
+function PCLVisualizer:updateShapePose(id, transform)
+  self.f.updateShapePose(self.o, id, transform:cdata())
 end
 
 function PCLVisualizer:removeAllPointClouds(viewport)
@@ -190,8 +212,8 @@ function PCLVisualizer:setPointCloudRenderingProperties1(property, value, id, vi
   return self.f.setPointCloudRenderingProperties1(self.o, property, value, id or 'cloud', viewport or 0)
 end
 
-function PCLVisualizer:setPointCloudRenderingProperties2(property, val1, val2, val3, id, viewport)
-  return self.f.setPointCloudRenderingProperties2(self.o, property, val1, val2, val3, id or 'cloud', viewport or 0)
+function PCLVisualizer:setPointCloudRenderingProperties3(property, val1, val2, val3, id, viewport)
+  return self.f.setPointCloudRenderingProperties3(self.o, property, val1, val2, val3, id or 'cloud', viewport or 0)
 end
 
 function PCLVisualizer:wasStopped()
@@ -321,6 +343,14 @@ function PCLVisualizer:updatePointCloud(cloud, id)
   return self.tf[cloud.pointType].updatePointCloud(self.o, cloud:cdata(), id)
 end
 
+function PCLVisualizer:addCorrespondences(source_points, target_points, correspondences, id, viewport)
+  return self.tf[source_points.pointType].addCorrespondences(source_points:cdata(), target_points:cdata(), correspondences:cdata(), id or 'correspondences', viewport or 0)
+end
+
+function PCLVisualizer:updateCorrespondences(source_points, target_points, correspondences, id, viewport)
+  return self.tf[source_points.pointType].updateCorrespondences(source_points:cdata(), target_points:cdata(), correspondences:cdata(), id or 'correspondences', viewport or 0)
+end
+
 function PCLVisualizer:addLine(pt1, pt2, r, g, b, id, viewport)
   return self.tf[pt1.type].addLine(self.o, pt1, pt2, r or 0.5, g or 0.5, b or 0.5, id or 'line', viewport or 0) 
 end
@@ -333,24 +363,24 @@ function PCLVisualizer:updateSphere(center, radius, r, g, b, id)
   return self.tf[center.type].updateSphere(self.o, center, radius, r or 0.5, g or 0.5, b or 0.5, id or 'sphere')
 end
 
-function PCLVisualizer:createColorHandlerRandom(pointType)
-  pointType = pcl.pointType(pointType)
-  local h = self.tf[pointType].createColorHandlerRandom()
-  ffi.gc(h, self.tf[pointType].deleteColorHandler)
+function PCLVisualizer.createColorHandlerRandom(cloud)
+  local m = func_by_type[cloud.pointType]
+  local h = m.createColorHandlerRandom(cloud:cdata())
+  ffi.gc(h, m.deleteColorHandler)
   return h
 end
 
-function PCLVisualizer:createColorHandlerCustom(pointType, r, g, b)
-  pointType = pcl.pointType(pointType)
-  local h = self.tf[pointType].createColorHandlerCustom(r, g, b)
-  ffi.gc(h, self.tf[pointType].deleteColorHandler)
+function PCLVisualizer.createColorHandlerCustom(cloud, r, g, b)
+  local m = func_by_type[cloud.pointType]
+  local h = m.createColorHandlerCustom(cloud:cdata(), r, g, b)
+  ffi.gc(h, m.deleteColorHandler)
   return h
 end
 
-function PCLVisualizer:createColorHandlerGenericField(pointType, field_name)
-  pointType = pcl.pointType(pointType)
-  local h = self.tf[pointType].createColorHandlerGenericField(field_name)
-  ffi.gc(h, self.tf[pointType].deleteColorHandler)
+function PCLVisualizer.createColorHandlerGenericField(cloud, field_name)
+  local m = func_by_type[cloud.pointType]
+  local h = m.createColorHandlerGenericField(cloud:cdata(), field_name)
+  ffi.gc(h, m.deleteColorHandler)
   return h
 end
 

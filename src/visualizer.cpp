@@ -43,7 +43,17 @@ PCLIMP(void, PCLVisualizer, addCoordinateSystem)(PCLVisualizer_ptr *self, double
 {
   (*self)->addCoordinateSystem(scale, id, viewport);
 }
-  
+
+PCLIMP(void, PCLVisualizer, addCoordinateSystemPose)(PCLVisualizer_ptr *self, double scale, THFloatTensor *transform, const char *id = "reference", int viewport = 0)
+{
+  (*self)->addCoordinateSystem(scale, Eigen::Affine3f(Tensor2Mat<4,4>(transform)), id, viewport);
+}
+
+PCLIMP(bool, PCLVisualizer, updateCoordinateSystemPose)(PCLVisualizer_ptr *self, const char *id, THFloatTensor *transform)
+{
+  return (*self)->updateCoordinateSystemPose(id, Eigen::Affine3f(Tensor2Mat<4,4>(transform)));
+}
+ 
 PCLIMP(int, PCLVisualizer, createViewPort)(PCLVisualizer_ptr *self, double xmin, double ymin, double xmax, double ymax)
 {
   int viewport = 0;
@@ -59,6 +69,16 @@ PCLIMP(void, PCLVisualizer, createViewPortCamera)(PCLVisualizer_ptr *self, int v
 PCLIMP(void, PCLVisualizer, setBackgroundColor)(PCLVisualizer_ptr *self, double r, double g, double b, int viewport = 0)
 {
   (*self)->setBackgroundColor(r, g, b, viewport);
+}
+
+PCLIMP(bool, PCLVisualizer, updatePointCloudPose)(PCLVisualizer_ptr *self, const char *id, THFloatTensor *transform)
+{
+  return (*self)->updatePointCloudPose(id, Eigen::Affine3f(Tensor2Mat<4,4>(transform)));
+}
+
+PCLIMP(bool, PCLVisualizer, updateShapePose)(PCLVisualizer_ptr *self, const char *id, THFloatTensor *transform)
+{
+  return (*self)->updateShapePose(id, Eigen::Affine3f(Tensor2Mat<4,4>(transform)));
 }
 
 PCLIMP(bool, PCLVisualizer, removeAllPointClouds)(PCLVisualizer_ptr *self, int viewport = 0)
@@ -101,7 +121,7 @@ PCLIMP(bool, PCLVisualizer, setPointCloudRenderingProperties1)(PCLVisualizer_ptr
   return (*self)->setPointCloudRenderingProperties(property, value, id, viewport);
 }
 
-PCLIMP(bool, PCLVisualizer, setPointCloudRenderingProperties2)(PCLVisualizer_ptr *self, int property, double val1, double val2, double val3, const char *id = "cloud", int viewport = 0)
+PCLIMP(bool, PCLVisualizer, setPointCloudRenderingProperties3)(PCLVisualizer_ptr *self, int property, double val1, double val2, double val3, const char *id = "cloud", int viewport = 0)
 {
   return (*self)->setPointCloudRenderingProperties(property, val1, val2, val3, id, viewport);
 }

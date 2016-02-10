@@ -15,13 +15,23 @@ v:addLine(pcl.PointXYZ(-5,-1,0), pcl.PointXYZ(5, 1, 0), 1, 1, 1, 'line1')
 -- add green pointcloud
 c = pcl.rand(1000)   -- create 1000 random points
 v:addPointCloud(c, 'cloud1')
-c2 = pcl.rand(500)  -- add some random colored points
-v:setPointCloudRenderingProperties2(pcl.RenderingProperties.PCL_VISUALIZER_COLOR, 0, 1, 0, 'cloud1')
+v:setPointCloudRenderingProperties3(pcl.RenderingProperties.PCL_VISUALIZER_COLOR, 0, 1, 0, 'cloud1')
 
 -- add some points in red
-c2 = pcl.rand(500)  -- add some random colored points
+c2 = pcl.rand(500)
 v:addPointCloud(c2, 'cloud2')
-v:setPointCloudRenderingProperties2(pcl.RenderingProperties.PCL_VISUALIZER_COLOR, 1, 0, 0, 'cloud2')
+
+-- move point cloud a bit
+v:updatePointCloudPose('cloud2', pcl.affine.translate(-0.5, -0.5, 0))
+v:setPointCloudRenderingProperties3(pcl.RenderingProperties.PCL_VISUALIZER_COLOR, 1, 0, 0, 'cloud2')
+
+-- add three point clouds with a random point color each
+c3 = pcl.rand(200, 'XYZ')
+v:addPointCloudWithColorHandler(c3, pcl.PCLVisualizer.createColorHandlerRandom(c3), 'cloud3')
+c4 = pcl.rand(200, 'XYZ')
+v:addPointCloudWithColorHandler(c4, pcl.PCLVisualizer.createColorHandlerRandom(c4), 'cloud4')
+c5 = pcl.rand(200, 'XYZ')
+v:addPointCloudWithColorHandler(c5, pcl.PCLVisualizer.createColorHandlerRandom(c5), 'cloud5')
 
 function onMouseEvent(type, button, x, y, alt, ctrl, shift, selection_mode)
   print(string.format('mouse event! type: %d, x: %d, y: %d, button: %d', type, x, y, button))

@@ -459,9 +459,13 @@ void pcl_PCLVisualizer_setWindowBorders(PCLVisualizer *self, bool mode);
 void pcl_PCLVisualizer_spin(PCLVisualizer *self);
 void pcl_PCLVisualizer_spinOnce(PCLVisualizer *self, int time, bool force_redraw);
 void pcl_PCLVisualizer_addCoordinateSystem(PCLVisualizer *self, double scale, const char *id, int viewport);
+void pcl_PCLVisualizer_addCoordinateSystemPose(PCLVisualizer *self, double scale, THFloatTensor *transform, const char *id, int viewport);
+bool pcl_PCLVisualizer_updateCoordinateSystemPose(PCLVisualizer *self, const char *id, THFloatTensor *pose);
 int  pcl_PCLVisualizer_createViewPort(PCLVisualizer *self, double xmin, double ymin, double xmax, double ymax);
 void pcl_PCLVisualizer_createViewPortCamera(PCLVisualizer *self, int viewport);
 void pcl_PCLVisualizer_setBackgroundColor(PCLVisualizer *self, double r, double g, double b, int viewport);
+bool pcl_PCLVisualizer_updatePointCloudPose(PCLVisualizer *self, const char *id, THFloatTensor *transform);
+bool pcl_PCLVisualizer_updateShapePose(PCLVisualizer *self, const char *id, THFloatTensor *transform);
 bool pcl_PCLVisualizer_removeAllPointClouds(PCLVisualizer *self, int viewport);
 bool pcl_PCLVisualizer_removeAllShapes(PCLVisualizer *self, int viewport);
 bool pcl_PCLVisualizer_removeAllCoordinateSystems(PCLVisualizer *self, int viewport);
@@ -470,7 +474,7 @@ bool pcl_PCLVisualizer_addText2(PCLVisualizer *self, const char *text, int xpos,
 bool pcl_PCLVisualizer_addText3(PCLVisualizer *self, const char *text, int xpos, int ypos, int fontsize, double r, double g, double b, const char *id, int viewport);
 void pcl_PCLVisualizer_initCameraParameters(PCLVisualizer *self);
 bool pcl_PCLVisualizer_setPointCloudRenderingProperties1(PCLVisualizer *self, int property, double value, const char *id, int viewport);
-bool pcl_PCLVisualizer_setPointCloudRenderingProperties2(PCLVisualizer *self, int property, double val1, double val2, double val3, const char *id, int viewport);
+bool pcl_PCLVisualizer_setPointCloudRenderingProperties3(PCLVisualizer *self, int property, double val1, double val2, double val3, const char *id, int viewport);
 bool pcl_PCLVisualizer_wasStopped(PCLVisualizer *self);
 void pcl_PCLVisualizer_resetStoppedFlag(PCLVisualizer *self);
 void pcl_PCLVisualizer_close(PCLVisualizer *self);
@@ -517,13 +521,15 @@ bool pcl_PCLVisualizer_TYPE_KEY_addPointCloudWithColorHandler(PCLVisualizer *sel
 bool pcl_PCLVisualizer_TYPE_KEY_addPointCloudNormals(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, int level, float scale, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_addPointCloudNormals2(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, PointCloud_Normal *normals, int level, float scale, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_updatePointCloud(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, const char *id);
+bool pcl_PCLVisualizer_TYPE_KEY_addCorrespondences(PCLVisualizer *self, PointCloud_TYPE_KEY *source_points, PointCloud_TYPE_KEY *target_points, Correspondences *correspondences, const char *id, int viewport);
+bool pcl_PCLVisualizer_TYPE_KEY_updateCorrespondences(PCLVisualizer *self, PointCloud_TYPE_KEY *source_points, PointCloud_TYPE_KEY *target_points, Correspondences *correspondences, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_addLine(PCLVisualizer *self, const PointTYPE_KEY &pt1, const PointTYPE_KEY &pt2, double r, double g, double b, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_addSphere(PCLVisualizer *self, const PointTYPE_KEY &center, double radius, double r, double g, double b, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_updateSphere(PCLVisualizer *self, const PointTYPE_KEY &center, double radius, double r, double g, double b, const char *id);
 
-PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerRandom();
-PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerCustom(double r, double g, double b);
-PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerGenericField(const char *field_name);
+PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerRandom(PointCloud_TYPE_KEY *cloud);
+PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerCustom(PointCloud_TYPE_KEY *cloud, double r, double g, double b);
+PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerGenericField(PointCloud_TYPE_KEY *cloud, const char *field_name);
 void pcl_PCLVisualizer_TYPE_KEY_deleteColorHandler(PointCloudColorHandler *handler);
 ]]
 
