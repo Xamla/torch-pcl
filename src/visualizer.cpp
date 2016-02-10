@@ -248,4 +248,29 @@ PCLIMP(void, PCLVisualizer, setRepresentationToWireframeForAllActors)(PCLVisuali
   (*self)->setRepresentationToWireframeForAllActors();
 }
 
+typedef void (*MouseEventCallback)(int type, int button, int x, int y, bool alt, bool ctrl, bool shift, bool selection_mode);
+
+static void mouse_event_translator(const pcl::visualization::MouseEvent& event, void  *cookie)
+{
+  MouseEventCallback target = reinterpret_cast<MouseEventCallback>(cookie);
+  unsigned int mod = event.getKeyboardModifiers();
+  target((int)event.getType(), (int)event.getButton(), event.getX(), event.getY(), mod & 1, mod & 2, mod & 4, event.getSelectionMode());
+}
+
+PCLIMP(boost::signals2::connection *, PCLVisualizer, registerMouseCallback)(PCLVisualizer_ptr *self, MouseEventCallback callback)
+{
+  boost::signals2::connection connection = (*self)->registerMouseCallback(mouse_event_translator, reinterpret_cast<void*>(callback));
+  return new boost::signals2::connection(connection);
+}
+
+PCLIMP(void, PCLVisualizer, unregisterCallback)(boost::signals2::connection *connection)
+{
+  connection->disconnect(); 
+}
+
+PCLIMP(void, PCLVisualizer, deleteCallback)(boost::signals2::connection *connection)
+{
+  delete connection;
+}
+
 #undef PCLVisualizer_ptr

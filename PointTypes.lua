@@ -494,6 +494,12 @@ bool pcl_PCLVisualizer_addCube(PCLVisualizer *self, float x_min, float x_max, fl
 void pcl_PCLVisualizer_setRepresentationToSurfaceForAllActors(PCLVisualizer *self);
 void pcl_PCLVisualizer_setRepresentationToPointsForAllActors(PCLVisualizer *self);
 void pcl_PCLVisualizer_setRepresentationToWireframeForAllActors(PCLVisualizer *self);
+
+typedef struct {} event_connection;
+typedef void (*MouseEventCallback)(int type, int button, int x, int y, bool alt, bool ctrl, bool shift, bool selection_mode);
+event_connection *pcl_PCLVisualizer_registerMouseCallback(PCLVisualizer *self, MouseEventCallback callback);
+void pcl_PCLVisualizer_unregisterCallback(event_connection *connection);
+void pcl_PCLVisualizer_deleteCallback(event_connection *connection);
 ]]
 
 local pcl_PCLVisualizer_template_declaration = [[

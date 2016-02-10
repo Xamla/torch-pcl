@@ -15,4 +15,12 @@ v:addLine(pcl.PointXYZ(-5,-1,0), pcl.PointXYZ(5, 1, 0), 1, 1, 1, 'line1')
 c = pcl.rand(1000)   -- create 1000 random points
 v:addPointCloud(c)
 
+function onMouseEvent(type, button, x, y, alt, ctrl, shift, selection_mode)
+  print(string.format('mouse event! type: %d, x: %d, y: %d, button: %d', type, x, y, button))
+end
+
+handle = v:registerMouseCallback(onMouseEvent)
+
 v:spin()  -- run msg loop
+
+

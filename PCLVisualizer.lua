@@ -55,7 +55,10 @@ local function init()
     'addCube',
     'setRepresentationToSurfaceForAllActors',
     'setRepresentationToPointsForAllActors',
-    'setRepresentationToWireframeForAllActors'
+    'setRepresentationToWireframeForAllActors',
+    'registerMouseCallback',
+    'unregisterCallback',
+    'deleteCallback'
   }
 
   func = utils.create_typed_methods("pcl_PCLVisualizer_", PCLVisualizer_method_names, '')
@@ -313,4 +316,20 @@ function PCLVisualizer:createColorHandlerGenericField(pointType, field_name)
   local h = self.tf[pointType].createColorHandlerGenericField(field_name)
   ffi.gc(h, self.tf[pointType].deleteColorHandler)
   return h
+end
+
+function PCLVisualizer:registerMouseCallback(fn)
+  local cb = ffi.cast("MouseEventCallback", fn)
+  local connection = self.f.registerMouseCallback(self.o, cb)
+  local unregister = self.f.unregisterCallback
+  local handle = {
+    connection = connection,
+    cb = cb
+  }
+  function handle:disconnect()
+    unregister(self.connection)
+    self.cb:free()
+  end
+  ffi.gc(connection, self.f.deleteCallback)
+  return handle
 end
