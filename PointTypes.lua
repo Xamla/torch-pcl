@@ -58,6 +58,7 @@ typedef struct Indices {} Indices;
 Indices* pcl_Indices_new();
 Indices* pcl_Indices_clone(Indices *self);
 void pcl_Indices_delete(Indices *self);
+Indices* pcl_Indices_fromPtr(Indices *existing);
 unsigned int pcl_Indices_size(Indices *self);
 unsigned int pcl_Indices_capacity(Indices *self);
 void pcl_Indices_reserve(Indices *self, size_t capacity);
@@ -496,8 +497,14 @@ void pcl_PCLVisualizer_setRepresentationToPointsForAllActors(PCLVisualizer *self
 void pcl_PCLVisualizer_setRepresentationToWireframeForAllActors(PCLVisualizer *self);
 
 typedef struct {} event_connection;
+typedef void (*KeyboardEventCallback)(bool keydown, const char *key_sym, int key_code, bool alt, bool ctrl, bool shift);
 typedef void (*MouseEventCallback)(int type, int button, int x, int y, bool alt, bool ctrl, bool shift, bool selection_mode);
+typedef void (*PointPickingCallback)(int idx1, int idx2, float x1, float y1, float z1, float x2, float y2, float z2);
+typedef void (*AreaPickingCallback)(Indices *indices);
+event_connection *pcl_PCLVisualizer_registerKeyboardCallback(PCLVisualizer *self, KeyboardEventCallback callback);
 event_connection *pcl_PCLVisualizer_registerMouseCallback(PCLVisualizer *self, MouseEventCallback callback);
+event_connection *pcl_PCLVisualizer_registerPointPickingCallback(PCLVisualizer *self, PointPickingCallback callback);
+event_connection *pcl_PCLVisualizer_registerAreaPickingCallback(PCLVisualizer *self, AreaPickingCallback callback);
 void pcl_PCLVisualizer_unregisterCallback(event_connection *connection);
 void pcl_PCLVisualizer_deleteCallback(event_connection *connection);
 ]]

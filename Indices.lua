@@ -4,6 +4,7 @@ local utils = require 'pcl.utils'
 local pcl = require 'pcl.PointTypes'
 
 local Indices = torch.class('pcl.Indices', pcl)
+local Indices_factory = torch.factory('pcl.Indices')
 
 local methods = {}
 
@@ -12,6 +13,7 @@ local function init()
     'new',
     'clone',
     'delete',
+    'fromPtr',
     'size',
     'capacity',
     'reserve',
@@ -48,12 +50,23 @@ function Indices:__init(x)
   end
 end
 
+function Indices.fromPtr(x)
+  local y = Indices_factory()
+  rawset(y, 'f', methods)
+  rawset(y, 'o', methods.fromPtr(x))
+  ffi.gc(y.o, methods.delete)   -- register cleanup function
+  return y
+end
+
 function Indices:cdata()
   return self.o
 end
 
 function Indices:clone()
-  return self.f.clone(self.o)
+  local c = Indices_factory()
+  rawset(c, 'f', self.f)
+  rawset(c, 'o', self.f.clone(self.o))
+  return c
 end
 
 function Indices:size()

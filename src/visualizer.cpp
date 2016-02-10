@@ -248,18 +248,75 @@ PCLIMP(void, PCLVisualizer, setRepresentationToWireframeForAllActors)(PCLVisuali
   (*self)->setRepresentationToWireframeForAllActors();
 }
 
+typedef void (*KeyboardEventCallback)(bool keydown, const char *key_sym, int key_code, bool alt, bool ctrl, bool shift);
 typedef void (*MouseEventCallback)(int type, int button, int x, int y, bool alt, bool ctrl, bool shift, bool selection_mode);
+typedef void (*PointPickingCallback)(int idx1, int idx2, float x1, float y1, float z1, float x2, float y2, float z2);
+typedef void (*AreaPickingCallback)(Indices_ptr *indices);
 
-static void mouse_event_translator(const pcl::visualization::MouseEvent& event, void  *cookie)
+static void keyboard_event_translator(const pcl::visualization::KeyboardEvent &event, void* cookie)
+{
+  KeyboardEventCallback target = reinterpret_cast<KeyboardEventCallback>(cookie);
+  bool keydown = event.keyDown();
+  int key_code = event.getKeyCode();
+  const std::string& key_sym = event.getKeySym();
+  target(keydown, key_sym.c_str(), key_code, event.isAltPressed(), event.isCtrlPressed(), event.isShiftPressed());
+}
+
+static void mouse_event_translator(const pcl::visualization::MouseEvent &event, void *cookie)
 {
   MouseEventCallback target = reinterpret_cast<MouseEventCallback>(cookie);
   unsigned int mod = event.getKeyboardModifiers();
   target((int)event.getType(), (int)event.getButton(), event.getX(), event.getY(), mod & 1, mod & 2, mod & 4, event.getSelectionMode());
 }
 
+static void point_picking_event_translator(const pcl::visualization::PointPickingEvent &event, void *cookie)
+{
+  PointPickingCallback target = reinterpret_cast<PointPickingCallback>(cookie);
+  int idx1, idx2;
+  float x1, y1, z1, x2, y2, z2;
+  if (!event.getPointIndices(idx1, idx2))
+  {
+    idx2 = -1;
+    idx1 = event.getPointIndex();
+  }
+  if (!event.getPoints(x1, y1, z1, x2, y2, z2))
+  {
+    event.getPoint(x1, y1, z1);
+    x2 =  y2 = z2 = 0;
+  }
+  target(idx1, idx2, x1, y1, z1, x2, y2, z2);
+}
+
+static void area_picking_event_translator(const pcl::visualization::AreaPickingEvent &event, void *cookie)
+{
+  AreaPickingCallback target = reinterpret_cast<AreaPickingCallback>(cookie);
+  pcl::IndicesPtr indices(new std::vector<int>());    // shared pointer is released when scope exits, lua side can use Indices.fromPtr
+  event.getPointsIndices(*indices);
+  printf("test:%d\n", indices->size());
+  target(&indices);
+}
+
+PCLIMP(boost::signals2::connection *, PCLVisualizer, registerKeyboardCallback)(PCLVisualizer_ptr *self, KeyboardEventCallback callback)
+{
+  boost::signals2::connection connection = (*self)->registerKeyboardCallback(keyboard_event_translator, reinterpret_cast<void*>(callback));
+  return new boost::signals2::connection(connection);
+}
+
 PCLIMP(boost::signals2::connection *, PCLVisualizer, registerMouseCallback)(PCLVisualizer_ptr *self, MouseEventCallback callback)
 {
   boost::signals2::connection connection = (*self)->registerMouseCallback(mouse_event_translator, reinterpret_cast<void*>(callback));
+  return new boost::signals2::connection(connection);
+}
+
+PCLIMP(boost::signals2::connection *, PCLVisualizer, registerPointPickingCallback)(PCLVisualizer_ptr *self, PointPickingCallback callback)
+{
+  boost::signals2::connection connection = (*self)->registerPointPickingCallback(point_picking_event_translator, reinterpret_cast<void*>(callback));
+  return new boost::signals2::connection(connection);
+}
+
+PCLIMP(boost::signals2::connection *, PCLVisualizer, registerAreaPickingCallback)(PCLVisualizer_ptr *self, AreaPickingCallback callback)
+{
+  boost::signals2::connection connection = (*self)->registerAreaPickingCallback(area_picking_event_translator, reinterpret_cast<void*>(callback));
   return new boost::signals2::connection(connection);
 }
 

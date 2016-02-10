@@ -19,8 +19,29 @@ function onMouseEvent(type, button, x, y, alt, ctrl, shift, selection_mode)
   print(string.format('mouse event! type: %d, x: %d, y: %d, button: %d', type, x, y, button))
 end
 
-handle = v:registerMouseCallback(onMouseEvent)
+function onKeyboardEvent(keydown, key_sym, key_code, alt, ctrl, shift)
+  print('keyboard event!')
+end
+
+-- press shift + left mouse button for point picking
+function onPointPickingEvent(idx1, idx2, x1, y1, z1, x2, y2, z2)
+  print(string.format('point picking event! idx1: %d, idx2: %d, (%f, %f, %f) (%f, %f, %f)', idx1, idx2, x1, y1, z1, x2, y2, z2))
+end
+
+-- pres x to activa area selection
+function onAreaPickingEvent(indices)
+  print(string.format('area picking event! %d points selected', #indices))
+end
+
+h1 = v:registerKeyboardCallback(onKeyboardEvent)
+h2 = v:registerMouseCallback(onMouseEvent)
+h3 = v:registerPointPickingCallback(onPointPickingEvent)
+h4 = v:registerAreaPickingCallback(onAreaPickingEvent)
 
 v:spin()  -- run msg loop
 
+h1:disconnect()
+h2:disconnect()
+h3:disconnect()
+h4:disconnect()
 

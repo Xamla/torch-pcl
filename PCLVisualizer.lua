@@ -56,7 +56,10 @@ local function init()
     'setRepresentationToSurfaceForAllActors',
     'setRepresentationToPointsForAllActors',
     'setRepresentationToWireframeForAllActors',
+    'registerKeyboardCallback',
     'registerMouseCallback',
+    'registerPointPickingCallback',
+    'registerAreaPickingCallback',
     'unregisterCallback',
     'deleteCallback'
   }
@@ -81,6 +84,23 @@ local function init()
     func_by_type[k] = utils.create_typed_methods("pcl_PCLVisualizer_TYPE_KEY_", PCLVisualizer_typed_method_names, v)
   end
 end
+
+pcl.MouseEventType = {
+  Move = 1,
+  ButtonPress = 2,
+  ButtonRelease = 3,
+  ScrollDown = 4,
+  ScrollUp = 5,
+  DblClick = 6
+}
+
+pcl.MouseButton = {
+  NoButton = 0,
+  LeftButton = 1,
+  MiddleButton = 2,
+  RightButton = 3,
+  VScroll = 4   --other buttons, scroll wheels etc. may follow
+}
 
 init()
 
@@ -318,10 +338,8 @@ function PCLVisualizer:createColorHandlerGenericField(pointType, field_name)
   return h
 end
 
-function PCLVisualizer:registerMouseCallback(fn)
-  local cb = ffi.cast("MouseEventCallback", fn)
-  local connection = self.f.registerMouseCallback(self.o, cb)
-  local unregister = self.f.unregisterCallback
+local function createEventHandle(connection, cb, f)
+  local unregister = f.unregisterCallback
   local handle = {
     connection = connection,
     cb = cb
@@ -330,6 +348,34 @@ function PCLVisualizer:registerMouseCallback(fn)
     unregister(self.connection)
     self.cb:free()
   end
-  ffi.gc(connection, self.f.deleteCallback)
+  ffi.gc(connection, f.deleteCallback)
   return handle
 end
+
+function PCLVisualizer:registerKeyboardCallback(fn)
+  local cb = ffi.cast("KeyboardEventCallback", fn)
+  local connection = self.f.registerKeyboardCallback(self.o, cb)
+  return createEventHandle(connection, cb, self.f)
+end
+
+function PCLVisualizer:registerMouseCallback(fn)
+  local cb = ffi.cast("MouseEventCallback", fn)
+  local connection = self.f.registerMouseCallback(self.o, cb)
+  return createEventHandle(connection, cb, self.f)
+end
+
+function PCLVisualizer:registerPointPickingCallback(fn)
+  local cb = ffi.cast("PointPickingCallback", fn)
+  local connection = self.f.registerPointPickingCallback(self.o, cb)
+  return createEventHandle(connection, cb, self.f)
+end
+
+function PCLVisualizer:registerAreaPickingCallback(fn)
+  local function IndicesWrapper(indices_ptr)
+    fn(pcl.Indices.fromPtr(indices_ptr))
+  end
+  local cb = ffi.cast("AreaPickingCallback", IndicesWrapper)
+  local connection = self.f.registerAreaPickingCallback(self.o, cb)
+  return createEventHandle(connection, cb, self.f)
+end
+    

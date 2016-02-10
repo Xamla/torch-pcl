@@ -18,6 +18,11 @@ PCLIMP(void, Indices, delete)(Indices_ptr *self)
   delete self;
 }
 
+PCLIMP(Indices_ptr *, Indices, fromPtr)(Indices_ptr *existing)
+{
+  return new Indices_ptr(*existing);
+}
+
 PCLIMP(unsigned int, Indices, size)(Indices_ptr *self)
 {
   const std::vector<int>& indices = **self;
