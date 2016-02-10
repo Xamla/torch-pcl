@@ -472,6 +472,7 @@ bool pcl_PCLVisualizer_removeAllCoordinateSystems(PCLVisualizer *self, int viewp
 bool pcl_PCLVisualizer_addText1(PCLVisualizer *self, const char *text, int xpos, int ypos, const char *id, int viewport);
 bool pcl_PCLVisualizer_addText2(PCLVisualizer *self, const char *text, int xpos, int ypos, double r, double g, double b, const char *id, int viewport);
 bool pcl_PCLVisualizer_addText3(PCLVisualizer *self, const char *text, int xpos, int ypos, int fontsize, double r, double g, double b, const char *id, int viewport);
+bool pcl_PCLVisualizer_removeText3D(PCLVisualizer *self, const char *id, int viewport);
 void pcl_PCLVisualizer_initCameraParameters(PCLVisualizer *self);
 bool pcl_PCLVisualizer_setPointCloudRenderingProperties1(PCLVisualizer *self, int property, double value, const char *id, int viewport);
 bool pcl_PCLVisualizer_setPointCloudRenderingProperties3(PCLVisualizer *self, int property, double val1, double val2, double val3, const char *id, int viewport);
@@ -526,6 +527,7 @@ bool pcl_PCLVisualizer_TYPE_KEY_updateCorrespondences(PCLVisualizer *self, Point
 bool pcl_PCLVisualizer_TYPE_KEY_addLine(PCLVisualizer *self, const PointTYPE_KEY &pt1, const PointTYPE_KEY &pt2, double r, double g, double b, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_addSphere(PCLVisualizer *self, const PointTYPE_KEY &center, double radius, double r, double g, double b, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_updateSphere(PCLVisualizer *self, const PointTYPE_KEY &center, double radius, double r, double g, double b, const char *id);
+bool pcl_PCLVisualizer_TYPE_KEY_addText3D(PCLVisualizer *self, const char *text, const PointTYPE_KEY &position, double textScale, double r, double g, double b, const char *id, int viewport);
 
 PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerRandom(PointCloud_TYPE_KEY *cloud);
 PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerCustom(PointCloud_TYPE_KEY *cloud, double r, double g, double b);

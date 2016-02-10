@@ -111,6 +111,11 @@ PCLIMP(bool, PCLVisualizer, addText3)(PCLVisualizer_ptr *self, const char *text,
   return (*self)->addText(text, xpos, ypos, fontsize, r, g, b, id, viewport);
 }
 
+PCLIMP(bool, PCLVisualizer, removeText3D)(PCLVisualizer_ptr *self, const char *id = "cloud", int viewport = 0)
+{
+  return (*self)->removeText3D(id, viewport);
+}
+
 PCLIMP(void, PCLVisualizer, initCameraParameters)(PCLVisualizer_ptr *self)
 {
   (*self)->initCameraParameters();

@@ -21,6 +21,10 @@ v:setPointCloudRenderingProperties3(pcl.RenderingProperties.PCL_VISUALIZER_COLOR
 c2 = pcl.rand(500)
 v:addPointCloud(c2, 'cloud2')
 
+for i=1,3 do
+  v:addCoordinateSystemPose(1, pcl.affine.translate(-1 * i, i, 0) * pcl.affine.rotateEuler(i*10, i* 20, i*30, true), 'ref' .. i)
+end
+
 -- move point cloud a bit
 v:updatePointCloudPose('cloud2', pcl.affine.translate(-0.5, -0.5, 0))
 v:setPointCloudRenderingProperties3(pcl.RenderingProperties.PCL_VISUALIZER_COLOR, 1, 0, 0, 'cloud2')
@@ -32,6 +36,10 @@ c4 = pcl.rand(200, 'XYZ')
 v:addPointCloudWithColorHandler(c4, pcl.PCLVisualizer.createColorHandlerRandom(c4), 'cloud4')
 c5 = pcl.rand(200, 'XYZ')
 v:addPointCloudWithColorHandler(c5, pcl.PCLVisualizer.createColorHandlerRandom(c5), 'cloud5')
+
+-- add 3D text
+v:addText3D('A 3D demo text.', pcl.PointXYZ(1,3,1), 0.1, 0.5, 1, 0.2, 'text')
+v:initCameraParameters()
 
 function onMouseEvent(type, button, x, y, alt, ctrl, shift, selection_mode)
   print(string.format('mouse event! type: %d, x: %d, y: %d, button: %d', type, x, y, button))

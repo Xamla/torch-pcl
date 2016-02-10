@@ -33,6 +33,7 @@ local function init()
     'addText1',
     'addText2',
     'addText3',
+    'removeText3D',
     'initCameraParameters',
     'setPointCloudRenderingProperties1',
     'setPointCloudRenderingProperties3',
@@ -82,6 +83,7 @@ local function init()
     'addLine',
     'addSphere',
     'updateSphere',
+    'addText3D',
     'createColorHandlerRandom',
     'createColorHandlerCustom',
     'createColorHandlerGenericField',
@@ -193,15 +195,19 @@ function PCLVisualizer:removeAllCoordinateSystems(viewport)
 end
 
 function PCLVisualizer:addText1(text, xpos, ypos, id, viewport)
-  return self.f.addText1(self.o, text, xpos, ypos, id or '', viewport or 0)
+  return self.f.addText1(self.o, text, xpos, ypos, id or 'text', viewport or 0)
 end
 
 function PCLVisualizer:addText2(text, xpos, ypos, r, g, b, id, viewport)
-  return self.f.addText2(self.o, text, xpos, ypos, r, g, b, id or '', viewport or 0)
+  return self.f.addText2(self.o, text, xpos, ypos, r, g, b, id or 'text', viewport or 0)
 end
 
 function PCLVisualizer:addText3(text, xpos, ypos, r, g, b, fontsize, id, viewport)
-  return self.f.addText3(self.o, text, xpos, ypos, fontsize, r, g, b, id, viewport)
+  return self.f.addText3(self.o, text, xpos, ypos, fontsize, r or 1, g or 1, b or 1, id or 'text', viewport or 0)
+end
+
+function PCLVisualizer:removeText3D(id, viewport)
+  return self.f.removeText3D(self.o, id or 'text', viewport or 0)
 end
 
 function PCLVisualizer:initCameraParameters()
@@ -361,6 +367,10 @@ end
 
 function PCLVisualizer:updateSphere(center, radius, r, g, b, id)
   return self.tf[center.type].updateSphere(self.o, center, radius, r or 0.5, g or 0.5, b or 0.5, id or 'sphere')
+end
+
+function PCLVisualizer:addText3D(text, position, textScale, r, g, b, id, viewport)
+  return self.tf[position.type].addText3D(self.o, text, position, textScale or 1, r or 1, g or 1, b or 1, id or 'text', viewport or 0)
 end
 
 function PCLVisualizer.createColorHandlerRandom(cloud)

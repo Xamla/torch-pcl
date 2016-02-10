@@ -62,6 +62,12 @@ PCLIMP(bool, PCLVisualizer, updateSphere)(PCLVisualizer_ptr *self, const _PointT
   (*self)->updateSphere(center, radius, r, g, b, id);
 }
 
+PCLIMP(bool, PCLVisualizer, addText3D)(PCLVisualizer_ptr *self, const char *text, const _PointT &position, double textScale = 1.0, 
+  double r = 1.0, double g = 1.0, double b = 1.0, const char *id = "", int viewport = 0)
+{
+  (*self)->addText3D<_PointT>(text, position, textScale, r, g, b, id, viewport);
+}
+
 // PointCloud color handler factories
 PCLIMP(PointCloudColorHandler_ptr *, PCLVisualizer, createColorHandlerRandom)(PointCloud_ptr *cloud)
 {
