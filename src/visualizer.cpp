@@ -292,7 +292,6 @@ static void area_picking_event_translator(const pcl::visualization::AreaPickingE
   AreaPickingCallback target = reinterpret_cast<AreaPickingCallback>(cookie);
   pcl::IndicesPtr indices(new std::vector<int>());    // shared pointer is released when scope exits, lua side can use Indices.fromPtr
   event.getPointsIndices(*indices);
-  printf("test:%d\n", indices->size());
   target(&indices);
 }
 

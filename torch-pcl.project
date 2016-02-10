@@ -205,5 +205,6 @@
   </Settings>
   <VirtualDirectory Name="demo">
     <File Name="demo/visualizer.lua"/>
+    <File Name="demo/openni2stream.lua"/>
   </VirtualDirectory>
 </CodeLite_Project>

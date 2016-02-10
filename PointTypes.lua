@@ -510,7 +510,10 @@ void pcl_PCLVisualizer_deleteCallback(event_connection *connection);
 ]]
 
 local pcl_PCLVisualizer_template_declaration = [[
+typedef struct {} PointCloudColorHandler;
+
 bool pcl_PCLVisualizer_TYPE_KEY_addPointCloud(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, const char *id, int viewport);
+bool pcl_PCLVisualizer_TYPE_KEY_addPointCloudWithColorHandler(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, PointCloudColorHandler *color_handler, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_addPointCloudNormals(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, int level, float scale, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_addPointCloudNormals2(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, PointCloud_Normal *normals, int level, float scale, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_updatePointCloud(PCLVisualizer *self, PointCloud_TYPE_KEY *cloud, const char *id);
@@ -518,7 +521,6 @@ bool pcl_PCLVisualizer_TYPE_KEY_addLine(PCLVisualizer *self, const PointTYPE_KEY
 bool pcl_PCLVisualizer_TYPE_KEY_addSphere(PCLVisualizer *self, const PointTYPE_KEY &center, double radius, double r, double g, double b, const char *id, int viewport);
 bool pcl_PCLVisualizer_TYPE_KEY_updateSphere(PCLVisualizer *self, const PointTYPE_KEY &center, double radius, double r, double g, double b, const char *id);
 
-typedef struct {} PointCloudColorHandler;
 PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerRandom();
 PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerCustom(double r, double g, double b);
 PointCloudColorHandler *pcl_PCLVisualizer_TYPE_KEY_createColorHandlerGenericField(const char *field_name);

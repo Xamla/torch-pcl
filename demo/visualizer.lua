@@ -12,8 +12,16 @@ v:addSphere(pcl.PointXYZ(3,3,3), 0.75, 0.1, 0.8, 0.3, 'sphere1')
 
 v:addLine(pcl.PointXYZ(-5,-1,0), pcl.PointXYZ(5, 1, 0), 1, 1, 1, 'line1')
 
+-- add green pointcloud
 c = pcl.rand(1000)   -- create 1000 random points
-v:addPointCloud(c)
+v:addPointCloud(c, 'cloud1')
+c2 = pcl.rand(500)  -- add some random colored points
+v:setPointCloudRenderingProperties2(pcl.RenderingProperties.PCL_VISUALIZER_COLOR, 0, 1, 0, 'cloud1')
+
+-- add some points in red
+c2 = pcl.rand(500)  -- add some random colored points
+v:addPointCloud(c2, 'cloud2')
+v:setPointCloudRenderingProperties2(pcl.RenderingProperties.PCL_VISUALIZER_COLOR, 1, 0, 0, 'cloud2')
 
 function onMouseEvent(type, button, x, y, alt, ctrl, shift, selection_mode)
   print(string.format('mouse event! type: %d, x: %d, y: %d, button: %d', type, x, y, button))
@@ -44,4 +52,3 @@ h1:disconnect()
 h2:disconnect()
 h3:disconnect()
 h4:disconnect()
-

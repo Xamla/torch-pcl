@@ -69,6 +69,7 @@ local function init()
   -- create function table for template methods
   local PCLVisualizer_typed_method_names = {
     'addPointCloud',
+    'addPointCloudWithColorHandler',
     'addPointCloudNormals',
     'addPointCloudNormals2',
     'updatePointCloud',
@@ -84,6 +85,17 @@ local function init()
     func_by_type[k] = utils.create_typed_methods("pcl_PCLVisualizer_TYPE_KEY_", PCLVisualizer_typed_method_names, v)
   end
 end
+
+pcl.RenderingProperties = {
+  PCL_VISUALIZER_POINT_SIZE = 0,
+  PCL_VISUALIZER_OPACITY = 1,
+  PCL_VISUALIZER_LINE_WIDTH = 2,
+  PCL_VISUALIZER_FONT_SIZE = 3,
+  PCL_VISUALIZER_COLOR = 4,
+  PCL_VISUALIZER_REPRESENTATION = 5,
+  PCL_VISUALIZER_IMMEDIATE_RENDERING = 6,
+  PCL_VISUALIZER_SHADING = 7
+}
 
 pcl.MouseEventType = {
   Move = 1,
@@ -291,6 +303,10 @@ end
 
 function PCLVisualizer:addPointCloud(cloud, id, viewport)
   self.tf[cloud.pointType].addPointCloud(self.o, cloud:cdata(), id or 'cloud', viewport or 0)
+end
+
+function PCLVisualizer:addPointCloudWithColorHandler(cloud, color_handler, id, viewport)
+  self.tf[cloud.pointType].addPointCloudWithColorHandler(self.o, cloud:cdata(), color_handler, id or 'cloud', viewport or 0)
 end
 
 function PCLVisualizer:addPointCloudNormals(cloud, level, scale, id, viewport)
