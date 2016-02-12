@@ -338,6 +338,22 @@ function PointCloud:__tostring()
   )
 end
 
+function PointCloud:apply(func)
+  local p = self:points()
+  local count = p:nElement()
+  local data = p:data()
+  local pt = self.pointType()
+  local point_size = ffi.sizeof(pt)
+  local stride =  point_size / #pt
+  for i=0,count-1,stride do
+    ffi.copy(pt, data + i, point_size)
+    local r = func(pt, i+1)   -- pass point and index to function
+    if r then
+      ffi.copy(data + i, r, point_size)
+    end
+  end
+end
+
 function PointCloud.copy(cloud_in, indices, cloud_out)
   if torch.isTypeOf(indices, pcl.PointCloud) then
     cloud_out = indices

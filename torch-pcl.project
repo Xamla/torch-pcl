@@ -206,5 +206,6 @@
   <VirtualDirectory Name="demo">
     <File Name="demo/visualizer.lua"/>
     <File Name="demo/openni2stream.lua"/>
+    <File Name="demo/cloud_from_tensor.lua"/>
   </VirtualDirectory>
 </CodeLite_Project>
