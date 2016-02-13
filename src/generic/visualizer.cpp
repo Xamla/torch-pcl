@@ -11,7 +11,6 @@ PCLIMP(bool, PCLVisualizer, addPointCloud)(PCLVisualizer_ptr *self, PointCloud_p
 
 PCLIMP(bool, PCLVisualizer, addPointCloudWithColorHandler)(PCLVisualizer_ptr *self, PointCloud_ptr *cloud, PointCloudColorHandler_ptr *color_handler, const char *id = "cloud", int viewport = 0)
 {
-  printf("%s\n", (*color_handler)->getName().c_str());
   return (*self)->addPointCloud<_PointT>(*cloud, **color_handler, id, viewport);
 }
 

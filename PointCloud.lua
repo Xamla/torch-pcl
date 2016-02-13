@@ -66,6 +66,7 @@ local function init()
   supported_types[pcl.FPFHSignature33] = 'FPFHSignature33'
   supported_types[pcl.VFHSignature308] = 'VFHSignature308'
   supported_types[pcl.Boundary] = 'Boundary'
+  supported_types[pcl.Label] = 'Label'
   for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods('pcl_PointCloud_TYPE_KEY_', PointCloud_method_names, v)
   end

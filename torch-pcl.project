@@ -45,6 +45,7 @@
       <File Name="src/generic/sac_segmentation.cpp"/>
       <File Name="src/correspondences.cpp"/>
       <File Name="src/generic/visualizer.cpp"/>
+      <File Name="src/generic/organized_edge_detection.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -66,6 +67,8 @@
     <File Name="src/boundary.cpp"/>
     <File Name="src/vfhsignature308.cpp"/>
     <File Name="src/visualizer.cpp"/>
+    <File Name="src/label.cpp"/>
+    <File Name="src/indices_vector.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="rocks">
     <File Name="rocks/torch-pcl-scm-1.rockspec"/>
@@ -101,6 +104,8 @@
     <File Name="VFHEstimation.lua"/>
     <File Name="SACSegmentation.lua"/>
     <File Name="PCLVisualizer.lua"/>
+    <File Name="IndicesVector.lua"/>
+    <File Name="OrganizedEdge.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>
@@ -207,5 +212,6 @@
     <File Name="demo/visualizer.lua"/>
     <File Name="demo/openni2stream.lua"/>
     <File Name="demo/cloud_from_tensor.lua"/>
+    <File Name="demo/organized_edge.lua"/>
   </VirtualDirectory>
 </CodeLite_Project>

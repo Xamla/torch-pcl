@@ -78,7 +78,11 @@ local function init()
     'new',
     'delete',
     'SACSegmentationFromNormals_ptr',
-    'SACSegmentation_ptr'
+    'SACSegmentation_ptr',
+    'setInputNormals',
+    'setNormalDistanceWeight',
+    'setMinMaxOpeningAngle',
+    'setDistanceFromOrigin'
   }
   for k,v in pairs(utils.type_key_map) do
     SACSegmentationFromNormals_func_by_type[k] = utils.create_typed_methods("pcl_SACSegmentationFromNormals_TYPE_KEY_", SACSegmentationFromNormals_method_names, v)

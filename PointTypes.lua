@@ -24,6 +24,7 @@ typedef struct PointNormal PointXYZNormal;\z
 typedef struct PointXYZRGBNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBNormal; \z
 typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal; \z
 typedef struct Boundary { uint8_t boundary_point; } Boundary; \z
+typedef struct Label { uint32_t label; } Label; \z
 " ..
 [[
 typedef struct FPFHSignature33 { float histogram[33]; } FPFHSignature33;
@@ -41,6 +42,7 @@ typedef struct PointCloud_Normal {} PointCloud_Normal;
 typedef struct PointCloud_FPFHSignature33 {} PointCloud_FPFHSignature33;
 typedef struct PointCloud_VFHSignature308 {} PointCloud_VFHSignature308;
 typedef struct PointCloud_Boundary {} PointCloud_Boundary;
+typedef struct PointCloud_Label {} PointCloud_Label;
 
 void* pcl_CloudViewer_new(const char *window_name);
 void pcl_CloudViewer_delete(void *self);
@@ -52,13 +54,13 @@ void pcl_Primitive_XYZ_createCylinder(PointCloud_XYZ *output, double height, dou
 void pcl_Primitive_XYZ_createCone(PointCloud_XYZ *output, double height, double radius, int facets, int samples, float resolution);
 void pcl_Primitive_XYZ_createPlatonicSolid(PointCloud_XYZ *output, int solidType, int samples, float resolution);
 void pcl_Primitive_XYZ_createPlane(PointCloud_XYZ *output, double x1, double y1, double z1, double x2, double y2, double z2, int samples, float resolution);
-void pcl_Primitive_XYZ_createDisk(PointCloud_XYZ *output, double innerRadius, double outerRadius, int radialResolution,int samples, float resolution);
+void pcl_Primitive_XYZ_createDisk(PointCloud_XYZ *output, double innerRadius, double outerRadius, int radialResolution, int samples, float resolution);
 
 typedef struct Indices {} Indices;
-Indices* pcl_Indices_new();
-Indices* pcl_Indices_clone(Indices *self);
+Indices *pcl_Indices_new();
+Indices *pcl_Indices_clone(Indices *self);
 void pcl_Indices_delete(Indices *self);
-Indices* pcl_Indices_fromPtr(Indices *existing);
+Indices *pcl_Indices_fromPtr(Indices *existing);
 unsigned int pcl_Indices_size(Indices *self);
 unsigned int pcl_Indices_capacity(Indices *self);
 void pcl_Indices_reserve(Indices *self, size_t capacity);
@@ -75,6 +77,19 @@ int pcl_Indices_pop_back(Indices *self);
 void pcl_Indices_clear(Indices *self);
 void pcl_Indices_insert(Indices *self, size_t pos, size_t n, int value);
 void pcl_Indices_erase(Indices *self, size_t begin, size_t end);
+
+typedef struct IndicesVector {} IndicesVector;
+IndicesVector *pcl_IndicesVector_new();
+void  pcl_IndicesVector_delete(IndicesVector *self);
+unsigned int pcl_IndicesVector_size(IndicesVector *self);
+void pcl_IndicesVector_getAt(IndicesVector *self, size_t pos, Indices *result);
+void pcl_IndicesVector_setAt(IndicesVector *self, size_t pos, Indices *value);
+void pcl_IndicesVector_push_back(IndicesVector *self, Indices *value);
+void pcl_IndicesVector_pop_back(IndicesVector *self);
+void pcl_IndicesVector_clear(IndicesVector *self);
+void pcl_IndicesVector_insert(IndicesVector *self, size_t pos, Indices *value);
+void pcl_IndicesVector_erase(IndicesVector *self, size_t begin, size_t end);
+bool pcl_IndicesVector_empty(IndicesVector *self);
 
 typedef struct Correspondences {} Correspondences;
 Correspondences *pcl_Correspondences_new();
@@ -449,6 +464,31 @@ void pcl_SACSegmentationFromNormals_TYPE_KEY_setMinMaxOpeningAngle(SACSegmentati
 void pcl_SACSegmentationFromNormals_TYPE_KEY_setDistanceFromOrigin(SACSegmentationFromNormals_TYPE_KEY *self, double d);
 ]]
 
+local pcl_OrganizedEdge_declaration = [[
+typedef struct {} OrganizedEdgeBaseHandle_TYPE_KEY;
+typedef struct {} OrganizedEdgeBase_TYPE_KEY;
+OrganizedEdgeBaseHandle_TYPE_KEY *pcl_OrganizedEdgeBase_TYPE_KEY_new();
+void pcl_OrganizedEdgeBase_TYPE_KEY_delete(OrganizedEdgeBaseHandle_TYPE_KEY *handle);
+OrganizedEdgeBase_TYPE_KEY *pcl_OrganizedEdgeBase_TYPE_KEY_OrganizedEdgeBase_ptr(OrganizedEdgeBaseHandle_TYPE_KEY *handle);
+void pcl_OrganizedEdgeBase_TYPE_KEY_setInputCloud(OrganizedEdgeBase_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_OrganizedEdgeBase_TYPE_KEY_setIndices(OrganizedEdgeBase_TYPE_KEY *self, Indices *indices);
+void pcl_OrganizedEdgeBase_TYPE_KEY_setDepthDisconThreshold(OrganizedEdgeBase_TYPE_KEY *self, float th);
+void pcl_OrganizedEdgeBase_TYPE_KEY_setMaxSearchNeighbors(OrganizedEdgeBase_TYPE_KEY *self, int max_dist);
+void pcl_OrganizedEdgeBase_TYPE_KEY_setEdgeType(OrganizedEdgeBase_TYPE_KEY *self, int edge_types);
+void pcl_OrganizedEdgeBase_TYPE_KEY_compute(OrganizedEdgeBase_TYPE_KEY *self, PointCloud_Label *labels, IndicesVector *label_indices);
+
+typedef struct {} OrganizedEdgeFromNormalsHandle_TYPE_KEY;
+typedef struct {} OrganizedEdgeFromNormals_TYPE_KEY;
+OrganizedEdgeFromNormalsHandle_TYPE_KEY *pcl_OrganizedEdgeFromNormals_TYPE_KEY_new();
+void pcl_OrganizedEdgeFromNormals_TYPE_KEY_delete(OrganizedEdgeFromNormalsHandle_TYPE_KEY *handle);
+OrganizedEdgeBase_TYPE_KEY *pcl_OrganizedEdgeFromNormals_TYPE_KEY_OrganizedEdgeBase_ptr(OrganizedEdgeFromNormalsHandle_TYPE_KEY *handle);
+OrganizedEdgeFromNormals_TYPE_KEY *pcl_OrganizedEdgeFromNormals_TYPE_KEY_OrganizedEdgeFromNormals_ptr(OrganizedEdgeFromNormalsHandle_TYPE_KEY *handle);
+void pcl_OrganizedEdgeFromNormals_TYPE_KEY_setInputNormals(OrganizedEdgeFromNormals_TYPE_KEY *self, PointCloud_Normal *normals);
+void pcl_OrganizedEdgeFromNormals_TYPE_KEY_setHCCannyLowThreshold(OrganizedEdgeFromNormals_TYPE_KEY *self, float th);
+void pcl_OrganizedEdgeFromNormals_TYPE_KEY_setHCCannyHighThreshold(OrganizedEdgeFromNormals_TYPE_KEY *self, float th);
+void pcl_OrganizedEdgeFromNormals_TYPE_KEY_compute(OrganizedEdgeFromNormals_TYPE_KEY *self, PointCloud_Label *labels, IndicesVector *label_indices);
+]];
+
 local pcl_PCLVisualizer_declaration = [[
 typedef struct {} PCLVisualizer;
 PCLVisualizer *pcl_PCLVisualizer_new(const char *name, bool create_interactor);
@@ -546,7 +586,8 @@ local declarations = {
     pcl_SampleConsensusPrerejective_declaration,
     pcl_BoundaryEstimation_declaration,
     pcl_SACSegmentation_declaration,
-    pcl_PCLVisualizer_template_declaration
+    pcl_PCLVisualizer_template_declaration,
+    pcl_OrganizedEdge_declaration
   }
 for i,v in ipairs(supported_keys) do
   for j,declaration in ipairs(declarations) do
@@ -578,7 +619,7 @@ end
 add_additional_point_types()
 
 local function add_additional_point_cloud_types()
-  local names = { 'Normal', 'Boundary' }
+  local names = { 'Normal', 'Boundary', 'Label' }
   local declarations = {
     pcl_PointCloud_declaration
   }
@@ -616,7 +657,8 @@ local pointTypeNames = {
   'PointXYZINormal',      -- float x, y, z, intensity, normal[3], curvature;
   'FPFHSignature33',
   'VFHSignature308',
-  'Boundary'
+  'Boundary',
+  'Label'
 }
 
 local nameByType = {}
@@ -907,10 +949,17 @@ local Boundary = {
   fields = { 'boundary_point' }
 }
 function Boundary:set(v) ffi.copy(self, v, ffi.sizeof(pcl.Boundary)) end
-function Boundary:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBNormal.prototype[i] end end
 function Boundary:__tostring() return string.format('{ boundary_point: %d }', self.boundary_point) end
 ffi.metatype(pcl.Boundary, Boundary)
 pcl.metatype[pcl.Boundary] = Boundary
+
+local Label = {
+  fields = { 'label' }
+}
+function Label:set(v) ffi.copy(self, v, ffi.sizeof(pcl.Label)) end
+function Label:__tostring() return string.format('{ label: %d }', self.label) end
+ffi.metatype(pcl.Label, Label)
+pcl.metatype[pcl.Label] = Label
 
 pcl.range = {
   double = {

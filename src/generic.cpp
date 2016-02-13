@@ -8,6 +8,7 @@
 #include "generic/kdtree.cpp"
 #include "generic/octree.cpp"
 #include "generic/boundary_estimation.cpp"
+#include "generic/organized_edge_detection.cpp"
 #include "generic/fpfh.cpp"
 #include "generic/vfh.cpp"
 #include "generic/correspondence_estimation.cpp"

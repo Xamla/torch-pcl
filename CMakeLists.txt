@@ -19,6 +19,7 @@ SET(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L\".\" ")
 
 SET(src
   "${SOURCE_DIR}/indices.cpp"
+  "${SOURCE_DIR}/indices_vector.cpp"
   "${SOURCE_DIR}/correspondences.cpp"
   "${SOURCE_DIR}/cloudviewer.cpp"
   "${SOURCE_DIR}/xyz.cpp"
@@ -32,6 +33,7 @@ SET(src
   "${SOURCE_DIR}/vfhsignature308.cpp"
   "${SOURCE_DIR}/boundary.cpp"
   "${SOURCE_DIR}/visualizer.cpp"
+  "${SOURCE_DIR}/label.cpp"
 )
 
 FILE(GLOB luasrc *.lua)

@@ -14,6 +14,7 @@ extern "C" {
 #define PCLIMP(return_type, class_name, name) extern "C" return_type TH_CONCAT_4(pcl_, class_name, TYPE_KEY, name)
 #define PCLCALL(class_name, name) TH_CONCAT_4(pcl_, class_name, TYPE_KEY, name)
 #define Indices_ptr pcl::IndicesPtr
+#define IndicesVector_ptr boost::shared_ptr<std::vector<Indices_ptr> >
 #define Normals_ptr pcl::PointCloud<pcl::Normal>::Ptr
 #define Correspondences_ptr pcl::CorrespondencesPtr
 

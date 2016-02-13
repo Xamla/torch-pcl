@@ -1,6 +1,7 @@
 #define _PointT pcl::PointXYZRGBA
 #define TYPE_KEY _XYZRGBA_
 #define _PointNormalT pcl::PointXYZRGBNormal
+#define _PointT_HAS_COLOR
 
 #include "utils.h"
 #include <pcl/point_types.h>
