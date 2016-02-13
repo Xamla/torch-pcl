@@ -471,7 +471,6 @@ OrganizedEdgeBaseHandle_TYPE_KEY *pcl_OrganizedEdgeBase_TYPE_KEY_new();
 void pcl_OrganizedEdgeBase_TYPE_KEY_delete(OrganizedEdgeBaseHandle_TYPE_KEY *handle);
 OrganizedEdgeBase_TYPE_KEY *pcl_OrganizedEdgeBase_TYPE_KEY_OrganizedEdgeBase_ptr(OrganizedEdgeBaseHandle_TYPE_KEY *handle);
 void pcl_OrganizedEdgeBase_TYPE_KEY_setInputCloud(OrganizedEdgeBase_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
-void pcl_OrganizedEdgeBase_TYPE_KEY_setIndices(OrganizedEdgeBase_TYPE_KEY *self, Indices *indices);
 void pcl_OrganizedEdgeBase_TYPE_KEY_setDepthDisconThreshold(OrganizedEdgeBase_TYPE_KEY *self, float th);
 void pcl_OrganizedEdgeBase_TYPE_KEY_setMaxSearchNeighbors(OrganizedEdgeBase_TYPE_KEY *self, int max_dist);
 void pcl_OrganizedEdgeBase_TYPE_KEY_setEdgeType(OrganizedEdgeBase_TYPE_KEY *self, int edge_types);
@@ -996,6 +995,25 @@ pcl.range = {
     min =  0,
     max =  0xffffffffffffffff
   }
+}
+
+pcl.COLORS = {
+  WHITE   = { 1, 1, 1, 1 },
+  SILVER  = { 0.75, 0.75, 0.75, 1 },
+  GRAY    = { 0.5, 0.5, 0.5, 1 },
+  BLACK   = { 0, 0, 0, 1 },
+  RED     = { 1, 0, 0, 1 },
+  MAROON  = { 0.5, 0, 0, 1 },
+  YELLOW  = { 1, 1, 0, 1 },
+  OLIVE   = { 0.5, 0.5, 0, 1 },
+  LIME    = { 0, 1, 0, 1 },
+  GREEN   = { 0, 0.5, 0, 1 },
+  AQUA    =	{ 0, 1, 1, 1 },
+  TEAL    = { 0, 0.5, 0.5, 1 },
+  BLUE    = { 0, 0, 1, 1 },
+  NAVY    = { 0, 0, 0.5, 1 },
+  FUCHSIA = { 1, 0, 1, 1 },
+  PURPLE  = { 0.5, 0, 0.5, 1 }
 }
 
 return pcl

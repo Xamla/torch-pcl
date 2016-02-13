@@ -15,7 +15,6 @@ local function init()
     'delete',
     'OrganizedEdgeBase_ptr',
     'setInputCloud',
-    'setIndices',
     'setDepthDisconThreshold',
     'setMaxSearchNeighbors',
     'setEdgeType',
@@ -42,6 +41,15 @@ end
 
 init()
 
+pcl.EDGELABEL =
+{
+  NAN_BOUNDARY      = 1,
+  OCCLUDING         = 2,
+  OCCLUDED          = 4,
+  HIGH_CURVATURE    = 8,
+  RGB_CANNY         = 16
+}
+
 function OrganizedEdgeBase:__init(pointType)
   self.pointType = pcl.pointType(pointType or pcl.PointXYZ)
   self.f = OrganizedEdgeBase_func_by_type[self.pointType]
@@ -59,10 +67,6 @@ end
 
 function OrganizedEdgeBase:setInputCloud(cloud)
   self.f.setInputCloud(self.p, cloud:cdata())
-end
-
-function OrganizedEdgeBase:setIndices(indices)
-  self.f.setIndices(self.p, indices:cdata())
 end
 
 function OrganizedEdgeBase:setDepthDisconThreshold(th)

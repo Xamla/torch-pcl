@@ -318,7 +318,7 @@ function PointCloud:loadOBJFile(fn)
 end
   
 function PointCloud:savePNGFile(fn, field_name)
-  return self.f.savePNGFile(self.o, fn)
+  return self.f.savePNGFile(self.o, fn, field_name or 'rgb')
 end
 
 function PointCloud:addNormals(normals, output)

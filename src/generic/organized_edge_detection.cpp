@@ -30,11 +30,6 @@ PCLIMP(void, OrganizedEdgeBase, setInputCloud)(OrganizedEdgeBase_ *self, PointCl
   self->setInputCloud(*cloud);
 }
 
-PCLIMP(void, OrganizedEdgeBase, setIndices)(OrganizedEdgeBase_ *self, Indices_ptr *indices)
-{
-  self->setIndices(*indices);
-}
-
 // OrganizedEdgeBase methods
 PCLIMP(void, OrganizedEdgeBase, setDepthDisconThreshold)(OrganizedEdgeBase_ *self, float th)
 {
