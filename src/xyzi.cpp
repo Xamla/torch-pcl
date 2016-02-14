@@ -6,3 +6,4 @@
 #include "generic/cloudviewer.cpp"
 #include "generic/openni2.cpp"
 #include "generic/normal_estimation.cpp"
+#include "generic/integral_image_normal.cpp"

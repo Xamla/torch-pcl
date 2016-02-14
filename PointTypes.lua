@@ -488,6 +488,25 @@ void pcl_OrganizedEdgeFromNormals_TYPE_KEY_setHCCannyHighThreshold(OrganizedEdge
 void pcl_OrganizedEdgeFromNormals_TYPE_KEY_compute(OrganizedEdgeFromNormals_TYPE_KEY *self, PointCloud_Label *labels, IndicesVector *label_indices);
 ]];
 
+local pcl_IntegralImageNormalEstimation_declaration = [[
+typedef struct {} IntegralImageNormalEstimation_TYPE_KEY;
+IntegralImageNormalEstimation_TYPE_KEY* pcl_IntegralImageNormalEstimation_TYPE_KEY_new();
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_delete(IntegralImageNormalEstimation_TYPE_KEY *self);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_setInputCloud(IntegralImageNormalEstimation_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_setRectSize(IntegralImageNormalEstimation_TYPE_KEY *self, int width, int height);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_setMaxDepthChangeFactor(IntegralImageNormalEstimation_TYPE_KEY *self, float max_depth_change_factor);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_setBorderPolicy(IntegralImageNormalEstimation_TYPE_KEY *self, int border_policy);
+Normal pcl_IntegralImageNormalEstimation_TYPE_KEY_computePointNormal(IntegralImageNormalEstimation_TYPE_KEY *self, int pos_x, int pos_y, unsigned int point_index);
+Normal pcl_IntegralImageNormalEstimation_TYPE_KEY_computePointNormalMirror(IntegralImageNormalEstimation_TYPE_KEY *self, int pos_x, int pos_y, unsigned int point_index);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_setNormalSmoothingSize(IntegralImageNormalEstimation_TYPE_KEY *self, float normal_smoothing_size);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_setNormalEstimationMethod(IntegralImageNormalEstimation_TYPE_KEY *self, int normal_estimation_method);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_setDepthDependentSmoothing(IntegralImageNormalEstimation_TYPE_KEY *self, bool use_depth_dependent_smoothing);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_getViewPoint(IntegralImageNormalEstimation_TYPE_KEY *self, THFloatTensor *out_pt);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_setViewPoint(IntegralImageNormalEstimation_TYPE_KEY *self, THFloatTensor *pt);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_useSensorOriginAsViewPoint(IntegralImageNormalEstimation_TYPE_KEY *self);
+void pcl_IntegralImageNormalEstimation_TYPE_KEY_compute(IntegralImageNormalEstimation_TYPE_KEY *self, PointCloud_Normal *output);
+]];
+
 local pcl_PCLVisualizer_declaration = [[
 typedef struct {} PCLVisualizer;
 PCLVisualizer *pcl_PCLVisualizer_new(const char *name, bool create_interactor);
@@ -586,7 +605,8 @@ local declarations = {
     pcl_BoundaryEstimation_declaration,
     pcl_SACSegmentation_declaration,
     pcl_PCLVisualizer_template_declaration,
-    pcl_OrganizedEdge_declaration
+    pcl_OrganizedEdge_declaration,
+    pcl_IntegralImageNormalEstimation_declaration
   }
 for i,v in ipairs(supported_keys) do
   for j,declaration in ipairs(declarations) do

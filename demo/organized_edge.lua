@@ -17,6 +17,8 @@ local colors = {
 
 function visualize(cloud, label_indices)
   v:removeAllPointClouds()
+  v:addPointCloud(cloud, 'base')
+  v:setPointCloudRenderingProperties3(pcl.RenderingProperties.PCL_VISUALIZER_COLOR, 0.2, 0.2, 0.2, 'base')
   for i=1,#label_indices do
     local color = colors[i]
     local id = 'cloud' .. i
@@ -51,9 +53,7 @@ function RunWithNormals()
   edge:setHCCannyLowThreshold(0.75)
   edge:setHCCannyHighThreshold(1.5)
 
-  local ne = pcl.NormalEstimation(pcl.PointXYZ)
-  ne:setRadiusSearch(0.04)
-  ne:setNumberOfThreads(8)
+  local ne = pcl.IntegralImageNormalEstimation(pcl.PointXYZ)
 
   while not v:wasStopped() do
 
@@ -72,7 +72,7 @@ function RunWithNormals()
 
 end
 
-RunBase()
---RunWithNormals()
+--RunBase()
+RunWithNormals()
 
 s:stop()
