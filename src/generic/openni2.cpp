@@ -23,6 +23,16 @@ PCLIMP(void, OpenNI2Stream, delete)(OpenNI2GrabberStream<_PointT> *self)
   delete self;
 }
 
+PCLIMP(void, OpenNI2Stream, setGrabImages)(OpenNI2GrabberStream<_PointT> *self, bool flag)
+{
+  self->setGrabImages(flag);
+}
+
+PCLIMP(void, OpenNI2Stream, setGrabIRImages)(OpenNI2GrabberStream<_PointT> *self, bool flag)
+{
+  self->setGrabIRImages(flag);
+}
+
 PCLIMP(void, OpenNI2Stream, start)(OpenNI2GrabberStream<_PointT> *self)
 {
   self->start();
@@ -39,6 +49,32 @@ PCLIMP(void*, OpenNI2Stream, read)(OpenNI2GrabberStream<_PointT> *self, int time
   if (!cloud)
     return 0;
   return new pcl::PointCloud<_PointT>::Ptr(cloud);
+}
+
+PCLIMP(void, OpenNI2Stream, readImage)(OpenNI2GrabberStream<_PointT> *self, int timeout_milliseconds, THByteTensor* output)
+{
+  pcl::io::Image::ConstPtr ptr = self->readImage(timeout_milliseconds);
+  if (ptr)
+  {
+    unsigned int height = ptr->getHeight(), width = ptr->getWidth();
+    THByteTensor_resize3d(output, height, width, 3);
+    THByteTensor* output_ = THByteTensor_newContiguous(output);
+    ptr->fillRGB(width, height, THByteTensor_data(output_));
+    THByteTensor_freeCopyTo(output_, output);
+  }
+}
+
+PCLIMP(void, OpenNI2Stream, readIRImage)(OpenNI2GrabberStream<_PointT> *self, int timeout_milliseconds, THShortTensor* output)
+{
+  pcl::io::IRImage::ConstPtr ptr = self->readIRImage(timeout_milliseconds);
+  if (ptr)
+  {
+    unsigned int height = ptr->getHeight(), width = ptr->getWidth();
+    THShortTensor_resize2d(output, height, width);
+    THShortTensor* output_ = THShortTensor_newContiguous(output);
+    ptr->fillRaw(width, height, reinterpret_cast<unsigned short*>(THShortTensor_data(output_)));
+    THShortTensor_freeCopyTo(output_, output);
+  }
 }
 
 PCLIMP(void, OpenNI2Stream, getRGBCameraIntrinsics)(OpenNI2GrabberStream<_PointT> *self, OpenNI2CameraParameters& p)
