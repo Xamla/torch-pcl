@@ -308,17 +308,21 @@ double pcl_NormalEstimation_TYPE_KEY_getRadiusSearch(NormalEstimation_TYPE_KEY *
 void pcl_NormalEstimation_TYPE_KEY_compute(NormalEstimation_TYPE_KEY *self, PointCloud_Normal* output);
 void pcl_NormalEstimation_TYPE_KEY_setNumberOfThreads(NormalEstimation_TYPE_KEY *self, unsigned int num_threads);
 
-void* pcl_OpenNI2Stream_TYPE_KEY_new(const char* device_id, int max_backlog);
-void pcl_OpenNI2Stream_TYPE_KEY_delete(void* self);
-void pcl_OpenNI2Stream_TYPE_KEY_start(void* self);
-void pcl_OpenNI2Stream_TYPE_KEY_stop(void* self);
-void* pcl_OpenNI2Stream_TYPE_KEY_read(void* self, int timeout_milliseconds);
-void pcl_OpenNI2Stream_TYPE_KEY_getRGBCameraIntrinsics(void *self, OpenNI2CameraParameters& p);
-void pcl_OpenNI2Stream_TYPE_KEY_setRGBCameraIntrinsics(void *self, const OpenNI2CameraParameters& p);
-void pcl_OpenNI2Stream_TYPE_KEY_getDepthCameraIntrinsics(void *self, OpenNI2CameraParameters& p);
-void pcl_OpenNI2Stream_TYPE_KEY_setDepthCameraIntrinsics(void *self, const OpenNI2CameraParameters& p);
-const char* pcl_OpenNI2Stream_TYPE_KEY_getName(void *self);
-float pcl_OpenNI2Stream_TYPE_KEY_getFramesPerSecond(void *self);
+typedef struct {} OpenNI2Stream_TYPE_KEY;
+OpenNI2Stream_TYPE_KEY* pcl_OpenNI2Stream_TYPE_KEY_new(const char* device_id, int max_backlog, bool grab_RGB, bool grab_Depth, bool grab_IR);
+void pcl_OpenNI2Stream_TYPE_KEY_delete(OpenNI2Stream_TYPE_KEY *self);
+void pcl_OpenNI2Stream_TYPE_KEY_start(OpenNI2Stream_TYPE_KEY *self);
+void pcl_OpenNI2Stream_TYPE_KEY_stop(OpenNI2Stream_TYPE_KEY *self);
+void* pcl_OpenNI2Stream_TYPE_KEY_read(OpenNI2Stream_TYPE_KEY *self, int timeout_milliseconds);
+void pcl_OpenNI2Stream_TYPE_KEY_readRGBImage(OpenNI2Stream_TYPE_KEY *self, int timeout_milliseconds, THByteTensor *output);
+void pcl_OpenNI2Stream_TYPE_KEY_readDepthImage(OpenNI2Stream_TYPE_KEY *self, int timeout_milliseconds, THShortTensor *output);
+void pcl_OpenNI2Stream_TYPE_KEY_readIRImage(OpenNI2Stream_TYPE_KEY *self, int timeout_milliseconds, THShortTensor *output);
+void pcl_OpenNI2Stream_TYPE_KEY_getRGBCameraIntrinsics(OpenNI2Stream_TYPE_KEY *self, OpenNI2CameraParameters& p);
+void pcl_OpenNI2Stream_TYPE_KEY_setRGBCameraIntrinsics(OpenNI2Stream_TYPE_KEY *self, const OpenNI2CameraParameters& p);
+void pcl_OpenNI2Stream_TYPE_KEY_getDepthCameraIntrinsics(OpenNI2Stream_TYPE_KEY *self, OpenNI2CameraParameters& p);
+void pcl_OpenNI2Stream_TYPE_KEY_setDepthCameraIntrinsics(OpenNI2Stream_TYPE_KEY *self, const OpenNI2CameraParameters& p);
+const char* pcl_OpenNI2Stream_TYPE_KEY_getName(OpenNI2Stream_TYPE_KEY *self);
+float pcl_OpenNI2Stream_TYPE_KEY_getFramesPerSecond(OpenNI2Stream_TYPE_KEY *self);
 
 typedef struct {} SIFTKeypoint_TYPE_KEY;
 SIFTKeypoint_TYPE_KEY* pcl_SIFTKeypoint_TYPE_KEY_new();

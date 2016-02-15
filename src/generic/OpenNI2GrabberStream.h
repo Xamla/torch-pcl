@@ -9,43 +9,41 @@ public:
   typedef typename pcl::PointCloud<PointT>::Ptr CloudPointPtr;
   typedef typename pcl::PointCloud<PointT>::ConstPtr CloudPointConstPtr;
 
-  OpenNI2GrabberStream(const std::string& device_id, int max_backlog = 30)
+  OpenNI2GrabberStream(const std::string& device_id, int max_backlog = 30, bool grab_RGB = false, bool grab_Depth = false, bool grab_IR = false)
     : maxBacklog(max_backlog)
     , grabber(device_id)
     , callbackRegistered(false)
-    , grabImages(false)
-    , grabIRImages(false)
+    , grab_RGB(grab_RGB)
+    , grab_Depth(grab_Depth)
+    , grab_IR(grab_IR)
   {
-  }
-
-  void setGrabImages(bool flag)
-  {
-    grabImages = flag;
-  }
-  
-  void setGrabIRImages(bool flag)
-  {
-    grabIRImages = flag;
   }
 
   void start()
   {
     if (!callbackRegistered)
     {
-      if (grabIRImages)
+      if (grab_RGB)
+      {
+        boost::function<void (const boost::shared_ptr<pcl::io::Image>&)> cb =
+          boost::bind (&OpenNI2GrabberStream::grabber_rgb_image_callback, this, _1);
+        grabber.registerCallback(cb);
+      }
+      
+      if (grab_Depth)
+      {
+        boost::function<void (const boost::shared_ptr<pcl::io::DepthImage>&)> cb =
+          boost::bind (&OpenNI2GrabberStream::grabber_depth_image_callback, this, _1);
+        grabber.registerCallback(cb);
+      }
+      
+      if (grab_IR)
       {
         boost::function<void (const boost::shared_ptr<pcl::io::IRImage>&)> cb =
           boost::bind (&OpenNI2GrabberStream::grabber_ir_image_callback, this, _1);
         grabber.registerCallback(cb);
       }
-      
-      if (grabImages)
-      {
-        boost::function<void (const boost::shared_ptr<pcl::io::Image>&)> cb =
-          boost::bind (&OpenNI2GrabberStream::grabber_image_callback, this, _1);
-        grabber.registerCallback(cb);
-      }
-      
+
       boost::function<void (const CloudPointConstPtr&)> cb =
         boost::bind (&OpenNI2GrabberStream::grabber_callback, this, _1);
       grabber.registerCallback(cb);
@@ -72,28 +70,36 @@ public:
   void clear()
   {
     boost::unique_lock<boost::mutex> lock(queueLock);
-    queue.clear();
+    cloud_Queue.clear();
+    rgb_Queue.clear();
+    depth_Queue.clear();
+    ir_Queue.clear();
   }
   
   size_t getCount()
   {
     boost::unique_lock<boost::mutex> lock(queueLock);
-    return queue.size();
+    return cloud_Queue.size();
   }
   
   CloudPointPtr read(int timeout_milliseconds)
   {
-    return readFromQueue(queue, framesAvailable, timeout_milliseconds);
+    return readFromQueue(cloud_Queue, framesAvailable, timeout_milliseconds);
   }
   
-  pcl::io::Image::Ptr readImage(int timeout_milliseconds)
+  pcl::io::Image::Ptr readRGBImage(int timeout_milliseconds)
   {
-    return readFromQueue(image_queue, imagesAvailable, timeout_milliseconds);
+    return readFromQueue(rgb_Queue, rgb_ImagesAvailable, timeout_milliseconds);
+  }
+  
+  pcl::io::DepthImage::Ptr readDepthImage(int timeout_milliseconds)
+  {
+    return readFromQueue(depth_Queue, depth_ImagesAvailable, timeout_milliseconds);
   }
   
   pcl::io::IRImage::Ptr readIRImage(int timeout_milliseconds)
   {
-    return readFromQueue(irimage_queue, irimagesAvailable, timeout_milliseconds);
+    return readFromQueue(ir_Queue, ir_ImagesAvailable, timeout_milliseconds);
   }
   
   pcl::io::OpenNI2Grabber& getGrabber()
@@ -103,19 +109,22 @@ public:
   
 private:
   int maxBacklog;
-  std::deque<CloudPointPtr> queue;
-  std::deque<pcl::io::Image::Ptr> image_queue;
-  std::deque<pcl::io::IRImage::Ptr> irimage_queue;
+  std::deque<CloudPointPtr> cloud_Queue;
+  std::deque<pcl::io::Image::Ptr> rgb_Queue;
+  std::deque<pcl::io::DepthImage::Ptr> depth_Queue;
+  std::deque<pcl::io::IRImage::Ptr> ir_Queue;
   
   boost::mutex queueLock;
   boost::condition_variable framesAvailable;
-  boost::condition_variable imagesAvailable;
-  boost::condition_variable irimagesAvailable;
+  boost::condition_variable rgb_ImagesAvailable;
+  boost::condition_variable ir_ImagesAvailable;
+  boost::condition_variable depth_ImagesAvailable;
   
   pcl::io::OpenNI2Grabber grabber;
   bool callbackRegistered;
-  bool grabImages;
-  bool grabIRImages;
+  bool grab_RGB;
+  bool grab_Depth;
+  bool grab_IR;
   
   template<typename T>
   T readFromQueue(std::deque<T>& queue, boost::condition_variable& condition, int timeout_milliseconds)
@@ -144,27 +153,36 @@ private:
   void grabber_callback(const CloudPointConstPtr &cloud)
   {
     boost::unique_lock<boost::mutex> lock(queueLock);
-    if (maxBacklog >= 0 && queue.size() > maxBacklog)
-      queue.pop_front();
-    queue.push_back(cloud->makeShared());
+    if (maxBacklog >= 0 && cloud_Queue.size() > maxBacklog)
+      cloud_Queue.pop_front();
+    cloud_Queue.push_back(cloud->makeShared());
     framesAvailable.notify_one();
   }
   
-  void grabber_image_callback(const boost::shared_ptr<pcl::io::Image> &image)
+  void grabber_rgb_image_callback(const boost::shared_ptr<pcl::io::Image> &image)
   {
     boost::unique_lock<boost::mutex> lock(queueLock);
-    if (maxBacklog >= 0 && image_queue.size() > maxBacklog)
-      image_queue.pop_front();
-    image_queue.push_back(image);
-    imagesAvailable.notify_one();
+    if (maxBacklog >= 0 && rgb_Queue.size() > maxBacklog)
+      rgb_Queue.pop_front();
+    rgb_Queue.push_back(image);
+    rgb_ImagesAvailable.notify_one();
+  }
+  
+  void grabber_depth_image_callback(const boost::shared_ptr<pcl::io::DepthImage> &image)
+  {
+      boost::unique_lock<boost::mutex> lock(queueLock);
+    if (maxBacklog >= 0 && depth_Queue.size() > maxBacklog)
+      depth_Queue.pop_front();
+    depth_Queue.push_back(image);
+    depth_ImagesAvailable.notify_one();
   }
   
   void grabber_ir_image_callback(const boost::shared_ptr<pcl::io::IRImage> &irimage)
   {
     boost::unique_lock<boost::mutex> lock(queueLock);
-    if (maxBacklog >= 0 && irimage_queue.size() > maxBacklog)
-      irimage_queue.pop_front();
-    irimage_queue.push_back(irimage);
-    irimagesAvailable.notify_one();
+    if (maxBacklog >= 0 && ir_Queue.size() > maxBacklog)
+      ir_Queue.pop_front();
+    ir_Queue.push_back(irimage);
+    ir_ImagesAvailable.notify_one();
   }
 };

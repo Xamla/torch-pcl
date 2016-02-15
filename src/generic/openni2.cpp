@@ -4,15 +4,15 @@
 #include "../openni2.h"
 #include "OpenNI2GrabberStream.h"
 
-PCLIMP(void*, OpenNI2Stream, new)(const char* device_id, int max_backlog)
+PCLIMP(void*, OpenNI2Stream, new)(const char* device_id, int max_backlog, bool grab_RGB = false, bool grab_Depth = false, bool grab_IR = false)
 {
   try
   {
-    return new OpenNI2GrabberStream<_PointT>(device_id, max_backlog);
+    return new OpenNI2GrabberStream<_PointT>(device_id, max_backlog, grab_RGB, grab_Depth, grab_IR);
   }
   catch (const std::exception& ex)
   {
-    // ## temporary debug output
+    // ## temporary debug output, remove as soon as C++ exception translation method is implemented
     std::cout << ex.what() << std::endl;
     throw;
   }
@@ -23,19 +23,18 @@ PCLIMP(void, OpenNI2Stream, delete)(OpenNI2GrabberStream<_PointT> *self)
   delete self;
 }
 
-PCLIMP(void, OpenNI2Stream, setGrabImages)(OpenNI2GrabberStream<_PointT> *self, bool flag)
-{
-  self->setGrabImages(flag);
-}
-
-PCLIMP(void, OpenNI2Stream, setGrabIRImages)(OpenNI2GrabberStream<_PointT> *self, bool flag)
-{
-  self->setGrabIRImages(flag);
-}
-
 PCLIMP(void, OpenNI2Stream, start)(OpenNI2GrabberStream<_PointT> *self)
 {
-  self->start();
+  try
+  {
+    self->start();
+  }
+  catch (const std::exception& ex)
+  {
+    // ## temporary debug output, remove as soon as C++ exception translation method is implemented
+    std::cout << ex.what() << std::endl;
+    throw;
+  }
 }
 
 PCLIMP(void, OpenNI2Stream, stop)(OpenNI2GrabberStream<_PointT> *self)
@@ -51,9 +50,9 @@ PCLIMP(void*, OpenNI2Stream, read)(OpenNI2GrabberStream<_PointT> *self, int time
   return new pcl::PointCloud<_PointT>::Ptr(cloud);
 }
 
-PCLIMP(void, OpenNI2Stream, readImage)(OpenNI2GrabberStream<_PointT> *self, int timeout_milliseconds, THByteTensor* output)
+PCLIMP(void, OpenNI2Stream, readRGBImage)(OpenNI2GrabberStream<_PointT> *self, int timeout_milliseconds, THByteTensor* output)
 {
-  pcl::io::Image::ConstPtr ptr = self->readImage(timeout_milliseconds);
+  pcl::io::Image::ConstPtr ptr = self->readRGBImage(timeout_milliseconds);
   if (ptr)
   {
     unsigned int height = ptr->getHeight(), width = ptr->getWidth();
@@ -64,13 +63,26 @@ PCLIMP(void, OpenNI2Stream, readImage)(OpenNI2GrabberStream<_PointT> *self, int 
   }
 }
 
+PCLIMP(void, OpenNI2Stream, readDepthImage)(OpenNI2GrabberStream<_PointT> *self, int timeout_milliseconds, THShortTensor* output)
+{
+  pcl::io::DepthImage::ConstPtr ptr = self->readDepthImage(timeout_milliseconds);
+  if (ptr)
+  {
+    unsigned int height = ptr->getHeight(), width = ptr->getWidth();
+    THShortTensor_resize3d(output, height, width, 1);
+    THShortTensor* output_ = THShortTensor_newContiguous(output);
+    ptr->fillDepthImageRaw(width, height, reinterpret_cast<unsigned short*>(THShortTensor_data(output_)));
+    THShortTensor_freeCopyTo(output_, output);
+  }
+}
+
 PCLIMP(void, OpenNI2Stream, readIRImage)(OpenNI2GrabberStream<_PointT> *self, int timeout_milliseconds, THShortTensor* output)
 {
   pcl::io::IRImage::ConstPtr ptr = self->readIRImage(timeout_milliseconds);
   if (ptr)
   {
     unsigned int height = ptr->getHeight(), width = ptr->getWidth();
-    THShortTensor_resize2d(output, height, width);
+    THShortTensor_resize3d(output, height, width, 1);
     THShortTensor* output_ = THShortTensor_newContiguous(output);
     ptr->fillRaw(width, height, reinterpret_cast<unsigned short*>(THShortTensor_data(output_)));
     THShortTensor_freeCopyTo(output_, output);
