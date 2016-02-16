@@ -32,7 +32,6 @@ end
 function RunBase()
   local edge = pcl.OrganizedEdgeBase()
   edge:setEdgeType(bit.bor(pcl.EDGELABEL.OCCLUDING))
-  edge:setEdgeType(bit.bor(pcl.EDGELABEL.OCCLUDING))
   edge:setDepthDisconThreshold(0.03)
 
   while not v:wasStopped() do

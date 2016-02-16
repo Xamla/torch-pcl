@@ -346,12 +346,14 @@ function PointCloud:apply(func)
   local pt = self.pointType()
   local point_size = ffi.sizeof(pt)
   local stride =  point_size / #pt
+  local j=1
   for i=0,count-1,stride do
     ffi.copy(pt, data + i, point_size)
-    local r = func(pt, i+1)   -- pass point and index to function
+    local r = func(pt, j)   -- pass point and index to function
     if r then
       ffi.copy(data + i, r, point_size)
     end
+    j = j + 1
   end
 end
 
