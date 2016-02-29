@@ -131,6 +131,12 @@ PCLIMP(bool, PCLVisualizer, removeText3D)(PCLVisualizer_ptr *self, const char *i
   return (*self)->removeText3D(id, viewport);
 }
 
+PCLIMP(bool, PCLVisualizer, contains)(PCLVisualizer_ptr *self, const char *id)
+{
+  return (*self)->contains(id);
+}
+
+
 PCLIMP(void, PCLVisualizer, initCameraParameters)(PCLVisualizer_ptr *self)
 {
   (*self)->initCameraParameters();

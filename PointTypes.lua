@@ -538,6 +538,7 @@ bool pcl_PCLVisualizer_addText1(PCLVisualizer *self, const char *text, int xpos,
 bool pcl_PCLVisualizer_addText2(PCLVisualizer *self, const char *text, int xpos, int ypos, double r, double g, double b, const char *id, int viewport);
 bool pcl_PCLVisualizer_addText3(PCLVisualizer *self, const char *text, int xpos, int ypos, int fontsize, double r, double g, double b, const char *id, int viewport);
 bool pcl_PCLVisualizer_removeText3D(PCLVisualizer *self, const char *id, int viewport);
+bool pcl_PCLVisualizer_contains(PCLVisualizer *self, const char *id);
 void pcl_PCLVisualizer_initCameraParameters(PCLVisualizer *self);
 bool pcl_PCLVisualizer_setPointCloudRenderingProperties1(PCLVisualizer *self, int property, double value, const char *id, int viewport);
 bool pcl_PCLVisualizer_setPointCloudRenderingProperties3(PCLVisualizer *self, int property, double val1, double val2, double val3, const char *id, int viewport);

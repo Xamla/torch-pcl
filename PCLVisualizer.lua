@@ -37,6 +37,7 @@ local function init()
     'addText2',
     'addText3',
     'removeText3D',
+    'contains',
     'initCameraParameters',
     'setPointCloudRenderingProperties1',
     'setPointCloudRenderingProperties3',
@@ -223,6 +224,10 @@ end
 
 function PCLVisualizer:removeText3D(id, viewport)
   return self.f.removeText3D(self.o, id or 'text', viewport or 0)
+end
+
+function PCLVisualizer:contains(id)
+  return self.f.contains(self.o, id)
 end
 
 function PCLVisualizer:initCameraParameters()
