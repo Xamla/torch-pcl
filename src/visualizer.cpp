@@ -86,14 +86,29 @@ PCLIMP(bool, PCLVisualizer, removeAllPointClouds)(PCLVisualizer_ptr *self, int v
   return (*self)->removeAllPointClouds(viewport);
 }
 
+PCLIMP(bool, PCLVisualizer, removePointCloud)(PCLVisualizer_ptr *self, const char *id = "cloud", int viewport = 0)
+{
+  return (*self)->removePointCloud(id, viewport);
+}
+
 PCLIMP(bool, PCLVisualizer, removeAllShapes)(PCLVisualizer_ptr *self, int viewport = 0)
 {
   return (*self)->removeAllShapes(viewport);
 }
 
+PCLIMP(bool, PCLVisualizer, removeShape)(PCLVisualizer_ptr *self, const char *id = "cloud", int viewport = 0)
+{
+  return (*self)->removeShape(id, viewport);
+}
+
 PCLIMP(bool, PCLVisualizer, removeAllCoordinateSystems)(PCLVisualizer_ptr *self, int viewport = 0)
 {
   return (*self)->removeAllCoordinateSystems(viewport);
+}
+
+PCLIMP(bool, PCLVisualizer, removeCoordinateSystem)(PCLVisualizer_ptr *self, const char *id = "reference", int viewport = 0)
+{
+  return (*self)->removeCoordinateSystem(id, viewport);
 }
 
 PCLIMP(bool, PCLVisualizer, addText1)(PCLVisualizer_ptr *self, const char *text, int xpos, int ypos, const char *id = "", int viewport = 0)

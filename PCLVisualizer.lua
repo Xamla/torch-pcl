@@ -28,8 +28,11 @@ local function init()
     'updatePointCloudPose',
     'updateShapePose',
     'removeAllPointClouds',
+    'removePointCloud',
     'removeAllShapes',
+    'removeShape',
     'removeAllCoordinateSystems',
+    'removeCoordinateSystem',
     'addText1',
     'addText2',
     'addText3',
@@ -186,12 +189,24 @@ function PCLVisualizer:removeAllPointClouds(viewport)
   return self.f.removeAllPointClouds(self.o, viewport or 0)
 end
 
+function PCLVisualizer:removePointCloud(id, viewport)
+  return self.f.removePointCloud(self.o, id or 'cloud', viewport or 0)
+end
+
 function PCLVisualizer:removeAllShapes(viewport)
   return self.f.removeAllShapes(self.o, viewport or 0)
 end
 
+function PCLVisualizer:removeShape(id, viewport)
+  return self.f.removeShape(self.o, id or 'cloud', viewport or 0)
+end
+
 function PCLVisualizer:removeAllCoordinateSystems(viewport)
   return self.f.removeAllCoordinateSystems(self.o, viewport or 0)
+end
+
+function PCLVisualizer:removeCoordinateSystem(id, viewport)
+  return self.f.removeCoordinateSystem(self.o, id or "reference", viewport or 0)
 end
 
 function PCLVisualizer:addText1(text, xpos, ypos, id, viewport)

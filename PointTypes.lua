@@ -529,8 +529,11 @@ void pcl_PCLVisualizer_setBackgroundColor(PCLVisualizer *self, double r, double 
 bool pcl_PCLVisualizer_updatePointCloudPose(PCLVisualizer *self, const char *id, THFloatTensor *transform);
 bool pcl_PCLVisualizer_updateShapePose(PCLVisualizer *self, const char *id, THFloatTensor *transform);
 bool pcl_PCLVisualizer_removeAllPointClouds(PCLVisualizer *self, int viewport);
+bool pcl_PCLVisualizer_removePointCloud(PCLVisualizer *self, const char *id, int viewport);
 bool pcl_PCLVisualizer_removeAllShapes(PCLVisualizer *self, int viewport);
+bool pcl_PCLVisualizer_removeShape(PCLVisualizer *self, const char *id, int viewport);
 bool pcl_PCLVisualizer_removeAllCoordinateSystems(PCLVisualizer *self, int viewport);
+bool pcl_PCLVisualizer_removeCoordinateSystem(PCLVisualizer *self, const char *id, int viewport);
 bool pcl_PCLVisualizer_addText1(PCLVisualizer *self, const char *text, int xpos, int ypos, const char *id, int viewport);
 bool pcl_PCLVisualizer_addText2(PCLVisualizer *self, const char *text, int xpos, int ypos, double r, double g, double b, const char *id, int viewport);
 bool pcl_PCLVisualizer_addText3(PCLVisualizer *self, const char *text, int xpos, int ypos, int fontsize, double r, double g, double b, const char *id, int viewport);
