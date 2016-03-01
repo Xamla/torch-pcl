@@ -20,10 +20,10 @@ end
 function TestBasics:testPointTypeString()
   local c1 = pcl.PointCloud('xyz')
   local c2 = pcl.PointCloud('xYZi')
-  local c3 = pcl.PointCloud('PointXYZRGB')
+  local c3 = pcl.PointCloud('PointXYZRGBA')
   luaunit.assertEquals(c1.pointType, pcl.PointXYZ)
   luaunit.assertEquals(c2.pointType, pcl.PointXYZI)
-  luaunit.assertEquals(c3.pointType, pcl.PointXYZRGB)
+  luaunit.assertEquals(c3.pointType, pcl.PointXYZRGBA)
   luaunit.assertNotEquals(c3.pointType, pcl.PointXYZ)
 end
 
@@ -35,7 +35,7 @@ function TestBasics:testPointType()
   luaunit.assertEquals(y, pcl.PointXYZ(99,99,99))
   luaunit.assertNotEquals(y, pcl.PointXYZ(99,99,98))
   
-  local z = pcl.PointXYZRGB(1,2,3,0xaabbccdd)
+  local z = pcl.PointXYZRGBA(1,2,3,0xaabbccdd)
   luaunit.assertEquals(z.rgba, 0xaabbccdd)
   luaunit.assertEquals(z.a, 0xaa)
   
@@ -45,7 +45,7 @@ function TestBasics:testPointType()
   -- smaller point to the right
   luaunit.assertTrue(pcl.PointXYZI(1,2,3,4) == pcl.PointXYZ(1,2,3))
   luaunit.assertFalse(pcl.PointXYZI(1,2,3,4) == pcl.PointXYZ(1,2,4))
-  luaunit.assertTrue(pcl.PointXYZRGB(1,2,3) == pcl.PointXYZ(1,2,3))
+  luaunit.assertTrue(pcl.PointXYZRGBA(1,2,3) == pcl.PointXYZ(1,2,3))
 end
 
 function TestBasics:testPushInsertErase()
@@ -152,6 +152,37 @@ function TestBasics:testIncrementalICPNL()
   icpnl:setEuclideanFitnessEpsilon(0.001)
   
   incrementalRegistrationTest(icpnl)
+end
+
+function TestBasics:testICPNLWithNormals()
+  local icp = pcl.ICPNL(pcl.PointNormal)
+  icp:setMaximumIterations(100)
+  icp:setEuclideanFitnessEpsilon(0.000001)
+
+  -- generate 2x 500 random points on plane
+  local g = pcl.primitive.plane(1,0,0, 0,0,1, 500, 0.01)
+  local h = pcl.primitive.plane(1,0,0, 0,0,1, 500, 0.01)
+  h:transform(pcl.affine.translate(-0.5,-0.75,-0.5))
+
+  local ne = pcl.NormalEstimation()
+  ne:setRadiusSearch(0.1)
+
+  -- estimate normals for h
+  ne:setInputCloud(g)
+  local gn = ne:compute()
+  g = g:addNormals(gn)
+
+  -- estimate normals for g
+  ne:setInputCloud(h)
+  local hn = ne:compute()
+  h = h:addNormals(hn)
+
+  icp:setInputSource(g)
+  icp:setInputTarget(h)
+
+  icp:align()
+  local finalTransformation = icp:getFinalTransformation()
+  luaunit.assertAlmostEquals(finalTransformation[{2,4}], -0.75, 0.05)
 end
 
 function TestBasics:testFilterDefaultValues()

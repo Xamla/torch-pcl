@@ -1,17 +1,74 @@
 #include <pcl/point_cloud.h>
 #include <pcl/registration/icp_nl.h>
+#include <pcl/registration/transformation_estimation_point_to_plane.h>
 #include <pcl/registration/correspondence_rejection_distance.h>
 #include <pcl/registration/correspondence_rejection_surface_normal.h>
 #include <pcl/registration/correspondence_rejection_sample_consensus.h>
 #include <pcl/registration/correspondence_rejection_one_to_one.h>
 #include <pcl/registration/correspondence_rejection_trimmed.h>
 
-#define ICPNL_ptr pcl::IterativeClosestPointNonLinear<_PointT, _PointT>::Ptr
+namespace xamla
+{
+
+// Redefine pcl:IterativeClosestPointNonLinear in xamla namespace:
+// The original pcl version makes the member transformation_estimation_ private but
+// IterativeClosestPointNonLinearPointToPlane should inherit from IterativeClosestPointNonLinear
+// in order to get point-compatibility.
+// Point-to-plane distance is used whenever normals are present in this torch-pcl.
+template <typename PointSource, typename PointTarget, typename Scalar = float>
+class IterativeClosestPointNonLinear :
+  public pcl::IterativeClosestPoint<PointSource, PointTarget, Scalar> {
+protected:
+  using pcl::IterativeClosestPoint<PointSource, PointTarget, Scalar>::min_number_correspondences_;
+  using pcl::IterativeClosestPoint<PointSource, PointTarget, Scalar>::reg_name_;
+  using pcl::IterativeClosestPoint<PointSource, PointTarget, Scalar>::transformation_estimation_;
+  using pcl::IterativeClosestPoint<PointSource, PointTarget, Scalar>::computeTransformation;
+
+public:
+  typedef boost::shared_ptr<IterativeClosestPointNonLinear<PointSource, PointTarget, Scalar> > Ptr;
+  typedef boost::shared_ptr<const IterativeClosestPointNonLinear<PointSource, PointTarget, Scalar> > ConstPtr;
+
+  typedef typename pcl::Registration<PointSource, PointTarget, Scalar>::Matrix4 Matrix4;
+
+  IterativeClosestPointNonLinear() {
+    min_number_correspondences_ = 4;
+    reg_name_ = "IterativeClosestPointNonLinear";
+    transformation_estimation_.reset(new pcl::registration::TransformationEstimationLM<PointSource, PointTarget, Scalar>);
+  }
+};
+
+template <typename PointSource, typename PointTarget, typename Scalar = float>
+class IterativeClosestPointNonLinearPointToPlane :
+  public IterativeClosestPointNonLinear<PointSource, PointTarget, Scalar> {
+protected:
+  using IterativeClosestPointNonLinear<PointSource, PointTarget, Scalar>::reg_name_;
+  using IterativeClosestPointNonLinear<PointSource, PointTarget, Scalar>::transformation_estimation_;
+  using IterativeClosestPointNonLinear<PointSource, PointTarget, Scalar>::computeTransformation;
+
+public:
+  typedef boost::shared_ptr<IterativeClosestPointNonLinearPointToPlane<PointSource, PointTarget, Scalar> > Ptr;
+  typedef boost::shared_ptr<const IterativeClosestPointNonLinearPointToPlane<PointSource, PointTarget, Scalar> > ConstPtr;
+
+  typedef typename pcl::Registration<PointSource, PointTarget, Scalar>::Matrix4 Matrix4;
+
+  IterativeClosestPointNonLinearPointToPlane() {
+    reg_name_ = "IterativeClosestPointNonLinearPointToPlane";
+    transformation_estimation_.reset(new pcl::registration::TransformationEstimationPointToPlane<PointSource, PointTarget, Scalar>());
+  }
+};
+
+}
+
+#define ICPNL_ptr xamla::IterativeClosestPointNonLinear<_PointT, _PointT>::Ptr
 #define PointCloud_ptr pcl::PointCloud<_PointT>::Ptr
 
 PCLIMP(void*, ICPNL, new)()
 {
-  return new ICPNL_ptr(new pcl::IterativeClosestPointNonLinear<_PointT, _PointT>());
+#ifdef _PointT_HAS_NORMALS
+  return new ICPNL_ptr(new xamla::IterativeClosestPointNonLinearPointToPlane<_PointT, _PointT>);
+#else
+  return new ICPNL_ptr(new xamla::IterativeClosestPointNonLinear<_PointT, _PointT>);
+#endif
 }
 
 PCLIMP(void, ICPNL, delete)(ICPNL_ptr *self)
