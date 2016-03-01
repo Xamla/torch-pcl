@@ -4,7 +4,7 @@ local utils = require 'pcl.utils'
 local pcl = require 'pcl.PointTypes'
 
 local SACSegmentation = torch.class('pcl.SACSegmentation', pcl)
-local SACSegmentationFromNormals, SACSegmentation = torch.class('pcl.SACSegmentationFromNormals', 'pcl.SACSegmentation', pcl)
+local SACSegmentationFromNormals = torch.class('pcl.SACSegmentationFromNormals', 'pcl.SACSegmentation', pcl)
 
 local SACSegmentation_func_by_type = {}
 local SACSegmentationFromNormals_func_by_type = {}
