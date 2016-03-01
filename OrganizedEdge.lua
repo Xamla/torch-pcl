@@ -4,7 +4,7 @@ local utils = require 'pcl.utils'
 local pcl = require 'pcl.PointTypes'
 
 local OrganizedEdgeBase = torch.class('pcl.OrganizedEdgeBase', pcl)
-local OrganizedEdgeFromNormals, SACSegmentation = torch.class('pcl.OrganizedEdgeFromNormals', 'pcl.OrganizedEdgeBase', pcl)
+local OrganizedEdgeFromNormals = torch.class('pcl.OrganizedEdgeFromNormals', 'pcl.OrganizedEdgeBase', pcl)
 
 local OrganizedEdgeBase_func_by_type = {}
 local OrganizedEdgeFromNormals_func_by_type = {}
