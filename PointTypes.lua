@@ -468,6 +468,26 @@ void pcl_SACSegmentationFromNormals_TYPE_KEY_setMinMaxOpeningAngle(SACSegmentati
 void pcl_SACSegmentationFromNormals_TYPE_KEY_setDistanceFromOrigin(SACSegmentationFromNormals_TYPE_KEY *self, double d);
 ]]
 
+local pcl_EuclideanClusterExtraction_declaration = [[
+typedef struct {} EuclideanClusterExtractionHandle_TYPE_KEY;
+typedef struct {} EuclideanClusterExtraction_TYPE_KEY;
+
+EuclideanClusterExtractionHandle_TYPE_KEY *pcl_EuclideanClusterExtraction_TYPE_KEY_new();
+void pcl_EuclideanClusterExtraction_TYPE_KEY_delete(EuclideanClusterExtractionHandle_TYPE_KEY *handle);
+EuclideanClusterExtraction_TYPE_KEY *pcl_EuclideanClusterExtraction_TYPE_KEY_EuclideanClusterExtraction_ptr(EuclideanClusterExtractionHandle_TYPE_KEY *handle);
+void pcl_EuclideanClusterExtraction_TYPE_KEY_setInputCloud(EuclideanClusterExtraction_TYPE_KEY *self, PointCloud_TYPE_KEY *cloud);
+void pcl_EuclideanClusterExtraction_TYPE_KEY_setIndices(EuclideanClusterExtraction_TYPE_KEY *self, Indices *indices);
+void pcl_EuclideanClusterExtraction_TYPE_KEY_setSearchMethod_Octree(EuclideanClusterExtraction_TYPE_KEY *self, OctreePointCloudSearch_TYPE_KEY *octree);
+void pcl_EuclideanClusterExtraction_TYPE_KEY_setSearchMethod_KdTree(EuclideanClusterExtraction_TYPE_KEY *self, KdTreeFLANN_TYPE_KEY *kdtree);
+void pcl_EuclideanClusterExtraction_TYPE_KEY_setClusterTolerance(EuclideanClusterExtraction_TYPE_KEY *self, double tolerance);
+double pcl_EuclideanClusterExtraction_TYPE_KEY_getClusterTolerance(EuclideanClusterExtraction_TYPE_KEY *self);
+void pcl_EuclideanClusterExtraction_TYPE_KEY_setMinClusterSize(EuclideanClusterExtraction_TYPE_KEY *self, int min_cluster_size);
+int pcl_EuclideanClusterExtraction_TYPE_KEY_getMinClusterSize(EuclideanClusterExtraction_TYPE_KEY *self);
+void pcl_EuclideanClusterExtraction_TYPE_KEY_setMaxClusterSize(EuclideanClusterExtraction_TYPE_KEY *self, int max_cluster_size);
+int pcl_EuclideanClusterExtraction_TYPE_KEY_getMaxClusterSize(EuclideanClusterExtraction_TYPE_KEY *self);
+void pcl_EuclideanClusterExtraction_TYPE_KEY_extract(EuclideanClusterExtraction_TYPE_KEY *self, IndicesVector *clusters);
+]]
+
 local pcl_OrganizedEdge_declaration = [[
 typedef struct {} OrganizedEdgeBaseHandle_TYPE_KEY;
 typedef struct {} OrganizedEdgeBase_TYPE_KEY;
@@ -612,6 +632,7 @@ local declarations = {
     pcl_SampleConsensusPrerejective_declaration,
     pcl_BoundaryEstimation_declaration,
     pcl_SACSegmentation_declaration,
+    pcl_EuclideanClusterExtraction_declaration,
     pcl_PCLVisualizer_template_declaration,
     pcl_OrganizedEdge_declaration,
     pcl_IntegralImageNormalEstimation_declaration

@@ -47,6 +47,7 @@
       <File Name="src/generic/visualizer.cpp"/>
       <File Name="src/generic/organized_edge_detection.cpp"/>
       <File Name="src/generic/integral_image_normal.cpp"/>
+      <File Name="src/generic/euclidean_cluster_extraction.cpp"/>
     </VirtualDirectory>
     <File Name="src/PointCloud2.cpp"/>
     <File Name="src/xyz.cpp"/>
@@ -108,6 +109,7 @@
     <File Name="IndicesVector.lua"/>
     <File Name="OrganizedEdge.lua"/>
     <File Name="IntegralImageNormalEstimation.lua"/>
+    <File Name="EuclideanClusterExtraction.lua"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
     <File Name="test/test_readPointCloudData.lua"/>

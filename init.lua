@@ -29,6 +29,7 @@ require 'pcl.BoundaryEstimation'
 require 'pcl.OrganizedEdge'
 require 'pcl.VFHEstimation'
 require 'pcl.SACSegmentation'
+require 'pcl.EuclideanClusterExtraction'
 require 'pcl.PCLVisualizer'
 
 function pcl.rand(width, height, pointType)
