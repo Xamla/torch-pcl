@@ -333,26 +333,26 @@ function TestBasics:testIndices()
   for i=1,100 do
     idx:push_back(i)
   end
-  luaunit.assertEquals(idx:size(), 100)
-  luaunit.assertEquals(#idx, 100)
+  luaunit.assertEquals(100, idx:size())
+  luaunit.assertEquals(100, #idx)
   idx:erase(1,51)
-  luaunit.assertEquals(#idx, 50)
-  luaunit.assertEquals(idx[1], 51)
+  luaunit.assertEquals(50, #idx)
+  luaunit.assertEquals(51, idx[1])
   
   local t = idx:viewAsTensor()
   for i=51,100 do
-    luaunit.assertEquals(t[i-50], i-1)
+    luaunit.assertEquals(i-1, t[i-50])
   end
   
   local idx2 = pcl.Indices({5,7,9})
-  luaunit.assertEquals(#idx2, 3)
-  luaunit.assertEquals(idx2[1], 5)
-  luaunit.assertEquals(idx2[2], 7)
-  luaunit.assertEquals(idx2[3], 9)
+  luaunit.assertEquals(3, #idx2)
+  luaunit.assertEquals(5, idx2[1])
+  luaunit.assertEquals(7, idx2[2])
+  luaunit.assertEquals(9, idx2[3])
   
   idx2:append(idx)
-  luaunit.assertEquals(#idx2, 53)
-  luaunit.assertEquals(idx2[53], 100)
+  luaunit.assertEquals(53, #idx2)
+  luaunit.assertEquals(100, idx2[53])
 end
 
 function TestBasics:testCopyPointCloud()
@@ -365,14 +365,37 @@ function TestBasics:testCopyPointCloud()
   end
   local b = pcl.PointCloud('xyzrgba', 10)
   a:copy(b)
-  luaunit.assertEquals(b:size(), 20)
-  luaunit.assertEquals(a.pointType, pcl.PointXYZI)
-  luaunit.assertEquals(b.pointType, pcl.PointXYZRGBA)
+  luaunit.assertEquals(20, b:size())
+  luaunit.assertEquals(pcl.PointXYZI, a.pointType)
+  luaunit.assertEquals(pcl.PointXYZRGBA, b.pointType)
   for i=1,10 do
-    luaunit.assertEquals(b[i].x, i*1)
-    luaunit.assertEquals(b[i].y, i*2)
-    luaunit.assertEquals(b[i].z, i*3)
+    luaunit.assertEquals(i*1, b[i].x)
+    luaunit.assertEquals(i*2, b[i].y)
+    luaunit.assertEquals(i*3, b[i].z)
   end
+end
+
+function TestBasics:testEuclideanClusterExtraction()
+  local c = pcl.PointCloud('xyz')
+
+  for i=1,5 do
+    local d = pcl.rand(50):transform(pcl.affine.translate(i*10,0,0))
+    c:add(d)
+  end
+
+  local x = pcl.EuclideanClusterExtraction(c.pointType)
+
+  x:setInputCloud(c)
+  x:setClusterTolerance(2)
+
+  local clusters = x:extract()
+
+  luaunit.assertEquals(5, clusters:size())
+  for i=1,#clusters do
+    local y = clusters[i]
+    luaunit.assertEquals(50, y:size())
+  end
+
 end
 
 os.exit( luaunit.LuaUnit.run() )
