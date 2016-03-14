@@ -79,7 +79,7 @@ end
 function filter.extractIndices(input, indices, output, negative, removed_indices)
   local f = check_input_type(input)
   output = output or pcl.PointCloud(input.pointType)
-  f.extractIndices(input:cdata(), indices:cdata(), output, negative or false, cdata(removed_indices))
+  f.extractIndices(input:cdata(), indices:cdata(), output:cdata(), negative or false, cdata(removed_indices))
   return output
 end
 
