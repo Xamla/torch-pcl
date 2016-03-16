@@ -32,18 +32,19 @@ PCLIMP(void, PCA, setIndices)(PCA_ptr *self, Indices_ptr *indices)
 PCLIMP(void, PCA, getMean)(PCA_ptr *self, THFloatTensor* output)
 {
   Eigen::Vector4f& mean = (*self)->getMean();
-  viewMatrix(mean, output);
+  copyMatrix(mean, output);
 }
 
 PCLIMP(void, PCA, getEigenVectors)(PCA_ptr *self, THFloatTensor* output)
 {
   Eigen::Matrix3f& eigenVectors = (*self)->getEigenVectors();
-  viewMatrix(eigenVectors, output);}
+  copyMatrix(eigenVectors, output);
+}
 
 PCLIMP(void, PCA, getEigenValues)(PCA_ptr *self, THFloatTensor* output)
 {
   Eigen::Vector3f& eigenValues = (*self)->getEigenValues();
-  viewMatrix(eigenValues, output);
+  copyMatrix(eigenValues, output);
 }
 
 PCLIMP(void, PCA, getCoefficients)(PCA_ptr *self, THFloatTensor* output)

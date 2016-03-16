@@ -52,7 +52,7 @@ function IncrementalRegistration:reset()
 end
 
 function IncrementalRegistration:registerCloud(cloud, delta_estimate)
-  return self.f.registerCloud(self.o, cloud:cdata(), delta_estimate)
+  return self.f.registerCloud(self.o, cloud:cdata(), utils.cdata(delta_estimate))
 end
 
 function IncrementalRegistration:getDeltaTransform()
