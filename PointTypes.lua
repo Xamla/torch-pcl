@@ -675,9 +675,9 @@ local function add_additional_point_cloud_types()
 end
 add_additional_point_cloud_types()
 
-local specialized_declarations = 
+local specialized_declarations =
 [[
-void pcl_PointCloud_XYZRGBA_readRGBAfloat_readRGBAfloat(void *cloud, struct THFloatTensor *output);
+void pcl_PointCloud_XYZRGBA_readRGBAfloat(void *cloud, struct THFloatTensor *output);
 void pcl_PointCloud_XYZRGBA_readRGBAbyte(void *cloud, struct THByteTensor *output);
 
 void pcl_PointCloud_XYZ_addNormals(PointCloud_XYZ *self, PointCloud_Normal *normals, PointCloud_XYZNormal *output);
@@ -693,7 +693,7 @@ ffi.cdef(specialized_declarations)
 
 pcl.lib = ffi.load(package.searchpath('libpcl', package.cpath))
 
-local pointTypeNames = { 
+local pointTypeNames = {
   'PointXYZ',             -- float x, y, z;
   'PointXYZI',            -- float x, y, z, intensity;
   'PointXYZRGBA',         -- float x, y, z; uint32_t rgb;
@@ -721,11 +721,11 @@ function pcl.pointType(pointType)
     end
     pointType = t
   end
-  return pointType or pcl.PointXYZ  
+  return pointType or pcl.PointXYZ
 end
 
 for i,n in ipairs(pointTypeNames) do
-  local t = ffi.typeof(n) 
+  local t = ffi.typeof(n)
   pcl[n] = t
   nameByType[t] = n
   pcl.pointTypeByName[string.lower(n)] = t
@@ -733,7 +733,7 @@ for i,n in ipairs(pointTypeNames) do
   n = string.gsub(n, 'Point', '')
   pcl.pointTypeByName[string.lower(n)] = t
 end
-pcl.Correspondence = ffi.typeof('Correspondence') 
+pcl.Correspondence = ffi.typeof('Correspondence')
 
 function pcl.getPointTypeName(pointType)
   return pcl.nameOfPointType[pcl.pointType(pointType)]
@@ -780,15 +780,15 @@ local function eq(a,b)
   else
     l = #b
   end
-  
+
   if not l then return false end
-  
+
   for i=1,l do
     if a[i] ~= b[i] then
       return false
     end
   end
-  
+
   return true
 end
 
@@ -831,7 +831,7 @@ local Correspondence = {
 }
 Correspondence.__pairs = createpairs_n(Correspondence.fields)
 function Correspondence:__index(i) return Correspondence.prototype[i] end
-function Correspondence:__tostring() return string.format('{ index_query: %d, index_match: %d, distance: %f }', self.index_query, self.index_match, self.distance) end 
+function Correspondence:__tostring() return string.format('{ index_query: %d, index_match: %d, distance: %f }', self.index_query, self.index_match, self.distance) end
 ffi.metatype(pcl.Correspondence, Correspondence)
 pcl.metatype[pcl.Correspondence] = Correspondence
 
@@ -851,7 +851,7 @@ local PointXYZ = {
 PointXYZ.__pairs = createpairs(PointXYZ.fields)
 function PointXYZ:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZ.prototype[i] end end
 function PointXYZ:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
-function PointXYZ:__tostring() return string.format('{ x:%f, y:%f, z:%f }', self.x, self.y, self.z) end 
+function PointXYZ:__tostring() return string.format('{ x:%f, y:%f, z:%f }', self.x, self.y, self.z) end
 ffi.metatype(pcl.PointXYZ, PointXYZ)
 pcl.metatype[pcl.PointXYZ] = PointXYZ
 
@@ -871,7 +871,7 @@ local PointXYZI = {
 PointXYZI.__pairs = createpairs(PointXYZI.fields)
 function PointXYZI:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZI.prototype[i] end end
 function PointXYZI:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
-function PointXYZI:__tostring() return string.format('{ x:%f, y:%f, z:%f, intensity:%f }', self.x, self.y, self.z, self.intensity) end 
+function PointXYZI:__tostring() return string.format('{ x:%f, y:%f, z:%f, intensity:%f }', self.x, self.y, self.z, self.intensity) end
 ffi.metatype(pcl.PointXYZI, PointXYZI)
 pcl.metatype[pcl.PointXYZI] = PointXYZI
 
@@ -891,7 +891,7 @@ local PointXYZRGBA = {
 PointXYZRGBA.__pairs = createpairs(PointXYZRGBA.fields)
 function PointXYZRGBA:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBA.prototype[i] end end
 function PointXYZRGBA:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
-function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba: %08X }', self.x, self.y, self.z, self.rgba) end 
+function PointXYZRGBA:__tostring() return string.format('{ x:%f, y:%f, z:%f, rgba: %08X }', self.x, self.y, self.z, self.rgba) end
 ffi.metatype(pcl.PointXYZRGBA, PointXYZRGBA)
 pcl.metatype[pcl.PointXYZRGBA] = PointXYZRGBA
 
@@ -911,9 +911,9 @@ Normal.__pairs = createpairs(Normal.fields)
 function Normal:__index(i) if type(i) == "number" then return self.data[i-1] else return Normal.prototype[i] end end
 function Normal:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
 function Normal:__tostring()
-  return string.format('{ normal_x:%f, normal_y:%f, normal_z:%f, curvature:%f }', 
-    self.normal_x, self.normal_y, self.normal_z, self.curvature) 
-end 
+  return string.format('{ normal_x:%f, normal_y:%f, normal_z:%f, curvature:%f }',
+    self.normal_x, self.normal_y, self.normal_z, self.curvature)
+end
 ffi.metatype(pcl.Normal, Normal)
 pcl.metatype[pcl.Normal] = Normal
 
@@ -934,9 +934,9 @@ PointNormal.__pairs = createpairs(PointNormal.fields)
 function PointNormal:__index(i) if type(i) == "number" then return self.data[i-1] else return PointNormal.prototype[i] end end
 function PointNormal:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
 function PointNormal:__tostring()
-  return string.format('{ x:%f, y:%f, z:%f, normal_x:%f, normal_y:%f, normal_z:%f, curvature:%f }', 
-    self.x, self.y, self.z, self.normal_x, self.normal_y, self.normal_z, self.curvature) 
-end 
+  return string.format('{ x:%f, y:%f, z:%f, normal_x:%f, normal_y:%f, normal_z:%f, curvature:%f }',
+    self.x, self.y, self.z, self.normal_x, self.normal_y, self.normal_z, self.curvature)
+end
 ffi.metatype(pcl.PointNormal, PointNormal)
 pcl.metatype[pcl.PointNormal] = PointNormal
 
@@ -950,15 +950,15 @@ local PointXYZINormal = {
   },
   __eq = eq,
   __len = len,
-  fields = { 'x', 'y', 'z', 'w', 'normal_x', 'normal_y', 'normal_z', '_1', 'intensity', 'curvature', '_2', '_3' } 
+  fields = { 'x', 'y', 'z', 'w', 'normal_x', 'normal_y', 'normal_z', '_1', 'intensity', 'curvature', '_2', '_3' }
 }
 PointXYZINormal.__pairs = createpairs(PointXYZINormal.fields)
 function PointXYZINormal:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZINormal.prototype[i] end end
 function PointXYZINormal:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
 function PointXYZINormal:__tostring()
-  return string.format('{ x:%f, y:%f, z:%f, normal_x:%f, normal_y:%f, normal_z:%f, intensity:%f, curvature:%f }', 
-    self.x, self.y, self.z, self.normal_x, self.normal_y, self.normal_z, self.intensity, self.curvature) 
-end 
+  return string.format('{ x:%f, y:%f, z:%f, normal_x:%f, normal_y:%f, normal_z:%f, intensity:%f, curvature:%f }',
+    self.x, self.y, self.z, self.normal_x, self.normal_y, self.normal_z, self.intensity, self.curvature)
+end
 ffi.metatype(pcl.PointXYZINormal, PointXYZINormal)
 pcl.metatype[pcl.PointXYZINormal] = PointXYZINormal
 
@@ -978,9 +978,9 @@ PointXYZRGBNormal.__pairs = createpairs(PointXYZRGBNormal.fields)
 function PointXYZRGBNormal:__index(i) if type(i) == "number" then return self.data[i-1] else return PointXYZRGBNormal.prototype[i] end end
 function PointXYZRGBNormal:__newindex(i, v) if i > 0 and i <= #self then self.data[i-1] = v else error('index out of range') end end
 function PointXYZRGBNormal:__tostring()
-  return string.format('{ x:%f, y:%f, z:%f, normal_x:%f, normal_y:%f, normal_z:%f, rgba:%08X, curvature:%f }', 
-    self.x, self.y, self.z, self.normal_x, self.normal_y, self.normal_z, self.rgba, self.curvature) 
-end 
+  return string.format('{ x:%f, y:%f, z:%f, normal_x:%f, normal_y:%f, normal_z:%f, rgba:%08X, curvature:%f }',
+    self.x, self.y, self.z, self.normal_x, self.normal_y, self.normal_z, self.rgba, self.curvature)
+end
 ffi.metatype(pcl.PointXYZRGBNormal, PointXYZRGBNormal)
 pcl.metatype[pcl.PointXYZRGBNormal] = PointXYZRGBNormal
 
@@ -1011,7 +1011,7 @@ pcl.metatype[pcl.Label] = Label
 
 pcl.range = {
   double = {
-    min = -1.7976931348623157E+308, 
+    min = -1.7976931348623157E+308,
     max =  1.7976931348623157E+308,
     eps =  2.22507385850720138e-308
   },
@@ -1039,7 +1039,7 @@ pcl.range = {
   int64 = {
     min = −9223372036854775808,
     max =  9223372036854775807
-  }, 
+  },
   uint64 = {
     min =  0,
     max =  0xffffffffffffffff
