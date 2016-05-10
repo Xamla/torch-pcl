@@ -29,6 +29,12 @@ PCLIMP(void, PCLVisualizer, setWindowBorders)(PCLVisualizer_ptr *self, bool mode
   (*self)->setWindowBorders(mode);
 }
 
+PCLIMP(void, PCLVisualizer, setPosition)(PCLVisualizer_ptr *self,  
+				     int x, int y)
+{
+  (*self)->setPosition(x, y);
+}
+
 PCLIMP(void, PCLVisualizer, spin)(PCLVisualizer_ptr *self)
 {
   (*self)->spin();
@@ -210,6 +216,12 @@ PCLIMP(void, PCLVisualizer, setCameraParameters_Tensor)(PCLVisualizer_ptr *self,
   Eigen::Matrix3f intrinsics_ = Tensor2Mat<3,3>(intrinsics);
   Eigen::Matrix4f extrinsics_ = Tensor2Mat<4,4>(extrinsics);
   (*self)->setCameraParameters(intrinsics_, extrinsics_, viewport);
+}
+
+PCLIMP(void, PCLVisualizer, setSize)(PCLVisualizer_ptr *self,  
+				     int xw, int yw)
+{
+  (*self)->setSize(xw, yw);
 }
 
 PCLIMP(void, PCLVisualizer, saveScreenshot)(PCLVisualizer_ptr *self, const char *fn)

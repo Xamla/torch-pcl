@@ -538,6 +538,7 @@ void pcl_PCLVisualizer_delete(PCLVisualizer *self);
 void pcl_PCLVisualizer_setFullScreen(PCLVisualizer *self, bool mode);
 void pcl_PCLVisualizer_setWindowName(PCLVisualizer *self, const char *name);
 void pcl_PCLVisualizer_setWindowBorders(PCLVisualizer *self, bool mode);
+void pcl_PCLVisualizer_setPosition(PCLVisualizer *self, int x, int y);
 void pcl_PCLVisualizer_spin(PCLVisualizer *self);
 void pcl_PCLVisualizer_spinOnce(PCLVisualizer *self, int time, bool force_redraw);
 void pcl_PCLVisualizer_addCoordinateSystem(PCLVisualizer *self, double scale, const char *id, int viewport);
@@ -573,6 +574,8 @@ void pcl_PCLVisualizer_setCameraPosition(PCLVisualizer *self, double pos_x, doub
 void pcl_PCLVisualizer_setCameraClipDistances(PCLVisualizer *self, double near, double far, int viewport);
 void pcl_PCLVisualizer_setCameraFieldOfView(PCLVisualizer *self, double fovy, int viewport);
 void pcl_PCLVisualizer_setCameraParameters_Tensor(PCLVisualizer *self, THFloatTensor *intrinsics, THFloatTensor *extrinsics, int viewport);
+void pcl_PCLVisualizer_setSize(PCLVisualizer *self, int xw, int yw);
+
 void pcl_PCLVisualizer_saveScreenshot(PCLVisualizer *self, const char *fn);
 void pcl_PCLVisualizer_saveCameraParameters(PCLVisualizer *self, const char *fn);
 bool pcl_PCLVisualizer_loadCameraParameters(PCLVisualizer *self, const char *fn);

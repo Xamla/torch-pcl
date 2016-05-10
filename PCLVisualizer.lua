@@ -17,6 +17,7 @@ local function init()
     'setFullScreen',
     'setWindowName',
     'setWindowBorders',
+    'setPosition',
     'spin',
     'spinOnce',
     'addCoordinateSystem',
@@ -52,6 +53,7 @@ local function init()
     'setCameraClipDistances',
     'setCameraFieldOfView',
     'setCameraParameters_Tensor',
+    'setSize',
     'saveScreenshot',
     'saveCameraParameters',
     'loadCameraParameters',
@@ -144,6 +146,10 @@ end
 
 function PCLVisualizer:setWindowBorders(mode)
   self.f.setWindowBorders(self.o, mode)
+end
+
+function PCLVisualizer:setPosition(x, y)
+  self.f.setPosition(self.o, x, y)
 end
 
 function PCLVisualizer:spin()
@@ -284,6 +290,10 @@ end
 
 function PCLVisualizer:setCameraParameters_Tensor(intrinsics, extrinsics, viewport)
   self.f.setCameraParameters_Tensor(self.o, intrinsics:cdata(), extrinsics:cdata(), viewport or 0)
+end
+
+function PCLVisualizer:setSize(xw, yw)
+  self.f.setSize(self.o, xw, yw)
 end
 
 function PCLVisualizer:saveScreenshot(fn)
