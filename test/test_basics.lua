@@ -388,6 +388,11 @@ function TestBasics:testEuclideanClusterExtraction()
   x:setInputCloud(c)
   x:setClusterTolerance(2)
 
+  -- test setSearchMetdhod...
+  local kd = pcl.KdTree()
+  kd:setInputCloud(c)
+  x:setSearchMethod(kd)
+
   local clusters = x:extract()
 
   luaunit.assertEquals(5, clusters:size())

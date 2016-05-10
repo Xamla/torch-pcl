@@ -8,40 +8,33 @@
 #define KdTree_ptr pcl::KdTreeFLANN<_PointT>::Ptr
 #define Octree_ptr pcl::octree::OctreePointCloudSearch<_PointT>::Ptr
 
-PCLIMP(EuclideanClusterExtraction_handle *, EuclideanClusterExtraction, new)()
-{
+PCLIMP(EuclideanClusterExtraction_handle *, EuclideanClusterExtraction, new)() {
   return new EuclideanClusterExtraction_handle(new EuclideanClusterExtraction_());
 }
 
-PCLIMP(void, EuclideanClusterExtraction, delete)(EuclideanClusterExtraction_handle *handle)
-{
+PCLIMP(void, EuclideanClusterExtraction, delete)(EuclideanClusterExtraction_handle *handle) {
   delete handle;
 }
 
-PCLIMP(EuclideanClusterExtraction_ *, EuclideanClusterExtraction, EuclideanClusterExtraction_ptr)(EuclideanClusterExtraction_handle *handle)
-{
+PCLIMP(EuclideanClusterExtraction_ *, EuclideanClusterExtraction, EuclideanClusterExtraction_ptr)(EuclideanClusterExtraction_handle *handle) {
   return handle->get();
 }
 
 // PCLBase methods
-PCLIMP(void, EuclideanClusterExtraction, setInputCloud)(EuclideanClusterExtraction_ *self, PointCloud_ptr *cloud)
-{
+PCLIMP(void, EuclideanClusterExtraction, setInputCloud)(EuclideanClusterExtraction_ *self, PointCloud_ptr *cloud) {
   self->setInputCloud(*cloud);
 }
 
-PCLIMP(void, EuclideanClusterExtraction, setIndices)(EuclideanClusterExtraction_ *self, Indices_ptr *indices)
-{
+PCLIMP(void, EuclideanClusterExtraction, setIndices)(EuclideanClusterExtraction_ *self, Indices_ptr *indices) {
   self->setIndices(*indices);
 }
 
-PCLIMP(void, EuclideanClusterExtraction, setSearchMethod_Octree)(EuclideanClusterExtraction_ *self, Octree_ptr *octree)
-{
+PCLIMP(void, EuclideanClusterExtraction, setSearchMethod_Octree)(EuclideanClusterExtraction_ *self, Octree_ptr *octree) {
   boost::shared_ptr<OctreeSearchWrapper<_PointT> > wrapper(new OctreeSearchWrapper<_PointT>(*octree));
   self->setSearchMethod(wrapper);
 }
 
-PCLIMP(void, EuclideanClusterExtraction, setSearchMethod_KdTree)(EuclideanClusterExtraction_ *self, KdTree_ptr *kdtree)
-{
+PCLIMP(void, EuclideanClusterExtraction, setSearchMethod_KdTree)(EuclideanClusterExtraction_ *self, KdTree_ptr *kdtree) {
   boost::shared_ptr<KdTreeSearchWrapper<_PointT> > wrapper(new KdTreeSearchWrapper<_PointT>(*kdtree));
   self->setSearchMethod(wrapper);
 }
