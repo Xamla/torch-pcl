@@ -167,6 +167,7 @@ void pcl_PointCloud_TYPE_KEY_copyXYZRGBA(PointCloud_TYPE_KEY *cloud_in, Indices 
 void pcl_PointCloud_TYPE_KEY_copyXYZNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZNormal *cloud_out);
 void pcl_PointCloud_TYPE_KEY_copyXYZINormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZINormal *cloud_out);
 void pcl_PointCloud_TYPE_KEY_copyXYZRGBNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZRGBNormal *cloud_out);
+void pcl_PointCloud_TYPE_KEY_copyNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_Normal *cloud_out);
 ]]
 
 local KdTreeFLANN_declarations = [[
@@ -198,8 +199,8 @@ void pcl_Filter_TYPE_KEY_normalSpaceSampling_Cloud(PointCloud_TYPE_KEY *input, I
 void pcl_Filter_TYPE_KEY_normalRefinement(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int k, int max_iterations, float convergence_threshold);
 void pcl_Filter_TYPE_KEY_frustumCulling_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, THFloatTensor *cameraPose, float hfov, float vfov, float np_dist, float fp_dist, bool negative, Indices *removed_indices);
 void pcl_Filter_TYPE_KEY_frustumCulling_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, THFloatTensor *cameraPose, float hfov, float vfov, float np_dist, float fp_dist, bool negative, Indices *removed_indices);
-void pcl_Filter_TYPE_KEY_passThrough_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, const char* fieldName, float min, float max, bool negative, Indices *removed_indices);
-void pcl_Filter_TYPE_KEY_passThrough_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_passThrough_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, const char* fieldName, float min, float max, bool negative, Indices *removed_indices, bool keepOrganized);
+void pcl_Filter_TYPE_KEY_passThrough_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative, Indices *removed_indices, bool keepOrganized);
 void pcl_Filter_TYPE_KEY_cropBox_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, THFloatTensor *transform, bool negative, Indices *removed_indices);
 void pcl_Filter_TYPE_KEY_cropBox_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, THFloatTensor *transform, bool negative, Indices *removed_indices);
 void pcl_Filter_TYPE_KEY_cropSphere_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, THFloatTensor *center, double radius, THFloatTensor *transform, bool negative, Indices *removed_indices);
