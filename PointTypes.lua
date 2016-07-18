@@ -586,6 +586,7 @@ bool pcl_PCLVisualizer_addLine_Coefficients(PCLVisualizer *self, THFloatTensor *
 bool pcl_PCLVisualizer_addSphere_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
 bool pcl_PCLVisualizer_addCube_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
 bool pcl_PCLVisualizer_addCylinder_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
+bool pcl_PCLVisualizer_addCone_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
 bool pcl_PCLVisualizer_addCube(PCLVisualizer *self, float x_min, float x_max, float y_min, float y_max, float z_min, float z_max, double r, double g, double b, const char *id, int viewport);
 void pcl_PCLVisualizer_setRepresentationToSurfaceForAllActors(PCLVisualizer *self);
 void pcl_PCLVisualizer_setRepresentationToPointsForAllActors(PCLVisualizer *self);

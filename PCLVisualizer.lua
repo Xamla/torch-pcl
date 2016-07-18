@@ -63,6 +63,7 @@ local function init()
     'addSphere_Coefficients',
     'addCube_Coefficients',
     'addCylinder_Coefficients',
+    'addCone_Coefficients',
     'addCube',
     'setRepresentationToSurfaceForAllActors',
     'setRepresentationToPointsForAllActors',
@@ -76,7 +77,7 @@ local function init()
   }
 
   func = utils.create_typed_methods("pcl_PCLVisualizer_", PCLVisualizer_method_names, '')
-  
+
   -- create function table for template methods
   local PCLVisualizer_typed_method_names = {
     'addPointCloud',
@@ -343,6 +344,11 @@ function PCLVisualizer:addCylinder_Coefficients(coefficients, id, viewport)
   return self.f.addCylinder_Coefficients(self.o, coefficients:cdata(), id or 'cylinder', viewport or 0)
 end
 
+function PCLVisualizer:addCone_Coefficients(coefficients, id, viewport)
+  coefficients = ensureTensor(coefficients)
+  return self.f.addCone_Coefficients(self.o, coefficients:cdata(), id or 'cone', viewport or 0)
+end
+
 function PCLVisualizer:addCube(x_min, x_max, y_min, y_max, z_min, z_max, r, g, b, id, viewport)
   return self.f.addCube(self.o, x_min, x_max, y_min, y_max, z_min, z_max, r or 0.5, g or 0.5, b or 0.5, id or 'cube', viewport or 0)
 end
@@ -388,7 +394,7 @@ function PCLVisualizer:updateCorrespondences(source_points, target_points, corre
 end
 
 function PCLVisualizer:addLine(pt1, pt2, r, g, b, id, viewport)
-  return self.tf[pt1.type].addLine(self.o, pt1, pt2, r or 0.5, g or 0.5, b or 0.5, id or 'line', viewport or 0) 
+  return self.tf[pt1.type].addLine(self.o, pt1, pt2, r or 0.5, g or 0.5, b or 0.5, id or 'line', viewport or 0)
 end
 
 function PCLVisualizer:addSphere(center, radius, r, g, b, id, viewport)
@@ -464,4 +470,3 @@ function PCLVisualizer:registerAreaPickingCallback(fn)
   local connection = self.f.registerAreaPickingCallback(self.o, cb)
   return createEventHandle(connection, cb, self.f)
 end
-    
