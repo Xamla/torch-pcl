@@ -110,6 +110,6 @@ function ICPNL:addOneToOneRejector()
   self.f.addOneToOneRejector(self.o)
 end
 
-function ICPNL:addTrimmedRejector()
+function ICPNL:addTrimmedRejector(overlap_ratio, min_correspondences)
   self.f.addTrimmedRejector(self.o, overlap_ratio or 0.5, min_correspondences or 0)
 end
