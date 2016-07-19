@@ -34,6 +34,7 @@ SET(src
   "${SOURCE_DIR}/boundary.cpp"
   "${SOURCE_DIR}/visualizer.cpp"
   "${SOURCE_DIR}/label.cpp"
+  "${SOURCE_DIR}/PCLPointCloud2.cpp"
 )
 
 FILE(GLOB luasrc *.lua)

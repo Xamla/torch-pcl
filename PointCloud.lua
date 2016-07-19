@@ -36,6 +36,7 @@ local function init()
     'computeCovarianceMatrix',
     'add',
     'fromPCLPointCloud2',
+    'toPCLPointCloud2',
     'loadPCDFile',
     'savePCDFile',
     'loadPLYFile',
@@ -81,7 +82,6 @@ function PointCloud:__init(pointType, width, height)
     width = pointType
     pointType = pcl.PointXYZ
   end
-  
   pointType = pcl.pointType(pointType)
   width = width or 0
   rawset(self, 'f', func_by_type[pointType])
@@ -290,11 +290,16 @@ function PointCloud:removeNaN(output, removed_indices)
 end
 
 function PointCloud:fromPCLPointCloud2(src_msg)
-  self.f.fromPCLPointCloud2(self.o, src_msg)
+  if not torch.isTypeOf(src_msg, pcl.PCLPointCloud2) then
+    error("Invalid type of argument 'src_msg': pcl.PCLPointCloud2 expected.")
+  end
+  self.f.fromPCLPointCloud2(self.o, src_msg:cdata())
 end
 
 function PointCloud:toPCLPointCloud2(dst_msg)
-  self.f.toPCLPointCloud2(self.o, dst_msg)
+  dst_msg = dst_msg or pcl.PCLPointCloud2()
+  self.f.toPCLPointCloud2(self.o, dst_msg:cdata())
+  return dst_msg
 end
 
 function PointCloud:loadPCDFile(fn)

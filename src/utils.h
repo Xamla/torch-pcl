@@ -110,4 +110,11 @@ inline void Tensor2vector(THFloatTensor *input, std::vector<float> &v)
   THFloatTensor_free(input);
 }
 
+inline void stringToByteStorage(const std::string& str, THByteStorage *output)
+{
+  THByteStorage_resize(output, str.length() * sizeof(char));
+  uint8_t *data = THByteStorage_data(output);
+  strncpy(reinterpret_cast<char*>(data), str.c_str(), str.length());
+}
+
 #endif

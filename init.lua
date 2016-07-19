@@ -31,6 +31,7 @@ require 'pcl.VFHEstimation'
 require 'pcl.SACSegmentation'
 require 'pcl.EuclideanClusterExtraction'
 require 'pcl.PCLVisualizer'
+require 'pcl.PCLPointCloud2'
 
 function pcl.rand(width, height, pointType)
   if pcl.isPointType(height) or type(height) == 'string' then

@@ -23,8 +23,8 @@ typedef struct PointNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { fl
 typedef struct PointNormal PointXYZNormal;\z
 typedef struct PointXYZRGBNormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { "..PCL_RGB.." float curvature; }; float data_c[4]; }; } PointXYZRGBNormal; \z
 typedef struct PointXYZINormal { "..PCL_POINT4D..PCL_NORMAL4D.." union { struct { float intensity; float curvature; }; float data_c[4]; }; } PointXYZINormal; \z
-typedef struct Boundary { uint8_t boundary_point; } Boundary; \z
-typedef struct Label { uint32_t label; } Label; \z
+typedef struct Boundary { uint8_t boundary_point; } Boundary;\z
+typedef struct Label { uint32_t label; } Label;\z
 " ..
 [[
 typedef struct FPFHSignature33 { float histogram[33]; } FPFHSignature33;
@@ -125,6 +125,11 @@ struct NarfKeypointParameters
 ]]
 ffi.cdef(cdef)
 
+-- check whether torch-ros has been loaded before, if not declare pcl_PCLPointCloud2 structure.
+if package.loaded['ros'] == nil then
+  ffi.cdef('typedef struct pcl_PCLPointCloud2 {} pcl_PCLPointCloud2;')
+end
+
 local pcl_PointCloud_declaration = [[
 PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_new(uint32_t width, uint32_t height);
 PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_clone(PointCloud_TYPE_KEY *self);
@@ -152,8 +157,8 @@ void pcl_PointCloud_TYPE_KEY_transformWithNormals(PointCloud_TYPE_KEY *self, THF
 void pcl_PointCloud_TYPE_KEY_getMinMax3D(PointCloud_TYPE_KEY *self, PointTYPE_KEY& min, PointTYPE_KEY& max);
 void pcl_PointCloud_TYPE_KEY_compute3DCentroid(PointCloud_TYPE_KEY *self, THFloatTensor *output);
 void pcl_PointCloud_TYPE_KEY_computeCovarianceMatrix(PointCloud_TYPE_KEY *self, THFloatTensor *centroid, THFloatTensor *output);
-void pcl_PointCloud_TYPE_KEY_fromPCLPointCloud2(void *cloud, void *msg);
-void pcl_PointCloud_TYPE_KEY_toPCLPointCloud2(void *cloud, void *msg);
+void pcl_PointCloud_TYPE_KEY_fromPCLPointCloud2(void *cloud, pcl_PCLPointCloud2 *msg);
+void pcl_PointCloud_TYPE_KEY_toPCLPointCloud2(void *cloud, pcl_PCLPointCloud2 *msg);
 int pcl_PointCloud_TYPE_KEY_loadPCDFile(PointCloud_TYPE_KEY *cloud, const char *fn);
 int pcl_PointCloud_TYPE_KEY_savePCDFile(PointCloud_TYPE_KEY *cloud, const char *fn, bool binary);
 int pcl_PointCloud_TYPE_KEY_loadPLYFile(PointCloud_TYPE_KEY *cloud, const char *fn);
@@ -623,6 +628,15 @@ void pcl_PCLVisualizer_TYPE_KEY_deleteColorHandler(PointCloudColorHandler *handl
 
 ffi.cdef(pcl_PCLVisualizer_declaration)
 
+local pcl_PCLPointCloud2_declarations = [[
+pcl_PCLPointCloud2* pcl_PCLPointCloud2_new();
+void pcl_PCLPointCloud2_delete(pcl_PCLPointCloud2 *self);
+void pcl_PCLPointCloud2_getFieldNames(pcl_PCLPointCloud2 *self, THByteStorage *string_buffer);
+void pcl_PCLPointCloud2_tostring(pcl_PCLPointCloud2 *self, THByteStorage *string_buffer);
+]]
+
+ffi.cdef(pcl_PCLPointCloud2_declarations)
+
 local supported_keys = { 'XYZ', 'XYZI', 'XYZRGBA', 'XYZNormal', 'XYZINormal', 'XYZRGBNormal' }
 local declarations = {
     pcl_PointCloud_declaration,
@@ -733,6 +747,12 @@ for i,n in ipairs(pointTypeNames) do
   n = string.gsub(n, 'Point', '')
   pcl.pointTypeByName[string.lower(n)] = t
 end
+
+-- alias for PointNormal
+pcl.XYZNormal = pcl.PointNormal
+pcl.pointTypeByName['pointxyznormal'] = pcl.PointNormal
+pcl.pointTypeByName['xyznormal'] = pcl.PointNormal
+
 pcl.Correspondence = ffi.typeof('Correspondence')
 
 function pcl.getPointTypeName(pointType)
