@@ -41,7 +41,7 @@ function PCA:__init(pointType, basis_only)
     pointType = cloud.pointType
   end
   
-  pointType = pointType or pcl.PointXYZ
+  pointType = pcl.pointType(pointType)
   basis_only = basis_only or false
   self.pointType = pointType
   self.f = func_by_type[self.pointType]

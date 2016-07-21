@@ -39,7 +39,7 @@ local function init()
 
   for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_Filter_TYPE_KEY_", method_names, v)
-  end    
+  end
 end
 
 init()
@@ -123,28 +123,29 @@ function filter.frustumCulling(input, cameraPose, hfov, vfov, np_dist, fp_dist, 
   return output
 end
 
-function filter.passThrough(input, fieldName, min, max, indices, output, negative, removed_indices)
+function filter.passThrough(input, fieldName, min, max, indices, output, negative, removed_indices, keepOrganized)
   local f = check_input_type(input)
   utils.check_arg('fieldName', type(fieldName) == 'string', 'string expected')
   min = min or pcl.range.double.min
   max = max or pcl.range.double.max
+
   if torch.isTypeOf(output, pcl.Indices) then
-    f.passThrough_Indices(input:cdata(), cdata(indices), output:cdata(), fieldName, min, max, negative or false, cdata(removed_indices))
+    f.passThrough_Indices(input:cdata(), cdata(indices), output:cdata(), fieldName, min, max, negative or false, cdata(removed_indices), keepOrganized or false)
   else
     output = output or pcl.PointCloud(input.pointType)
-    f.passThrough_Cloud(input:cdata(), cdata(indices), output:cdata(), fieldName, min, max, negative or false, cdata(removed_indices))
+    f.passThrough_Cloud(input:cdata(), cdata(indices), output:cdata(), fieldName, min, max, negative or false, cdata(removed_indices), keepOrganized or false)
   end
   return output
 end
 
 function filter.cropBox(input, min, max, rotation, translation, transform, indices, output, negative, removed_indices)
   local f = check_input_type(input)
-  
+
   min = tensor(min)
   max = tensor(max)
   rotation = tensor(rotation)
   translation = tensor(translation)
-  
+
   if torch.isTypeOf(transform, pcl.affine.Transform) then
     transform = transform:totensor()
   else
@@ -163,15 +164,15 @@ end
 
 function filter.cropSphere(input, center, radius, transform, indices, output, negative, removed_indices)
   local f = check_input_type(input)
-  
+
   center = tensor(center)
-  
+
   if torch.isTypeOf(transform, pcl.affine.Transform) then
     transform = transform:totensor()
   else
     transform = tensor(transform)
   end
-  
+
   if torch.isTypeOf(output, pcl.Indices) then
     f.cropSphere_Indices(input:cdata(), cdata(indices), output:cdata(), cdata(center), radius or 1, cdata(transform), negative or false, cdata(removed_indices))
   else

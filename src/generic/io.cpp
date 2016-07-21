@@ -11,7 +11,7 @@ PCLIMP(int, PointCloud, loadPCDFile)(pcl::PointCloud<_PointT>::Ptr *self, const 
   return pcl::io::loadPCDFile<_PointT>(fn, **self);
 }
 
-PCLIMP(int, PointCloud, savePCDFile)(pcl::PointCloud<_PointT>::Ptr *self, const char *fn, bool binary) 
+PCLIMP(int, PointCloud, savePCDFile)(pcl::PointCloud<_PointT>::Ptr *self, const char *fn, bool binary)
 {
   return pcl::io::savePCDFile(fn, **self, binary);
 }
@@ -77,6 +77,14 @@ PCLIMP(void, PointCloud, copyXYZINormal)(pcl::PointCloud<_PointT>::Ptr *self, In
 }
 
 PCLIMP(void, PointCloud, copyXYZRGBNormal)(pcl::PointCloud<_PointT>::Ptr *self, Indices_ptr *indices, pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr *cloud_out)
+{
+  if (indices)
+    pcl::copyPointCloud(**self, **indices, **cloud_out);
+  else
+    pcl::copyPointCloud(**self, **cloud_out);
+}
+
+PCLIMP(void, PointCloud, copyNormal)(pcl::PointCloud<_PointT>::Ptr *self, Indices_ptr *indices, pcl::PointCloud<pcl::Normal>::Ptr *cloud_out)
 {
   if (indices)
     pcl::copyPointCloud(**self, **indices, **cloud_out);

@@ -151,7 +151,7 @@ PCLIMP(void, Filter, frustumCulling_Cloud)(PointCloud_ptr *input, Indices_ptr *i
 
 template<typename T>
 void Filter_passThroughT(PointCloud_ptr *input, Indices_ptr *indices, T *output, 
-  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices)
+  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keepOrganized)
 {
   bool keep_removed = removed_indices && *removed_indices;
   pcl::PassThrough<_PointT> f(keep_removed);
@@ -161,21 +161,22 @@ void Filter_passThroughT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
   f.setNegative(negative);
   f.setFilterFieldName(fieldName);
   f.setFilterLimits(min, max);
+  f.setKeepOrganized(keepOrganized);
   f.filter(**output);
   if (keep_removed)
     **removed_indices = *f.getRemovedIndices();
 }
 
 PCLIMP(void, Filter, passThrough_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output, 
-  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices)
+  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keepOrganized)
 {
-  Filter_passThroughT(input, indices, output, fieldName, min, max, negative, removed_indices);
+  Filter_passThroughT(input, indices, output, fieldName, min, max, negative, removed_indices, keepOrganized);
 }
 
 PCLIMP(void, Filter, passThrough_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output, 
-  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices)
+  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keepOrganized)
 {
-  Filter_passThroughT(input, indices, output, fieldName, min, max, negative, removed_indices);
+  Filter_passThroughT(input, indices, output, fieldName, min, max, negative, removed_indices, keepOrganized);
 }
 
 template<typename T>

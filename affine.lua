@@ -12,7 +12,7 @@ function affine.identity()
 end
 
 function affine.invert(M)
-  return torch.invert(M)
+  return torch.inverse(M)
 end
 
 function affine.scale(x, y, z)

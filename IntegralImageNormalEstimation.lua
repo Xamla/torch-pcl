@@ -7,6 +7,19 @@ local IntegralImageNormalEstimation = torch.class('pcl.IntegralImageNormalEstima
 
 local func_by_type = {}
 
+pcl.NormalEstimationMethod = {
+   COVARIANCE_MATRIX     = 0,
+   AVERAGE_3D_GRADIENT   = 1,
+   AVERAGE_DEPTH_CHANGE  = 2,
+   SIMPLE_3D_GRADIENT    = 3,
+}
+
+pcl.BorderPolicy = {
+   BORDER_POLICY_IGNORE = 0,
+   BORDER_POLICY_MIRROR = 1
+}
+
+
 local function init()
 
   local IntegralImageNormalEstimation_method_names = {
@@ -26,10 +39,10 @@ local function init()
     'useSensorOriginAsViewPoint',
     'compute'
   }
-  
+
   for k,v in pairs(utils.type_key_map) do
     func_by_type[k] = utils.create_typed_methods("pcl_IntegralImageNormalEstimation_TYPE_KEY_", IntegralImageNormalEstimation_method_names, v)
-  end   
+  end
 end
 
 init()

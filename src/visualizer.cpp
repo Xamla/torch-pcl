@@ -29,6 +29,12 @@ PCLIMP(void, PCLVisualizer, setWindowBorders)(PCLVisualizer_ptr *self, bool mode
   (*self)->setWindowBorders(mode);
 }
 
+PCLIMP(void, PCLVisualizer, setPosition)(PCLVisualizer_ptr *self,
+				     int x, int y)
+{
+  (*self)->setPosition(x, y);
+}
+
 PCLIMP(void, PCLVisualizer, spin)(PCLVisualizer_ptr *self)
 {
   (*self)->spin();
@@ -53,7 +59,7 @@ PCLIMP(bool, PCLVisualizer, updateCoordinateSystemPose)(PCLVisualizer_ptr *self,
 {
   return (*self)->updateCoordinateSystemPose(id, Eigen::Affine3f(Tensor2Mat<4,4>(transform)));
 }
- 
+
 PCLIMP(int, PCLVisualizer, createViewPort)(PCLVisualizer_ptr *self, double xmin, double ymin, double xmax, double ymax)
 {
   int viewport = 0;
@@ -115,12 +121,12 @@ PCLIMP(bool, PCLVisualizer, addText1)(PCLVisualizer_ptr *self, const char *text,
 {
   return (*self)->addText(text, xpos, ypos, id, viewport);
 }
-                 
+
 PCLIMP(bool, PCLVisualizer, addText2)(PCLVisualizer_ptr *self, const char *text, int xpos, int ypos, double r, double g, double b, const char *id = "", int viewport = 0)
 {
   return (*self)->addText(text, xpos, ypos, r, g, b, id, viewport);
 }
-                 
+
 PCLIMP(bool, PCLVisualizer, addText3)(PCLVisualizer_ptr *self, const char *text, int xpos, int ypos, int fontsize, double r, double g, double b, const char *id = "", int viewport = 0)
 {
   return (*self)->addText(text, xpos, ypos, fontsize, r, g, b, id, viewport);
@@ -151,7 +157,7 @@ PCLIMP(bool, PCLVisualizer, setPointCloudRenderingProperties3)(PCLVisualizer_ptr
 {
   return (*self)->setPointCloudRenderingProperties(property, val1, val2, val3, id, viewport);
 }
-                                          
+
 PCLIMP(bool, PCLVisualizer, wasStopped)(PCLVisualizer_ptr *self)
 {
  return (*self)->wasStopped();
@@ -187,7 +193,7 @@ PCLIMP(void, PCLVisualizer, resetCameraViewpoint)(PCLVisualizer_ptr *self, const
   (*self)->resetCameraViewpoint(id);
 }
 
-PCLIMP(void, PCLVisualizer, setCameraPosition)(PCLVisualizer_ptr *self,  
+PCLIMP(void, PCLVisualizer, setCameraPosition)(PCLVisualizer_ptr *self,
   double pos_x, double pos_y, double pos_z,
   double view_x, double view_y, double view_z,
   double up_x, double up_y, double up_z, int viewport = 0)
@@ -212,6 +218,12 @@ PCLIMP(void, PCLVisualizer, setCameraParameters_Tensor)(PCLVisualizer_ptr *self,
   (*self)->setCameraParameters(intrinsics_, extrinsics_, viewport);
 }
 
+PCLIMP(void, PCLVisualizer, setSize)(PCLVisualizer_ptr *self,
+				     int xw, int yw)
+{
+  (*self)->setSize(xw, yw);
+}
+
 PCLIMP(void, PCLVisualizer, saveScreenshot)(PCLVisualizer_ptr *self, const char *fn)
 {
   (*self)->saveScreenshot(fn);
@@ -232,7 +244,7 @@ PCLIMP(void, PCLVisualizer, getViewerPose)(PCLVisualizer_ptr *self, int viewport
   const Eigen::Affine3f &pose = (*self)->getViewerPose();
   copyMatrix(pose.matrix(), result);}
 
-PCLIMP(bool, PCLVisualizer, addPlane_Coefficients)(PCLVisualizer_ptr *self, THFloatTensor *coefficients, 
+PCLIMP(bool, PCLVisualizer, addPlane_Coefficients)(PCLVisualizer_ptr *self, THFloatTensor *coefficients,
   double x, double y, double z, const char *id = "plane", int viewport = 0)
 {
   pcl::ModelCoefficients c;
@@ -240,7 +252,7 @@ PCLIMP(bool, PCLVisualizer, addPlane_Coefficients)(PCLVisualizer_ptr *self, THFl
   return (*self)->addPlane(c, x, y, z, id, viewport);
 }
 
-PCLIMP(bool, PCLVisualizer, addLine_Coefficients)(PCLVisualizer_ptr *self, THFloatTensor *coefficients, 
+PCLIMP(bool, PCLVisualizer, addLine_Coefficients)(PCLVisualizer_ptr *self, THFloatTensor *coefficients,
   const char *id = "line", int viewport = 0)
 {
   pcl::ModelCoefficients c;
@@ -272,7 +284,15 @@ PCLIMP(bool, PCLVisualizer, addCylinder_Coefficients)(PCLVisualizer_ptr *self, T
   return (*self)->addCylinder(c, id, viewport);
 }
 
-PCLIMP(bool, PCLVisualizer, addCube)(PCLVisualizer_ptr *self, 
+PCLIMP(bool, PCLVisualizer, addCone_Coefficients)(PCLVisualizer_ptr *self, THFloatTensor *coefficients,
+  const char *id = "cone", int viewport = 0)
+{
+  pcl::ModelCoefficients c;
+  Tensor2vector(coefficients, c.values);
+  return (*self)->addCone(c, id, viewport);
+}
+
+PCLIMP(bool, PCLVisualizer, addCube)(PCLVisualizer_ptr *self,
   float x_min, float x_max, float y_min, float y_max, float z_min, float z_max,
   double r = 1.0, double g = 1.0, double b = 1.0, const char *id = "cube", int viewport = 0)
 {
@@ -367,7 +387,7 @@ PCLIMP(boost::signals2::connection *, PCLVisualizer, registerAreaPickingCallback
 
 PCLIMP(void, PCLVisualizer, unregisterCallback)(boost::signals2::connection *connection)
 {
-  connection->disconnect(); 
+  connection->disconnect();
 }
 
 PCLIMP(void, PCLVisualizer, deleteCallback)(boost::signals2::connection *connection)

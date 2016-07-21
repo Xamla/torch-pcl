@@ -172,6 +172,7 @@ void pcl_PointCloud_TYPE_KEY_copyXYZRGBA(PointCloud_TYPE_KEY *cloud_in, Indices 
 void pcl_PointCloud_TYPE_KEY_copyXYZNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZNormal *cloud_out);
 void pcl_PointCloud_TYPE_KEY_copyXYZINormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZINormal *cloud_out);
 void pcl_PointCloud_TYPE_KEY_copyXYZRGBNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_XYZRGBNormal *cloud_out);
+void pcl_PointCloud_TYPE_KEY_copyNormal(PointCloud_TYPE_KEY *cloud_in, Indices *indices, PointCloud_Normal *cloud_out);
 ]]
 
 local KdTreeFLANN_declarations = [[
@@ -203,8 +204,8 @@ void pcl_Filter_TYPE_KEY_normalSpaceSampling_Cloud(PointCloud_TYPE_KEY *input, I
 void pcl_Filter_TYPE_KEY_normalRefinement(PointCloud_TYPE_KEY *input, PointCloud_TYPE_KEY *output, int k, int max_iterations, float convergence_threshold);
 void pcl_Filter_TYPE_KEY_frustumCulling_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, THFloatTensor *cameraPose, float hfov, float vfov, float np_dist, float fp_dist, bool negative, Indices *removed_indices);
 void pcl_Filter_TYPE_KEY_frustumCulling_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, THFloatTensor *cameraPose, float hfov, float vfov, float np_dist, float fp_dist, bool negative, Indices *removed_indices);
-void pcl_Filter_TYPE_KEY_passThrough_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, const char* fieldName, float min, float max, bool negative, Indices *removed_indices);
-void pcl_Filter_TYPE_KEY_passThrough_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative, Indices *removed_indices);
+void pcl_Filter_TYPE_KEY_passThrough_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, const char* fieldName, float min, float max, bool negative, Indices *removed_indices, bool keepOrganized);
+void pcl_Filter_TYPE_KEY_passThrough_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, const char* fieldName, float min, float max, bool negative, Indices *removed_indices, bool keepOrganized);
 void pcl_Filter_TYPE_KEY_cropBox_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, THFloatTensor *transform, bool negative, Indices *removed_indices);
 void pcl_Filter_TYPE_KEY_cropBox_Cloud(PointCloud_TYPE_KEY *input, Indices *indices, PointCloud_TYPE_KEY *output, THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, THFloatTensor *transform, bool negative, Indices *removed_indices);
 void pcl_Filter_TYPE_KEY_cropSphere_Indices(PointCloud_TYPE_KEY *input, Indices *indices, Indices *output, THFloatTensor *center, double radius, THFloatTensor *transform, bool negative, Indices *removed_indices);
@@ -543,6 +544,7 @@ void pcl_PCLVisualizer_delete(PCLVisualizer *self);
 void pcl_PCLVisualizer_setFullScreen(PCLVisualizer *self, bool mode);
 void pcl_PCLVisualizer_setWindowName(PCLVisualizer *self, const char *name);
 void pcl_PCLVisualizer_setWindowBorders(PCLVisualizer *self, bool mode);
+void pcl_PCLVisualizer_setPosition(PCLVisualizer *self, int x, int y);
 void pcl_PCLVisualizer_spin(PCLVisualizer *self);
 void pcl_PCLVisualizer_spinOnce(PCLVisualizer *self, int time, bool force_redraw);
 void pcl_PCLVisualizer_addCoordinateSystem(PCLVisualizer *self, double scale, const char *id, int viewport);
@@ -578,6 +580,8 @@ void pcl_PCLVisualizer_setCameraPosition(PCLVisualizer *self, double pos_x, doub
 void pcl_PCLVisualizer_setCameraClipDistances(PCLVisualizer *self, double near, double far, int viewport);
 void pcl_PCLVisualizer_setCameraFieldOfView(PCLVisualizer *self, double fovy, int viewport);
 void pcl_PCLVisualizer_setCameraParameters_Tensor(PCLVisualizer *self, THFloatTensor *intrinsics, THFloatTensor *extrinsics, int viewport);
+void pcl_PCLVisualizer_setSize(PCLVisualizer *self, int xw, int yw);
+
 void pcl_PCLVisualizer_saveScreenshot(PCLVisualizer *self, const char *fn);
 void pcl_PCLVisualizer_saveCameraParameters(PCLVisualizer *self, const char *fn);
 bool pcl_PCLVisualizer_loadCameraParameters(PCLVisualizer *self, const char *fn);
@@ -587,6 +591,7 @@ bool pcl_PCLVisualizer_addLine_Coefficients(PCLVisualizer *self, THFloatTensor *
 bool pcl_PCLVisualizer_addSphere_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
 bool pcl_PCLVisualizer_addCube_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
 bool pcl_PCLVisualizer_addCylinder_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
+bool pcl_PCLVisualizer_addCone_Coefficients(PCLVisualizer *self, THFloatTensor *coefficients, const char *id, int viewport);
 bool pcl_PCLVisualizer_addCube(PCLVisualizer *self, float x_min, float x_max, float y_min, float y_max, float z_min, float z_max, double r, double g, double b, const char *id, int viewport);
 void pcl_PCLVisualizer_setRepresentationToSurfaceForAllActors(PCLVisualizer *self);
 void pcl_PCLVisualizer_setRepresentationToPointsForAllActors(PCLVisualizer *self);
