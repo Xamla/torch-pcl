@@ -12,6 +12,13 @@ local function init()
     'new',
     'clone',
     'delete',
+    'getHeaderSeq',
+    'setHeaderSeq',
+    'getHeaderStamp_sec',
+    'getHeaderStamp_nsec',
+    'setHeaderStamp',
+    'getHeaderFrameId',
+    'setHeaderFrameId',
     'getWidth',
     'getHeight',
     'getIsDense',
@@ -28,7 +35,7 @@ local function init()
     'erase',
     'points',
     'sensorOrientation',
-    'sensorOrigin', 
+    'sensorOrigin',
     'transform',
     'transformWithNormals',
     'getMinMax3D',
@@ -71,7 +78,7 @@ local function init()
   for k,v in pairs(supported_types) do
     func_by_type[k] = utils.create_typed_methods('pcl_PointCloud_TYPE_KEY_', PointCloud_method_names, v)
   end
-  
+
   func_by_type[pcl.Normal] = utils.create_typed_methods('pcl_PointCloud_TYPE_KEY_', PointCloud_method_names, 'Normal')
 end
 
@@ -138,7 +145,7 @@ end
 
 function PointCloud:__index(idx)
   local v = rawget(self, idx)
-  if not v then 
+  if not v then
     v = PointCloud[idx]
     if not v then
       local f, o = rawget(self, 'f'), rawget(self, 'o')
@@ -165,6 +172,30 @@ end
 
 function PointCloud:__len()
   return self:size()
+end
+
+function PointCloud:getHeaderSeq()
+  return self.f.getHeaderSeq(self.o)
+end
+
+function PointCloud:setHeaderSeq(value)
+  self.f.setHeaderSeq(self.o, value)
+end
+
+function PointCloud:getHeaderStamp()
+  return self.f.getHeaderStamp_sec(self.o), self.f.getHeaderStamp_nsec(self.o)
+end
+
+function PointCloud:setHeaderStamp(sec, nsec)
+  self.f.setHeaderStamp(self.o, sec, nsec)
+end
+
+function PointCloud:getHeaderFrameId()
+  return ffi.string(self.f.getHeaderFrameId(self.o))
+end
+
+function PointCloud:setHeaderFrameId(value)
+  self.f.setHeaderFrameId(self.o, value or '')
 end
 
 function PointCloud:getWidth()
@@ -321,7 +352,7 @@ end
 function PointCloud:loadOBJFile(fn)
   return self.f.loadOBJFile(self.o, fn)
 end
-  
+
 function PointCloud:savePNGFile(fn, field_name)
   return self.f.savePNGFile(self.o, fn, field_name or 'rgb')
 end
@@ -335,7 +366,7 @@ function PointCloud:addNormals(normals, output)
 end
 
 function PointCloud:__tostring()
-  return string.format('PointCloud<%s> (w: %d, h: %d, organized: %s, dense: %s)', 
+  return string.format('PointCloud<%s> (w: %d, h: %d, organized: %s, dense: %s)',
     pcl.getPointTypeName(self.pointType),
     self:getWidth(),
     self:getHeight(),

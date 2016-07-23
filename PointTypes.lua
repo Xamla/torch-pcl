@@ -134,6 +134,13 @@ local pcl_PointCloud_declaration = [[
 PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_new(uint32_t width, uint32_t height);
 PointCloud_TYPE_KEY* pcl_PointCloud_TYPE_KEY_clone(PointCloud_TYPE_KEY *self);
 void pcl_PointCloud_TYPE_KEY_delete(PointCloud_TYPE_KEY *self);
+uint32_t pcl_PointCloud_TYPE_KEY_getHeaderSeq(PointCloud_TYPE_KEY *self);
+void pcl_PointCloud_TYPE_KEY_setHeaderSeq(PointCloud_TYPE_KEY *self, uint32_t value);
+int32_t pcl_PointCloud_TYPE_KEY_getHeaderStamp_sec(PointCloud_TYPE_KEY *self);
+int32_t pcl_PointCloud_TYPE_KEY_getHeaderStamp_nsec(PointCloud_TYPE_KEY *self);
+void pcl_PointCloud_TYPE_KEY_setHeaderStamp(PointCloud_TYPE_KEY *self, int32_t sec, int32_t nsec);
+const char *pcl_PointCloud_TYPE_KEY_getHeaderFrameId(PointCloud_TYPE_KEY *self);
+void pcl_PointCloud_TYPE_KEY_setHeaderFrameId(PointCloud_TYPE_KEY *self, const char *value);
 uint32_t pcl_PointCloud_TYPE_KEY_getWidth(PointCloud_TYPE_KEY *self);
 uint32_t pcl_PointCloud_TYPE_KEY_getHeight(PointCloud_TYPE_KEY *self);
 bool pcl_PointCloud_TYPE_KEY_getIsDense(PointCloud_TYPE_KEY *self);

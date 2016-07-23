@@ -7,7 +7,7 @@
 
 typedef struct { THFloatStorage* storage; uint32_t width, height, dim; } _PointsBuffer;
 
-PCLIMP(void*, PointCloud, new)(uint32_t width, uint32_t height) 
+PCLIMP(void*, PointCloud, new)(uint32_t width, uint32_t height)
 {
   return new pcl::PointCloud<_PointT>::Ptr(new pcl::PointCloud<_PointT>(width, height));
 }
@@ -22,13 +22,48 @@ PCLIMP(void, PointCloud, delete)(pcl::PointCloud<_PointT>::Ptr *self)
   delete self;
 }
 
+PCLIMP(uint32_t, PointCloud, getHeaderSeq)(pcl::PointCloud<_PointT>::Ptr *self)
+{
+  return (*self)->header.seq;
+}
+
+PCLIMP(void, PointCloud, setHeaderSeq)(pcl::PointCloud<_PointT>::Ptr *self, uint32_t value)
+{
+  (*self)->header.seq = value;
+}
+
+PCLIMP(int32_t, PointCloud, getHeaderStamp_sec)(pcl::PointCloud<_PointT>::Ptr *self)
+{
+  return (int32_t)((*self)->header.stamp / 1000000000ull);
+}
+
+PCLIMP(int32_t, PointCloud, getHeaderStamp_nsec)(pcl::PointCloud<_PointT>::Ptr *self)
+{
+  return (int32_t)((*self)->header.stamp % 1000000000ull);
+}
+
+PCLIMP(void, PointCloud, setHeaderStamp)(pcl::PointCloud<_PointT>::Ptr *self, int32_t sec, int32_t nsec)
+{
+  (*self)->header.stamp = (uint64_t)sec*1000000000ull + (uint64_t)nsec;
+}
+
+PCLIMP(const char *, PointCloud, getHeaderFrameId)(pcl::PointCloud<_PointT>::Ptr *self)
+{
+  return (*self)->header.frame_id.c_str();
+}
+
+PCLIMP(void, PointCloud, setHeaderFrameId)(pcl::PointCloud<_PointT>::Ptr *self, const char *value)
+{
+  (*self)->header.frame_id = (value != NULL) ? value : "";
+}
+
 PCLIMP(uint32_t, PointCloud, getWidth)(pcl::PointCloud<_PointT>::Ptr *self)
 {
   return (*self)->width;
 }
 
 PCLIMP(uint32_t, PointCloud, getHeight)(pcl::PointCloud<_PointT>::Ptr *self)
-{  
+{
   return (*self)->height;
 }
 
@@ -86,7 +121,7 @@ PCLIMP(void, PointCloud, insert)(pcl::PointCloud<_PointT>::Ptr *self, size_t pos
 {
   if (n == 0)
     return;
-    
+
   pcl::PointCloud<_PointT>& cloud = **self;
   pcl::PointCloud<_PointT>::iterator it;
   if (position >= cloud.size())
@@ -100,7 +135,7 @@ PCLIMP(void, PointCloud, erase)(pcl::PointCloud<_PointT>::Ptr *self, size_t begi
 {
   if (begin >= end)
     return;
-    
+
   pcl::PointCloud<_PointT>& cloud = **self;
   pcl::PointCloud<_PointT>::iterator b, e;
   if (begin >= cloud.size())
@@ -128,7 +163,7 @@ PCLIMP(_PointsBuffer, PointCloud, points)(pcl::PointCloud<_PointT>::Ptr *self)
 
 PCLIMP(THFloatStorage*, PointCloud, sensorOrigin)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-  float* ptr = &((*self)->sensor_origin_(0));
+  float *ptr = &((*self)->sensor_origin_(0));
   THFloatStorage* storage = THFloatStorage_newWithData(ptr, 4);
   storage->flag = TH_STORAGE_REFCOUNTED;
   return storage;
@@ -136,7 +171,7 @@ PCLIMP(THFloatStorage*, PointCloud, sensorOrigin)(pcl::PointCloud<_PointT>::Ptr 
 
 PCLIMP(THFloatStorage*, PointCloud, sensorOrientation)(pcl::PointCloud<_PointT>::Ptr *self)
 {
-  float* ptr = &((*self)->sensor_orientation_.coeffs()(0));
+  float *ptr = &((*self)->sensor_orientation_.coeffs()(0));
   THFloatStorage* storage = THFloatStorage_newWithData(ptr, 4);
   storage->flag = TH_STORAGE_REFCOUNTED;
   return storage;
@@ -153,11 +188,11 @@ PCLIMP(void, PointCloud, transform)(pcl::PointCloud<_PointT>::Ptr *self, THFloat
 {
   // check dimensionality of input matrix
   THArgCheck(mat != NULL && mat->nDimension == 2 && mat->size[0] == 4 && mat->size[1] == 4, 2, "4x4 matrix expected");
-  
+
   // make sure tensor is contiguous
   mat = THFloatTensor_newContiguous(mat);
-  
-  // fill Eigen matrix 
+
+  // fill Eigen matrix
   Eigen::Map<Eigen::Matrix<float,4,4,Eigen::RowMajor> > m(THFloatTensor_data(mat));
   pcl::transformPointCloud(**self, **output, m);
   THFloatTensor_free(mat);
@@ -169,11 +204,11 @@ PCLIMP(void, PointCloud, transformWithNormals)(pcl::PointCloud<_PointT>::Ptr *se
 {
   // check dimensionality of input matrix
   THArgCheck(mat != NULL && mat->nDimension == 2 && mat->size[0] == 4 && mat->size[1] == 4, 2, "4x4 matrix expected");
-  
+
   // make sure tensor is contiguous
   mat = THFloatTensor_newContiguous(mat);
-  
-  // fill Eigen matrix 
+
+  // fill Eigen matrix
   Eigen::Map<Eigen::Matrix<float,4,4,Eigen::RowMajor> > m(THFloatTensor_data(mat));
   pcl::transformPointCloudWithNormals(**self, **output, m);
   THFloatTensor_free(mat);
@@ -227,12 +262,12 @@ PCLIMP(int, PointCloud, readXYZfloat)(pcl::PointCloud<_PointT>::Ptr *self, THFlo
 {
   if (!self || !output)
     return -1;
-    
+
   const pcl::PointCloud<_PointT>& c = **self;
 
   THFloatTensor_resize3d(output, c.height, c.width, 3);
   float *output_data = THFloatTensor_data(output);
-  
+
   for (pcl::PointCloud<_PointT>::const_iterator i = c.begin(); i != c.end(); ++i)
   {
     const _PointT& p = *i;
@@ -240,19 +275,19 @@ PCLIMP(int, PointCloud, readXYZfloat)(pcl::PointCloud<_PointT>::Ptr *self, THFlo
     *output_data++ = p.y;
     *output_data++ = p.z;
   }
-  
+
   return 0;
 }
 
 #endif
 
-/*PCLIMP(void*, PointCloud, fromTensor)(THTensor* tensor) 
+/*PCLIMP(void*, PointCloud, fromTensor)(THTensor* tensor)
 {
-  
+
   // TODO
-  
+
   // validate tensor
-  
+
   // get float buffer
   return new pcl::PointCloud<_PointT>::Ptr(...);
 }*/
