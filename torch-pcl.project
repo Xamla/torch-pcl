@@ -48,6 +48,7 @@
       <File Name="src/generic/organized_edge_detection.cpp"/>
       <File Name="src/generic/integral_image_normal.cpp"/>
       <File Name="src/generic/euclidean_cluster_extraction.cpp"/>
+      <File Name="src/generic/writeRGBA.cpp"/>
     </VirtualDirectory>
     <File Name="src/xyz.cpp"/>
     <File Name="src/xyzi.cpp"/>

@@ -705,6 +705,10 @@ local specialized_declarations =
 [[
 void pcl_PointCloud_XYZRGBA_readRGBAfloat(void *cloud, struct THFloatTensor *output);
 void pcl_PointCloud_XYZRGBA_readRGBAbyte(void *cloud, struct THByteTensor *output);
+void pcl_PointCloud_XYZRGBA_writeRGBAfloat(void *cloud, struct THFloatTensor *input);
+void pcl_PointCloud_XYZRGBA_writeRGBAbyte(void *cloud, struct THByteTensor *input);
+void pcl_PointCloud_XYZRGBA_writeRGBfloat(void *cloud, struct THFloatTensor *input, bool setAlpha, float alpha);
+void pcl_PointCloud_XYZRGBA_writeRGBbyte(void *cloud, struct THByteTensor *input, bool setAlpha, uint8_t alpha);
 
 void pcl_PointCloud_XYZ_addNormals(PointCloud_XYZ *self, PointCloud_Normal *normals, PointCloud_XYZNormal *output);
 void pcl_PointCloud_XYZI_addNormals(PointCloud_XYZI *self, PointCloud_Normal *normals, PointCloud_XYZINormal *output);

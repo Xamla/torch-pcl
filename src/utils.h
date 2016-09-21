@@ -117,4 +117,18 @@ inline void stringToByteStorage(const std::string& str, THByteStorage *output)
   strncpy(reinterpret_cast<char*>(data), str.c_str(), str.length());
 }
 
+template<typename T>
+inline T clamp(T f, T lo, T hi)
+{
+  if (f < lo) return lo;
+  if (f > hi) return hi;
+  return f;
+}
+
+template<typename T>
+inline T saturate(T x)
+{
+  return clamp<T>(x, 0, 1);
+}
+
 #endif

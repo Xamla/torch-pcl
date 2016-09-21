@@ -53,6 +53,10 @@ local function init()
     'readXYZfloat',
     'readRGBAfloat',
     'readRGBAbyte',
+    'writeRGBAfloat',
+    'writeRGBAbyte',
+    'writeRGBfloat',
+    'writeRGBbyte',
     'addNormals',
     'copyXYZ',
     'copyXYZI',
@@ -138,6 +142,26 @@ function PointCloud:readRGBA(t)
   return t
 end
 
+function PointCloud:writeRGBA(t)
+  if torch.type(t) == 'torch.FloatTensor' then
+    self.f.writeRGBAfloat(self.o, t:cdata())
+  elseif torch.type(t) == 'torch.ByteTensor' then
+    self.f.writeRGBAbyte(self.o, t:cdata())
+  else
+    error('unsupported tensor type')
+  end
+end
+
+function PointCloud:writeRGB(t, setAlpha, alpha)
+  if torch.type(t) == 'torch.FloatTensor' then
+    self.f.writeRGBfloat(self.o, t:cdata(), setAlpha or false, alpha or 1)
+  elseif torch.type(t) == 'torch.ByteTensor' then
+    self.f.writeRGBbyte(self.o, t:cdata(), setAlpha or false, alpha or 255)
+  else
+    error('unsupported tensor type')
+  end
+end
+
 function PointCloud:clone()
   local clone = self.f.clone(self.o)
   return PointCloud.new(self.pointType, clone)
@@ -152,7 +176,7 @@ function PointCloud:__index(idx)
       if type(idx) == 'number' then
         v = f.at1D(o, idx-1)
       elseif type(idx) == 'table' then
-        v = f.at2D(o, idx[1]-1, row[2]-1)
+        v = f.at2D(o, idx[1]-1, idx[2]-1)
       end
     end
   end
@@ -164,7 +188,7 @@ function PointCloud:__newindex(idx, v)
   if type(idx) == 'number' then
     f.at1D(o, idx-1):set(v)
   elseif type(idx) == 'table' then
-    f.at2D(o, idx[1]-1, row[2]-1):set(v)
+    f.at2D(o, idx[1]-1, idx[2]-1):set(v)
   else
     rawset(self, idx, v)
   end
