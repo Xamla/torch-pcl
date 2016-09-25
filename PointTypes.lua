@@ -80,7 +80,7 @@ void pcl_Indices_erase(Indices *self, size_t begin, size_t end);
 
 typedef struct IndicesVector {} IndicesVector;
 IndicesVector *pcl_IndicesVector_new();
-void  pcl_IndicesVector_delete(IndicesVector *self);
+void pcl_IndicesVector_delete(IndicesVector *self);
 unsigned int pcl_IndicesVector_size(IndicesVector *self);
 void pcl_IndicesVector_getAt(IndicesVector *self, size_t pos, Indices *result);
 void pcl_IndicesVector_setAt(IndicesVector *self, size_t pos, Indices *value);
@@ -97,7 +97,7 @@ Correspondences *pcl_Correspondences_clone(Correspondences *self);
 void pcl_Correspondences_delete(Correspondences *self);
 int pcl_Correspondences_size(Correspondences *self);
 Correspondence pcl_Correspondences_getAt(Correspondences *self, size_t pos);
-void pcl_Correspondences_getAt(Correspondences *self, size_t pos, const Correspondence &value);
+void pcl_Correspondences_setAt(Correspondences *self, size_t pos, const Correspondence &value);
 void pcl_Correspondences_push_back(Correspondences *self, const Correspondence &value);
 void pcl_Correspondences_pop_back(Correspondences *self);
 void pcl_Correspondences_clear(Correspondences *self);

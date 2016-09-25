@@ -38,12 +38,12 @@ PCLIMP(int, Correspondences, size)(pcl::Correspondences *self)
 PCLIMP(_Correspondences, Correspondences, getAt)(pcl::Correspondences *self, size_t pos)
 {
   pcl::Correspondences &v = *self;
-  const pcl::Correspondence &c = v[pos]; 
+  const pcl::Correspondence &c = v[pos];
   _Correspondences c_ = { c.index_query, c.index_match, c.distance };
   return c_;
 }
 
-PCLIMP(pcl::Correspondence &, Correspondences, setAt)(pcl::Correspondences *self, size_t pos, const _Correspondences &value)
+PCLIMP(void, Correspondences, setAt)(pcl::Correspondences *self, size_t pos, const _Correspondences &value)
 {
   pcl::Correspondences &v = *self;
   v[pos] = pcl::Correspondence(value.index_query, value.index_match, value.distance);
@@ -75,7 +75,7 @@ PCLIMP(void, Correspondences, erase)(pcl::Correspondences *self, size_t begin, s
 {
   if (begin >= end)
     return;
-    
+
   pcl::Correspondences& v = *self;
   pcl::Correspondences::iterator b = begin >= v.size() ? v.end() : v.begin() + begin;
   pcl::Correspondences::iterator e = end >= v.size() ? v.end() : v.begin() + end;

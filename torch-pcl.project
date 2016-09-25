@@ -219,5 +219,7 @@
     <File Name="demo/openni2stream.lua"/>
     <File Name="demo/cloud_from_tensor.lua"/>
     <File Name="demo/organized_edge.lua"/>
+    <File Name="demo/cropbox_filter_demo.lua"/>
+    <File Name="demo/cropsphere_filter_demo.lua"/>
   </VirtualDirectory>
 </CodeLite_Project>

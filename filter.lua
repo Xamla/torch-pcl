@@ -52,10 +52,24 @@ local function check_input_type(input)
 end
 
 local function tensor(x)
-  if pcl.isPoint(x) then
+  if torch.isTensor(x) then
+    x = x:float()  -- ensure we are dealing with a float tensor
+  elseif pcl.isPoint(x) then
     x = x:totensor()
   elseif type(x) == 'table' then
     x = torch.FloatTensor(x)
+  end
+  return x
+end
+
+local function tensor4(x)
+  x = tensor(x)
+  if x:size(1) < 4 then
+    local y = torch.FloatTensor(4)
+    y:zero()
+    y[4] = 1
+    y[{{1,x:size(1)}}]:copy(x)
+    x = y
   end
   return x
 end
@@ -141,8 +155,8 @@ end
 function filter.cropBox(input, min, max, rotation, translation, transform, indices, output, negative, removed_indices)
   local f = check_input_type(input)
 
-  min = tensor(min)
-  max = tensor(max)
+  min = tensor4(min)
+  max = tensor4(max)
   rotation = tensor(rotation)
   translation = tensor(translation)
 
@@ -165,7 +179,7 @@ end
 function filter.cropSphere(input, center, radius, transform, indices, output, negative, removed_indices)
   local f = check_input_type(input)
 
-  center = tensor(center)
+  center = tensor4(center)
 
   if torch.isTypeOf(transform, pcl.affine.Transform) then
     transform = transform:totensor()

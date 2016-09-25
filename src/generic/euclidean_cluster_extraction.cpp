@@ -44,7 +44,7 @@ PCLIMP(void, EuclideanClusterExtraction, setClusterTolerance)(EuclideanClusterEx
 }
 
 PCLIMP(double, EuclideanClusterExtraction, getClusterTolerance)(EuclideanClusterExtraction_ *self) {
-  self->getClusterTolerance();
+  return self->getClusterTolerance();
 }
 
 PCLIMP(void, EuclideanClusterExtraction, setMinClusterSize)(EuclideanClusterExtraction_ *self, int min_cluster_size) {

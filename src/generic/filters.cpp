@@ -31,7 +31,7 @@ PCLIMP(void, Filter, extractIndices)(PointCloud_ptr *input, Indices_ptr *indices
 }
 
 template<typename T>
-void Filter_shadowPointsT(PointCloud_ptr *input, Indices_ptr *indices, Normals_ptr *normals, T *output, 
+void Filter_shadowPointsT(PointCloud_ptr *input, Indices_ptr *indices, Normals_ptr *normals, T *output,
   float threshold, bool negative, Indices_ptr *removed_indices)
 {
   bool keep_removed = removed_indices && *removed_indices;
@@ -47,13 +47,13 @@ void Filter_shadowPointsT(PointCloud_ptr *input, Indices_ptr *indices, Normals_p
     **removed_indices = *f.getRemovedIndices();
 }
 
-PCLIMP(void, Filter, shadowPoints_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Normals_ptr *normals, Indices_ptr *output, 
+PCLIMP(void, Filter, shadowPoints_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Normals_ptr *normals, Indices_ptr *output,
   float threshold, bool negative, Indices_ptr *removed_indices)
 {
   Filter_shadowPointsT(input, indices, normals, output, threshold, negative, removed_indices);
 }
 
-PCLIMP(void, Filter, shadowPoints_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, Normals_ptr *normals, PointCloud_ptr *output, 
+PCLIMP(void, Filter, shadowPoints_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, Normals_ptr *normals, PointCloud_ptr *output,
   float threshold, bool negative, Indices_ptr *removed_indices)
 {
   Filter_shadowPointsT(input, indices, normals, output, threshold, negative, removed_indices);
@@ -112,12 +112,14 @@ PCLIMP(void, Filter, normalRefinement)(PointCloud_ptr *input, PointCloud_ptr *ou
 
   pcl::NormalRefinement<_PointT> f(k_indices, k_sqr_distances);
   f.setInputCloud(*input);
+  f.setMaxIterations(max_iterations);
+  f.setConvergenceThreshold(convergence_threshold);
   f.filter(**output);
 }
 
 #endif
 
-template<typename T> 
+template<typename T>
 void Filter_frustumCullingT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
   THFloatTensor *cameraPose, float hfov, float vfov, float np_dist, float fp_dist, bool negative, Indices_ptr *removed_indices)
 {
@@ -126,7 +128,7 @@ void Filter_frustumCullingT(PointCloud_ptr *input, Indices_ptr *indices, T *outp
   f.setNegative(negative);
   f.setInputCloud(*input);
   if (indices && *indices)
-    f.setIndices(*indices);  
+    f.setIndices(*indices);
   f.setCameraPose(Tensor2Mat<4,4>(cameraPose));
   f.setHorizontalFOV(hfov);
   f.setVerticalFOV(vfov);
@@ -150,7 +152,7 @@ PCLIMP(void, Filter, frustumCulling_Cloud)(PointCloud_ptr *input, Indices_ptr *i
 }
 
 template<typename T>
-void Filter_passThroughT(PointCloud_ptr *input, Indices_ptr *indices, T *output, 
+void Filter_passThroughT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
   const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keepOrganized)
 {
   bool keep_removed = removed_indices && *removed_indices;
@@ -167,21 +169,21 @@ void Filter_passThroughT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
     **removed_indices = *f.getRemovedIndices();
 }
 
-PCLIMP(void, Filter, passThrough_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output, 
+PCLIMP(void, Filter, passThrough_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output,
   const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keepOrganized)
 {
   Filter_passThroughT(input, indices, output, fieldName, min, max, negative, removed_indices, keepOrganized);
 }
 
-PCLIMP(void, Filter, passThrough_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output, 
+PCLIMP(void, Filter, passThrough_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output,
   const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keepOrganized)
 {
   Filter_passThroughT(input, indices, output, fieldName, min, max, negative, removed_indices, keepOrganized);
 }
 
 template<typename T>
-void Filter_cropBoxT(PointCloud_ptr *input, Indices_ptr *indices, T *output, 
-  THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, 
+void Filter_cropBoxT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
+  THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation,
   THFloatTensor *transform, bool negative, Indices_ptr *removed_indices)
 {
   bool keep_removed = removed_indices && *removed_indices;
@@ -205,22 +207,22 @@ void Filter_cropBoxT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
     **removed_indices = *f.getRemovedIndices();
 }
 
-PCLIMP(void, Filter, cropBox_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output, 
-  THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, 
+PCLIMP(void, Filter, cropBox_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output,
+  THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation,
   THFloatTensor *transform, bool negative, Indices_ptr *removed_indices)
 {
   Filter_cropBoxT(input, indices, output, min, max, rotation, translation, transform, negative, removed_indices);
 }
 
-PCLIMP(void, Filter, cropBox_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output, 
-  THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation, 
+PCLIMP(void, Filter, cropBox_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output,
+  THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation,
   THFloatTensor *transform, bool negative, Indices_ptr *removed_indices)
 {
   Filter_cropBoxT(input, indices, output, min, max, rotation, translation, transform, negative, removed_indices);
 }
 
 template<typename T>
-void Filter_cropSphereT(PointCloud_ptr *input, Indices_ptr *indices, T *output, 
+void Filter_cropSphereT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
   THFloatTensor *center, double radius, THFloatTensor *transform, bool negative, Indices_ptr *removed_indices)
 {
   bool keep_removed = removed_indices && *removed_indices;
@@ -239,13 +241,13 @@ void Filter_cropSphereT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
     **removed_indices = *f.getRemovedIndices();
 }
 
-PCLIMP(void, Filter, cropSphere_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output, 
+PCLIMP(void, Filter, cropSphere_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output,
   THFloatTensor *center, double radius, THFloatTensor *transform, bool negative, Indices_ptr *removed_indices)
 {
   Filter_cropSphereT(input, indices, output, center, radius, transform, negative, removed_indices);
 }
 
-PCLIMP(void, Filter, cropSphere_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output, 
+PCLIMP(void, Filter, cropSphere_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output,
   THFloatTensor *center, double radius, THFloatTensor *transform, bool negative, Indices_ptr *removed_indices)
 {
   Filter_cropSphereT(input, indices, output, center, radius, transform, negative, removed_indices);
@@ -262,7 +264,7 @@ PCLIMP(void, Filter, voxelGrid)(PointCloud_ptr *input, Indices_ptr *indices, Poi
 }
 
 template<typename T>
-void Filter_statisticalOutlierRemovalT(PointCloud_ptr *input, Indices_ptr *indices, T *output, 
+void Filter_statisticalOutlierRemovalT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
   int meanK, double stddevMulThresh, bool negative, Indices_ptr *removed_indices)
 {
   bool keep_removed = removed_indices && *removed_indices;
@@ -278,13 +280,13 @@ void Filter_statisticalOutlierRemovalT(PointCloud_ptr *input, Indices_ptr *indic
     **removed_indices = *f.getRemovedIndices();
 }
 
-PCLIMP(void, Filter, statisticalOutlierRemoval_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output, 
+PCLIMP(void, Filter, statisticalOutlierRemoval_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output,
   int meanK, double stddevMulThresh, bool negative, Indices_ptr *removed_indices)
 {
   Filter_statisticalOutlierRemovalT(input, indices, output, meanK, stddevMulThresh, negative, removed_indices);
 }
 
-PCLIMP(void, Filter, statisticalOutlierRemoval_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output, 
+PCLIMP(void, Filter, statisticalOutlierRemoval_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output,
   int meanK, double stddevMulThresh, bool negative, Indices_ptr *removed_indices)
 {
   Filter_statisticalOutlierRemovalT(input, indices, output, meanK, stddevMulThresh, negative, removed_indices);
@@ -336,35 +338,35 @@ PCLIMP(void, Filter, radiusOutlierRemoval)(PointCloud_ptr *input, Indices_ptr *i
     **removed_indices = *f.getRemovedIndices();
 }
 
-PCLIMP(int, Filter, voxelHistogram)(PointCloud_ptr *input, THFloatTensor *output, 
-  int w = 48, int h = 48, int t = 48, float voxelSize = 1, 
+PCLIMP(int, Filter, voxelHistogram)(PointCloud_ptr *input, THFloatTensor *output,
+  int w = 48, int h = 48, int t = 48, float voxelSize = 1,
   float originX = 0, float originY = 0, float originZ = 0, bool center = false)
 {
   if (!input || !*input)
     PCL_THROW_EXCEPTION(TorchPclException, "invalid input cloud");
-  
+
   if (!output)
     PCL_THROW_EXCEPTION(TorchPclException, "invalid output tensor");
-  
+
   if (w <= 0 || h <= 0 || t <= 0)
     PCL_THROW_EXCEPTION(TorchPclException, "invalid volume specified");
-    
+
   if (voxelSize <= 0)
     PCL_THROW_EXCEPTION(TorchPclException, "voxel size must be positive");
-  
+
   const pcl::PointCloud<_PointT>& cloud = **input;
-  
+
   THFloatTensor_resize3d(output, w, h, t);
   THFloatTensor* output_ = THFloatTensor_newContiguous(output);
   THFloatTensor_zero(output_);
   float* data = THFloatTensor_data(output_);
-  
+
   const size_t zstride = static_cast<size_t>(THFloatTensor_stride(output_, 0));
   const size_t ystride = static_cast<size_t>(THFloatTensor_stride(output_, 1));
   const size_t xstride = static_cast<size_t>(THFloatTensor_stride(output_, 2));
 
   // offsets
-  Eigen::Vector4f offset(Eigen::Vector4f::Zero());
+  Eigen::Vector4f offset = Eigen::Vector4f::Zero();
   if (center)
     offset = -Eigen::Vector4f(w, h, t, 1) * 0.5;
   int count = 0;
@@ -373,23 +375,23 @@ PCLIMP(int, Filter, voxelHistogram)(PointCloud_ptr *input, THFloatTensor *output
     const _PointT& p = *i;
     if (!cloud.is_dense && !pcl::isFinite(p))
       continue;
-    
+
     // compute index
     int x = static_cast<int>(std::floor((p.x - originX) / voxelSize + offset[0]));
     if (x < 0 || x >= w)
       continue;
-    
+
     int y = static_cast<int>(std::floor((p.y - originY) / voxelSize + offset[1]));
     if (y < 0 || y >= h)
       continue;
-      
+
     int z = static_cast<int>(std::floor((p.z - originZ) / voxelSize + offset[2]));
     if (z < 0 || z >= t)
       continue;
-        
+
     data[z * zstride + y * ystride + x * xstride] += 1;
     ++count;  }
-  
+
   THFloatTensor_freeCopyTo(output_, output);
   return count;
 }

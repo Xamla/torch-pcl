@@ -6,7 +6,7 @@
 
 PCLIMP(bool, PCLVisualizer, addPointCloud)(PCLVisualizer_ptr *self, PointCloud_ptr *cloud, const char *id = "cloud", int viewport = 0)
 {
-  (*self)->addPointCloud<_PointT>(*cloud, id, viewport);
+  return (*self)->addPointCloud<_PointT>(*cloud, id, viewport);
 }
 
 PCLIMP(bool, PCLVisualizer, addPointCloudWithColorHandler)(PCLVisualizer_ptr *self, PointCloud_ptr *cloud, PointCloudColorHandler_ptr *color_handler, const char *id = "cloud", int viewport = 0)
@@ -43,28 +43,28 @@ PCLIMP(bool, PCLVisualizer, updateCorrespondences)(PCLVisualizer_ptr *self, Poin
   return (*self)->updateCorrespondences<_PointT>(*source_points, *target_points, **correspondences, id, viewport);
 }
 
-PCLIMP(bool, PCLVisualizer, addLine)(PCLVisualizer_ptr *self, const _PointT &pt1, const _PointT &pt2, 
+PCLIMP(bool, PCLVisualizer, addLine)(PCLVisualizer_ptr *self, const _PointT &pt1, const _PointT &pt2,
   double r, double g, double b, const char *id = "line", int viewport = 0)
 {
-  (*self)->addLine(pt1, pt2, r, g, b, id, viewport);
+  return (*self)->addLine(pt1, pt2, r, g, b, id, viewport);
 }
-                 
+
 PCLIMP(bool, PCLVisualizer, addSphere)(PCLVisualizer_ptr *self, const _PointT &center, double radius, double r, double g, double b,
   const char *id = "sphere", int viewport = 0)
 {
-  (*self)->addSphere(center, radius, r, g, b, id, viewport);
+  return (*self)->addSphere(center, radius, r, g, b, id, viewport);
 }
 
-PCLIMP(bool, PCLVisualizer, updateSphere)(PCLVisualizer_ptr *self, const _PointT &center, double radius, double r, double g, double b, 
+PCLIMP(bool, PCLVisualizer, updateSphere)(PCLVisualizer_ptr *self, const _PointT &center, double radius, double r, double g, double b,
   const char *id = "sphere")
 {
-  (*self)->updateSphere(center, radius, r, g, b, id);
+  return (*self)->updateSphere(center, radius, r, g, b, id);
 }
 
-PCLIMP(bool, PCLVisualizer, addText3D)(PCLVisualizer_ptr *self, const char *text, const _PointT &position, double textScale = 1.0, 
+PCLIMP(bool, PCLVisualizer, addText3D)(PCLVisualizer_ptr *self, const char *text, const _PointT &position, double textScale = 1.0,
   double r = 1.0, double g = 1.0, double b = 1.0, const char *id = "", int viewport = 0)
 {
-  (*self)->addText3D<_PointT>(text, position, textScale, r, g, b, id, viewport);
+  return (*self)->addText3D<_PointT>(text, position, textScale, r, g, b, id, viewport);
 }
 
 // PointCloud color handler factories
