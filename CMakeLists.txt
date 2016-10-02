@@ -12,7 +12,7 @@ INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/cmake/pcl_find_sse.cmake")
 PCL_CHECK_FOR_SSE()
 MESSAGE("Using SSE flags: ${SSE_FLAGS}")
 
-SET(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unknown-pragmas -fno-strict-aliasing -Wno-format-extra-args -Wno-sign-compare -Wno-invalid-offsetof -Wno-conversion ${SSE_FLAGS}")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLGAS} -Wall -Wextra -Wno-unknown-pragmas -fno-strict-aliasing -Wno-format-extra-args -Wno-sign-compare -Wno-invalid-offsetof -Wno-conversion -fvisibility=hidden ${SSE_FLAGS}")
 
 INCLUDE_DIRECTORIES(${PCL_INCLUDE_DIRS} ${Torch_INSTALL_INCLUDE})
 LINK_DIRECTORIES(${PCL_LIBRARY_DIRS} "${Torch_INSTALL_LIB}")
@@ -53,6 +53,7 @@ SET_TARGET_PROPERTIES(pcl PROPERTIES PREFIX "lib" IMPORT_PREFIX "lib" INSTALL_NA
 IF(APPLE)
   SET_TARGET_PROPERTIES(pcl PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
 ENDIF()
+
 
 TARGET_LINK_LIBRARIES(pcl TH ${PCL_LIBRARIES} ${VTK_LIBRARIES})
 

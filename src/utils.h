@@ -11,14 +11,15 @@ extern "C" {
 #include <pcl/exceptions.h>
 #include <pcl/pcl_base.h>
 
-#define PCLIMP(return_type, class_name, name) extern "C" return_type TH_CONCAT_4(pcl_, class_name, TYPE_KEY, name)
+#define TORCH_PCL_EXPORT __attribute__ ((visibility ("default")))
+#define PCLIMP(return_type, class_name, name) extern "C" TORCH_PCL_EXPORT return_type TH_CONCAT_4(pcl_, class_name, TYPE_KEY, name)
 #define PCLCALL(class_name, name) TH_CONCAT_4(pcl_, class_name, TYPE_KEY, name)
 #define Indices_ptr pcl::IndicesPtr
 #define IndicesVector_ptr boost::shared_ptr<std::vector<Indices_ptr> >
 #define Normals_ptr pcl::PointCloud<pcl::Normal>::Ptr
 #define Correspondences_ptr pcl::CorrespondencesPtr
 
-class TorchPclException : public pcl::PCLException
+class TORCH_PCL_EXPORT TorchPclException : public pcl::PCLException
 {
   public:
     TorchPclException(const std::string &error_description, const char *file_name = NULL, const char *function_name = NULL, unsigned line_number = 0)
@@ -31,7 +32,7 @@ inline Eigen::Vector4f Tensor2Vec4f(THFloatTensor *tensor)
 {
   if (THFloatTensor_nElement(tensor) < 4)
     PCL_THROW_EXCEPTION(TorchPclException, "A tensor with at least 4 elements was expected.");
-    
+
   THFloatTensor *tensor_ = THFloatTensor_newContiguous(tensor);
   float* data = THFloatTensor_data(tensor_);
   Eigen::Vector4f v(data[0], data[1], data[2], data[3]);
@@ -43,7 +44,7 @@ inline Eigen::Vector3f Tensor2Vec3f(THFloatTensor *tensor)
 {
   if (THFloatTensor_nElement(tensor) < 3)
     PCL_THROW_EXCEPTION(TorchPclException, "A Tensor with at least 3 elements was expected.");
-    
+
   THFloatTensor *tensor_ = THFloatTensor_newContiguous(tensor);
   float* data = THFloatTensor_data(tensor_);
   Eigen::Vector3f v(data[0], data[1], data[2]);
@@ -69,7 +70,7 @@ template<int rows, int cols, int options> void viewMatrix(Eigen::Matrix<float, r
     storage = THFloatStorage_newWithData(m.data(), (m.rows() * m.rowStride()));
   else
     storage = THFloatStorage_newWithData(m.data(), (m.cols() * m.colStride()));
-    
+
   storage->flag = TH_STORAGE_REFCOUNTED;
   THFloatTensor_setStorage2d(output, storage, 0, rows, m.rowStride(), cols, m.colStride());
   THFloatStorage_free(storage);   // tensor took ownership
