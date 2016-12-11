@@ -45,23 +45,23 @@ function CorrespondenceEstimation:setInputSource(cloud)
 end
 
 function CorrespondenceEstimation:setInputTarget(cloud)
-  self.f.setInputTarget(self.o, cloud:data())
+  self.f.setInputTarget(self.o, cloud:cdata())
 end
 
-function CorrespondenceEstimation:setIndicesSource(indices, no_recompute)
-  self.f.setIndicesSource(self.o, indices:cdata(), no_recompute or false)
+function CorrespondenceEstimation:setIndicesSource(indices)
+  self.f.setIndicesSource(self.o, indices:cdata())
 end
 
 function CorrespondenceEstimation:setIndicesTarget(indices, no_recompute)
-  self.f.setIndicesTarget(self.o, indices:cdata(), no_recompute or false)
+  self.f.setIndicesTarget(self.o, indices:cdata())
 end
 
-function CorrespondenceEstimation:setSearchMethodSource(kdtree)
-  self.f.setSearchMethodSource(self.o, kdtree:cdata())
+function CorrespondenceEstimation:setSearchMethodSource(kdtree, no_recompute)
+  self.f.setSearchMethodSource(self.o, kdtree:cdata(), no_recompute or false)
 end
 
-function CorrespondenceEstimation:setSearchMethodTarget(kdtree)
-  self.f.setSearchMethodTarget(self.o, kdtree:cdata())
+function CorrespondenceEstimation:setSearchMethodTarget(kdtree, no_recompute)
+  self.f.setSearchMethodTarget(self.o, kdtree:cdata(), no_recompute or false)
 end
 
 function CorrespondenceEstimation:determineCorrespondences(correspondences, max_distance)

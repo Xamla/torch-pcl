@@ -29,7 +29,7 @@ PCLIMP(void, CorrespondenceEstimation, setIndicesSource)(CorrespondenceEstimatio
 {
   (*self)->setIndicesSource(*indices);
 }
-  
+
 PCLIMP(void, CorrespondenceEstimation, setIndicesTarget)(CorrespondenceEstimation_ptr *self, Indices_ptr *indices)
 {
   (*self)->setIndicesTarget(*indices);
@@ -50,7 +50,7 @@ PCLIMP(void, CorrespondenceEstimation, setSearchMethodTarget)(CorrespondenceEsti
 PCLIMP(void, CorrespondenceEstimation, determineCorrespondences)(
   CorrespondenceEstimation_ptr *self,
   Correspondences_ptr *correspondences,
-  double max_distance =std::numeric_limits<double>::max()
+  double max_distance = std::numeric_limits<double>::max()
 )
 {
   (*self)->determineCorrespondences(**correspondences, max_distance);
