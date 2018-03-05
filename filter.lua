@@ -235,10 +235,10 @@ function filter.medianFilter(input, windowSize, indices, output)
   return output
 end
 
-function filter.radiusOutlierRemoval(input, radius, minNeighbors, indices, output, negative)
+function filter.radiusOutlierRemoval(input, radius, minNeighbors, indices, output, negative, removed_indices)
   local f = check_input_type(input)
   output = output or pcl.PointCloud(input.pointType)
-  f.radiusOutlierRemoval(input:cdata(), cdata(indices), output:cdata(), radius or 1, minNeighbors or 1, negative or false)
+  f.radiusOutlierRemoval(input:cdata(), cdata(indices), output:cdata(), radius or 1, minNeighbors or 1, negative or false, cdata(removed_indices))
   return output
 end
 
