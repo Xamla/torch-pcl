@@ -137,28 +137,29 @@ function filter.frustumCulling(input, cameraPose, hfov, vfov, np_dist, fp_dist, 
   return output
 end
 
-function filter.passThrough(input, fieldName, min, max, indices, output, negative, removed_indices, keepOrganized)
+function filter.passThrough(input, fieldName, min, max, indices, output, negative, removed_indices, keep_organized)
   local f = check_input_type(input)
   utils.check_arg('fieldName', type(fieldName) == 'string', 'string expected')
   min = min or pcl.range.double.min
   max = max or pcl.range.double.max
 
   if torch.isTypeOf(output, pcl.Indices) then
-    f.passThrough_Indices(input:cdata(), cdata(indices), output:cdata(), fieldName, min, max, negative or false, cdata(removed_indices), keepOrganized or false)
+    f.passThrough_Indices(input:cdata(), cdata(indices), output:cdata(), fieldName, min, max, negative or false, cdata(removed_indices), keep_organized or false)
   else
     output = output or pcl.PointCloud(input.pointType)
-    f.passThrough_Cloud(input:cdata(), cdata(indices), output:cdata(), fieldName, min, max, negative or false, cdata(removed_indices), keepOrganized or false)
+    f.passThrough_Cloud(input:cdata(), cdata(indices), output:cdata(), fieldName, min, max, negative or false, cdata(removed_indices), keep_organized or false)
   end
   return output
 end
 
-function filter.cropBox(input, min, max, rotation, translation, transform, indices, output, negative, removed_indices)
+function filter.cropBox(input, min, max, rotation, translation, transform, indices, output, negative, removed_indices, keep_organized)
   local f = check_input_type(input)
 
   min = tensor4(min)
   max = tensor4(max)
   rotation = tensor(rotation)
   translation = tensor(translation)
+  keep_organized = keep_organized or false
 
   if torch.isTypeOf(transform, pcl.affine.Transform) then
     transform = transform:totensor()
@@ -167,10 +168,10 @@ function filter.cropBox(input, min, max, rotation, translation, transform, indic
   end
 
   if torch.isTypeOf(output, pcl.Indices) then
-    f.cropBox_Indices(input:cdata(), cdata(indices), output:cdata(), cdata(min), cdata(max), cdata(rotation), cdata(translation), cdata(transform), negative or false, cdata(removed_indices))
+    f.cropBox_Indices(input:cdata(), cdata(indices), output:cdata(), cdata(min), cdata(max), cdata(rotation), cdata(translation), cdata(transform), negative or false, cdata(removed_indices), keep_organized)
   else
     output = output or pcl.PointCloud(input.pointType)
-    f.cropBox_Cloud(input:cdata(), cdata(indices), output:cdata(), cdata(min), cdata(max), cdata(rotation), cdata(translation), cdata(transform), negative or false, cdata(removed_indices))
+    f.cropBox_Cloud(input:cdata(), cdata(indices), output:cdata(), cdata(min), cdata(max), cdata(rotation), cdata(translation), cdata(transform), negative or false, cdata(removed_indices), keep_organized)
   end
 
   return output
@@ -206,13 +207,14 @@ function filter.voxelGrid(input, lx, ly, lz, indices, output)
   return output
 end
 
-function filter.statisticalOutlierRemoval(input, meanK, stddevMulThresh, indices, output, negative, removed_indices)
+function filter.statisticalOutlierRemoval(input, meanK, stddevMulThresh, indices, output, negative, removed_indices, keep_organized)
   local f = check_input_type(input)
+  keep_organized = keep_organized or false
   if torch.isTypeOf(output, pcl.Indices) then
-    f.statisticalOutlierRemoval_Indices(input:cdata(), cdata(indices), output:cdata(), meanK or 2, stddevMulThresh or 1, negative or false, cdata(removed_indices))
+    f.statisticalOutlierRemoval_Indices(input:cdata(), cdata(indices), output:cdata(), meanK or 2, stddevMulThresh or 1, negative or false, cdata(removed_indices), keep_organized)
   else
     output = output or pcl.PointCloud(input.pointType)
-    f.statisticalOutlierRemoval_Cloud(input:cdata(), cdata(indices), output:cdata(), meanK or 2, stddevMulThresh or 1, negative or false, cdata(removed_indices))
+    f.statisticalOutlierRemoval_Cloud(input:cdata(), cdata(indices), output:cdata(), meanK or 2, stddevMulThresh or 1, negative or false, cdata(removed_indices), keep_organized)
   end
   return output
 end

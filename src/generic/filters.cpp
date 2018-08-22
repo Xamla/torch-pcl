@@ -153,7 +153,7 @@ PCLIMP(void, Filter, frustumCulling_Cloud)(PointCloud_ptr *input, Indices_ptr *i
 
 template<typename T>
 void Filter_passThroughT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
-  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keepOrganized)
+  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keep_organized)
 {
   bool keep_removed = removed_indices && *removed_indices;
   pcl::PassThrough<_PointT> f(keep_removed);
@@ -163,28 +163,28 @@ void Filter_passThroughT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
   f.setNegative(negative);
   f.setFilterFieldName(fieldName);
   f.setFilterLimits(min, max);
-  f.setKeepOrganized(keepOrganized);
+  f.setKeepOrganized(keep_organized);
   f.filter(**output);
   if (keep_removed)
     **removed_indices = *f.getRemovedIndices();
 }
 
 PCLIMP(void, Filter, passThrough_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output,
-  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keepOrganized)
+  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keep_organized)
 {
-  Filter_passThroughT(input, indices, output, fieldName, min, max, negative, removed_indices, keepOrganized);
+  Filter_passThroughT(input, indices, output, fieldName, min, max, negative, removed_indices, keep_organized);
 }
 
 PCLIMP(void, Filter, passThrough_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output,
-  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keepOrganized)
+  const char* fieldName, float min, float max, bool negative, Indices_ptr *removed_indices, bool keep_organized)
 {
-  Filter_passThroughT(input, indices, output, fieldName, min, max, negative, removed_indices, keepOrganized);
+  Filter_passThroughT(input, indices, output, fieldName, min, max, negative, removed_indices, keep_organized);
 }
 
 template<typename T>
 void Filter_cropBoxT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
   THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation,
-  THFloatTensor *transform, bool negative, Indices_ptr *removed_indices)
+  THFloatTensor *transform, bool negative, Indices_ptr *removed_indices, bool keep_organized)
 {
   bool keep_removed = removed_indices && *removed_indices;
   pcl::CropBox<_PointT> f(keep_removed);
@@ -202,6 +202,7 @@ void Filter_cropBoxT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
   if (transform)
     f.setTransform(Eigen::Affine3f(Tensor2Mat<4,4>(transform)));
   f.setNegative(negative);
+  f.setKeepOrganized(keep_organized);
   f.filter(**output);
   if (keep_removed)
     **removed_indices = *f.getRemovedIndices();
@@ -209,16 +210,16 @@ void Filter_cropBoxT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
 
 PCLIMP(void, Filter, cropBox_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output,
   THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation,
-  THFloatTensor *transform, bool negative, Indices_ptr *removed_indices)
+  THFloatTensor *transform, bool negative, Indices_ptr *removed_indices, bool keep_organized)
 {
-  Filter_cropBoxT(input, indices, output, min, max, rotation, translation, transform, negative, removed_indices);
+  Filter_cropBoxT(input, indices, output, min, max, rotation, translation, transform, negative, removed_indices, keep_organized);
 }
 
 PCLIMP(void, Filter, cropBox_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output,
   THFloatTensor *min, THFloatTensor *max, THFloatTensor *rotation, THFloatTensor *translation,
-  THFloatTensor *transform, bool negative, Indices_ptr *removed_indices)
+  THFloatTensor *transform, bool negative, Indices_ptr *removed_indices, bool keep_organized)
 {
-  Filter_cropBoxT(input, indices, output, min, max, rotation, translation, transform, negative, removed_indices);
+  Filter_cropBoxT(input, indices, output, min, max, rotation, translation, transform, negative, removed_indices, keep_organized);
 }
 
 template<typename T>
@@ -265,7 +266,7 @@ PCLIMP(void, Filter, voxelGrid)(PointCloud_ptr *input, Indices_ptr *indices, Poi
 
 template<typename T>
 void Filter_statisticalOutlierRemovalT(PointCloud_ptr *input, Indices_ptr *indices, T *output,
-  int meanK, double stddevMulThresh, bool negative, Indices_ptr *removed_indices)
+  int meanK, double stddevMulThresh, bool negative, Indices_ptr *removed_indices, bool keep_organized)
 {
   bool keep_removed = removed_indices && *removed_indices;
   pcl::StatisticalOutlierRemoval<_PointT> f(keep_removed);
@@ -275,21 +276,22 @@ void Filter_statisticalOutlierRemovalT(PointCloud_ptr *input, Indices_ptr *indic
   f.setMeanK(meanK);
   f.setStddevMulThresh(stddevMulThresh);
   f.setNegative(negative);
+  f.setKeepOrganized(keep_organized);
   f.filter(**output);
   if (keep_removed)
     **removed_indices = *f.getRemovedIndices();
 }
 
 PCLIMP(void, Filter, statisticalOutlierRemoval_Indices)(PointCloud_ptr *input, Indices_ptr *indices, Indices_ptr *output,
-  int meanK, double stddevMulThresh, bool negative, Indices_ptr *removed_indices)
+  int meanK, double stddevMulThresh, bool negative, Indices_ptr *removed_indices, bool keep_organized)
 {
-  Filter_statisticalOutlierRemovalT(input, indices, output, meanK, stddevMulThresh, negative, removed_indices);
+  Filter_statisticalOutlierRemovalT(input, indices, output, meanK, stddevMulThresh, negative, removed_indices, keep_organized);
 }
 
 PCLIMP(void, Filter, statisticalOutlierRemoval_Cloud)(PointCloud_ptr *input, Indices_ptr *indices, PointCloud_ptr *output,
-  int meanK, double stddevMulThresh, bool negative, Indices_ptr *removed_indices)
+  int meanK, double stddevMulThresh, bool negative, Indices_ptr *removed_indices, bool keep_organized)
 {
-  Filter_statisticalOutlierRemovalT(input, indices, output, meanK, stddevMulThresh, negative, removed_indices);
+  Filter_statisticalOutlierRemovalT(input, indices, output, meanK, stddevMulThresh, negative, removed_indices, keep_organized);
 }
 
 template<typename T>
@@ -390,7 +392,8 @@ PCLIMP(int, Filter, voxelHistogram)(PointCloud_ptr *input, THFloatTensor *output
       continue;
 
     data[z * zstride + y * ystride + x * xstride] += 1;
-    ++count;  }
+    ++count;
+  }
 
   THFloatTensor_freeCopyTo(output_, output);
   return count;
